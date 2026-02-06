@@ -1,7 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "mirmis-nir-mir-pipeline"
 version = "0.1.0"
 description = "Ground processing pipeline for MIRMIS/NIR-MIR instrument"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "astropy>=7.2.0",
+    "numpy>=2.4.2",
+]
+
+[project.scripts]
+mirmis = "nir_mir_pipeline.cli:main" 
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/nir_mir_pipeline"]

@@ -22,3 +22,6 @@ wheels/
 logs/
 runs/
 
+# Data and documentation
+docs/
+
