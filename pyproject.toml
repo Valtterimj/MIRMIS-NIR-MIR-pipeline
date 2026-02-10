@@ -14,7 +14,7 @@ dependencies = [
 ]
 
 [project.scripts]
-mirmis = "nir_mir_pipeline.cli:main" 
+mirmis = "nirmir_pipeline.cli:main" 
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/nir_mir_pipeline"]
+packages = ["src/nirmir_pipeline"]

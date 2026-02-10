@@ -1,0 +1,72 @@
+# ========================================================
+# MIRMIS NIRMIR data processing pipeline 
+# Example configuration file example
+# 
+# Usage:
+# mirmis run --config configs/pipeline.example.yaml
+#
+# Copy this file to e.g.:
+#   configs/my_run.yaml
+# and edit the paths and settings as needed.
+# For detailed descriptions of the fields check README.md
+# ========================================================
+
+
+# --------------------------------------------------------
+# Run-time settings
+# --------------------------------------------------------
+run:
+
+  # Path to input data. Can be absolute or relative to this config file
+  input_dir: "data/ASPECT_data"
+
+  # Root output directory for all generated products
+  output_dir: "output"
+
+  # SPICE meta kernel path
+  spice_dir: ""
+
+  # Overwrite existing outputs if they already exists
+  overwrite: true
+
+
+# --------------------------------------------------------
+# Metadata settings
+# --------------------------------------------------------
+data:
+
+  # Camera ID
+  instrume: "NIRMIR"
+
+  # Mission
+  origin: "ESA-COMET-INTERCEPTOR"
+
+  # Software identification
+  swcreate: "NIRMIRCAL"
+
+  # Mission phase ID
+  missphas: "000_test"
+
+  # Mission observation ID
+  observ_id: "pipeline-testing"
+
+  # Observed target
+  object: "test"
+
+  # Observed target (SPICE)
+  target: "test"
+
+
+# --------------------------------------------------------
+# Pipeline settings
+# --------------------------------------------------------
+pipeline:
+
+  # Ordered list of pipeline levels to execute.
+  # Values: "0", "1", "2", "3"
+  levels: ["0"]
+
+  # list of channels included in processin
+  # Values: "nir", "mir"
+  channels: ["nir", "mir"]
+
