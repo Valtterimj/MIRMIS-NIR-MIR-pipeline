@@ -48,7 +48,7 @@ data:
   missphas: "000_test"
 
   # Mission observation ID
-  observ_id: "pipeline-testing"
+  observ: "pipeline-testing"
 
   # Observed target
   object: "test"

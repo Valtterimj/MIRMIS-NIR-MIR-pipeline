@@ -2,25 +2,10 @@ import argparse
 
 from pathlib import Path
 
+from nirmir_pipeline.utils.logging_config import setup_logging
+
 from nirmir_pipeline.pipeline.run import test_run
-
-DEFAULT_CANDIDATES = [
-    Path("configs/pipeline.yaml"),
-    Path("configs/pipeline.example.yaml"),
-]
-
-def resolve_config_path(cli_value: str | None) -> Path:
-    if cli_value:
-        p = Path(cli_value)
-        if not p.exists():
-            raise SystemExit(f"Config not found: {p}")
-        return p
-    
-    for p in DEFAULT_CANDIDATES:
-        if p.exists():
-            return p
-    
-    raise SystemExit("No config found")
+from nirmir_pipeline.pipeline.utils.error import PipelineError
 
 
 def main() -> None:
@@ -36,9 +21,14 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    if args.cdm == "test":
-        config_path = resolve_config_path(args.config)
-        test_run(config_path)
+    setup_logging("INFO")
+    
+    try:
+        if args.cdm == "test":
+            config_path = Path(args.config).expanduser() if args.config else None
+            test_run(config_path)
+    except PipelineError as e:
+        raise SystemExit(str(e)) from e
 
 if __name__ == "__main__":
     main()
