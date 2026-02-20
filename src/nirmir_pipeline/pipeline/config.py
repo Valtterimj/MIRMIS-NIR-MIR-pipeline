@@ -9,37 +9,8 @@ import yaml
 from nirmir_pipeline.pipeline.utils.validate import (Level, Channel, _require_mapping, _require_bool, _require_list_of_str, _require_str, 
                                                      _resolve_path, _resolve_optional_path, _validate_levels, _validate_channels)
 
-from nirmir_pipeline.pipeline.utils.error import ConfigError
-
-
-@dataclass(frozen=True)
-class RunConfig:
-    input_dir: Path
-    output_dir: Path
-    spice_dir: Path | None
-    overwrite: bool
-
-@dataclass(frozen=True)
-class DataConfig:
-    instrume: str
-    origin: str
-    swcreate: str
-    missphas: str
-    observ: str
-    object: str
-    target: str
-
-@dataclass(frozen=True)
-class PipelineConfig:
-    levels: Sequence[Level]
-    channels: Sequence[Channel]
-
-@dataclass(frozen=True)
-class Config:
-    run: RunConfig
-    data: DataConfig
-    pipeline: PipelineConfig
-    config_path: Path
+from nirmir_pipeline.pipeline.utils.errors import ConfigError
+from nirmir_pipeline.pipeline.utils.classes import Config, RunConfig, DataConfig, PipelineConfig
 
 
 DEFAULT_CANDIDATES = [
@@ -138,12 +109,10 @@ def _parse_config_dict(raw: dict[str, Any], *, config_path: Path) -> Config:
     data_raw = _require_mapping(raw, "data")
     pipeline_raw = _require_mapping(raw, "pipeline")
 
-    base_dir = config_path.parent
-
     run = RunConfig(
-        input_dir=_resolve_path(base_dir, _require_str(run_raw, "input_dir"), key="run.input_dir"),
-        output_dir=_resolve_path(base_dir, _require_str(run_raw, "output_dir"), key="run.output_dir"),
-        spice_dir=_resolve_optional_path(base_dir, run_raw.get("spice_dir", ""), key="run.spice_dir"),
+        input_dir=_resolve_path(_require_str(run_raw, "input_dir")),
+        output_dir=_resolve_optional_path(run_raw.get("output_dir", "")),
+        spice_dir=_resolve_optional_path(run_raw.get("spice_dir", "")),
         overwrite=_require_bool(run_raw, "overwrite"),
     )
 

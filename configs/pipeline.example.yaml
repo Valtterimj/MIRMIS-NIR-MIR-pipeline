@@ -14,14 +14,15 @@
 
 # --------------------------------------------------------
 # Run-time settings
+# The paths can be absolute or relative to project root.
 # --------------------------------------------------------
 run:
 
-  # Path to input data. Can be absolute or relative to this config file
-  input_dir: "data/ASPECT_data"
+  # Path to input data.
+  input_dir: "data/ASPECT_data/NIR"
 
-  # Root output directory for all generated products
-  output_dir: "output"
+  # Root output directory for generated products
+  output_dir: ""
 
   # SPICE meta kernel path
   spice_dir: ""

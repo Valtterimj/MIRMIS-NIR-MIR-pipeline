@@ -5,7 +5,7 @@ from pathlib import Path
 from nirmir_pipeline.utils.logging_config import setup_logging
 
 from nirmir_pipeline.pipeline.run import test_run
-from nirmir_pipeline.pipeline.utils.error import PipelineError
+from nirmir_pipeline.pipeline.utils.errors import PipelineError
 
 
 def main() -> None:
