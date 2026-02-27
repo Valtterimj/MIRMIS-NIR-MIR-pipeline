@@ -18,10 +18,10 @@
 # --------------------------------------------------------
 run:
 
-  # (Required) Path to input data. Relative or absolute
-  input_dir: "data/ASPECT_data/NIR"
+  # (Required) Path to input data. Relative to this config file or absolute.
+  input_dir: "../data/ASPECT_data/NIR"
 
-  # (Optional) Root output directory for generated products. Relative or absolute. If left empty outputs folder is used from the repo.
+  # (Optional) Root output directory for generated products. Relative to this config file or absolute. If left empty outputs folder is used from the repo.
   output_dir: ""
 
   # (Optional) SPICE meta kernel path. Should be absolute. Optional only from the pipeline perspective

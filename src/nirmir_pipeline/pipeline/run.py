@@ -3,7 +3,7 @@ import logging
 from pathlib import Path
 
 from nirmir_pipeline.pipeline.config import load_config
-from nirmir_pipeline.pipeline.utils.errors import PipelineError, format_exeption_chain
+from nirmir_pipeline.pipeline.utils.errors import PipelineError, ValidationError, ConfigError, format_exeption_chain
 
 from nirmir_pipeline.pipeline.levels.level_0.run import run_level_0
 from nirmir_pipeline.pipeline.utils.validate import _validate_output_dir
@@ -17,7 +17,7 @@ def run_pipeline(config_path: Path) -> None:
 
     try:
         cfg = load_config(config_path=config_path)
-    except PipelineError as e: 
+    except ConfigError as e: 
         logger.error(f"[%s] Loading config failed.", type(e).__name__)
         raise
     cfg_path = cfg.config_path
@@ -31,7 +31,7 @@ def run_pipeline(config_path: Path) -> None:
         output_path = _validate_output_dir(output_dir=output_dir, missphas=missphas)
         cfg.run.output_dir = output_path
         logger.info(f"Output directory resolved: {output_path}")
-    except PipelineError as e:
+    except ValidationError as e:
         logger.error(f"[%s] Resolving output directory failed.", type(e).__name__)
         raise
     
