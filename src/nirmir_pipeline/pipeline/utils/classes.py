@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Sequence, Literal, Optional
 
 Level = Literal["0", "1", "2", "3"]
-Channel = Literal["nir", "mir"]
+Channel = Literal["NIR", "MIR"]
 IssueLevel = Literal["info", "warning", "error"]
 
 @dataclass(frozen=False)
@@ -55,7 +55,7 @@ class AcqMetadata:
     INSTRUME: HeaderEntry
     ORIGIN: HeaderEntry
     MISSPHAS: HeaderEntry
-    OBSER_ID: HeaderEntry
+    OSERV_ID: HeaderEntry
     FILENAME: HeaderEntry
     ORIGFILE: HeaderEntry
     SWCREATE: HeaderEntry

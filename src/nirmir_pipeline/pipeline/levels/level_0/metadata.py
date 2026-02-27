@@ -34,7 +34,11 @@ def collect_metadata(input: InputLayout, spice: Path, cfg: DataConfig, channel: 
     target = cfg.target
     missphase = cfg.missphas
 
-    original_filename = list_channel_frames(acq_dir=acq_dir, channel=channel)[1][0]
+    frame_number, list_of_frames = list_channel_frames(acq_dir=acq_dir, channel=channel)
+    if len(list_of_frames) == 0:
+        raise PipelineError(f"No acquisitions", channel=channel, level='0A', stage='collect_metadata', path=acq_dir)
+    else: 
+        original_filename = list_of_frames[0]
 
     acq_metadata, acq_issues = collect_config_metadata(telemetry_path=tel_path, data=cfg, orig_file=original_filename)
     all_issues.extend(acq_issues)
@@ -69,7 +73,7 @@ def collect_spice_metadata(mk: Path, target: str, utc_ob: str) -> tuple[SpiceMet
         issues.append(
             Issue(
                 level="warning",
-                message=(f"Failed to load meta kernel {mk};"
+                message=(f"Failed to load meta kernel {mk}; "
                         f"Continuing with 'UNK defaults (reson: {type(e).__name__})"
                         ),
                 source=__name__,
@@ -87,7 +91,7 @@ def collect_spice_metadata(mk: Path, target: str, utc_ob: str) -> tuple[SpiceMet
         meta_data['EARTPOSY'] = HeaderEntry('UNK', 'Earth position vector Y [km]')
         meta_data['EARTPOSZ'] = HeaderEntry('UNK', 'Earth position vector Z [km]')
         meta_data['EARTH_D']  = HeaderEntry('UNK', 'Earth distance')
-        meta_data['TARGET'] = HeaderEntry('target', 'Observation target')
+        meta_data['TARGET'] = HeaderEntry(f'{target}', 'Observation target')
         meta_data['TRG_POSX'] = HeaderEntry('UNK', 'Target position vector X [km]')
         meta_data['TRG_POSY'] = HeaderEntry('UNK', 'Target position vector Y [km]')
         meta_data['TRG_POSZ'] = HeaderEntry('UNK', 'Target position vector Z [km]')
@@ -186,40 +190,18 @@ def collect_config_metadata(telemetry_path: Path, data: DataConfig, orig_file: s
             )
         )
         date_obs = 'UNK'
-    try:
-        meta_data['INSTRUME'] = HeaderEntry(data.instrume, 'Camera ID')
-        meta_data['ORIGIN'] = HeaderEntry(data.origin, 'Mission imagin instrument')
-        meta_data['MISSPHAS'] = HeaderEntry(data.missphas, 'Mission phase ID')
-        meta_data['FILENAME'] = HeaderEntry('UNK', 'Filename')
-        meta_data['ORIGFILE'] = HeaderEntry(orig_file, 'Original filename')
-        meta_data['SWCREATE'] = HeaderEntry(data.swcreate, 'Software identification')
-        meta_data['DATE'] = HeaderEntry(get_current_utc_time_str(), 'File creation UTC')
-        meta_data['PROCLEVL'] = HeaderEntry('0A', 'Calibration level')
-        meta_data['DATE_OBS'] = HeaderEntry(date_obs, 'Observation time UTC')
-        meta_data['SC_CLK'] = HeaderEntry('UNK', 'Spacecraft clock')
-        meta_data['OBJECT'] = HeaderEntry(data.object, 'Observation target')
-    except Exception as e:
-        issues.append(
-            Issue(
-                level="warning",
-                message=(f"Failed to add metadata from configurations;"
-                            f"Continuing with 'UNK' defaults (reson: {type(e).__name__})"
-                            ),
-                source=__name__,
-
-            )
-        )
-        meta_data['INSTRUME'] = HeaderEntry('UNK', 'Camera ID')
-        meta_data['ORIGIN'] = HeaderEntry('UNK', 'Mission imagin instrument')
-        meta_data['MISSPHAS'] = HeaderEntry('UNK', 'Mission phase ID')
-        meta_data['FILENAME'] = HeaderEntry('UNK', 'Filename')
-        meta_data['ORIGFILE'] = HeaderEntry(orig_file, 'Original filename')
-        meta_data['SWCREATE'] = HeaderEntry('UNK', 'Software identification')
-        meta_data['DATE'] = HeaderEntry(get_current_utc_time_str(), 'File creation UTC')
-        meta_data['PROCLEVL'] = HeaderEntry('0A', 'Calibration level')
-        meta_data['DATE_OBS'] = HeaderEntry(date_obs, 'Observation time UTC')
-        meta_data['SC_CLK'] = HeaderEntry('UNK', 'Spacecraft clock')
-        meta_data['OBJECT'] = HeaderEntry(data.object, 'Observation target')
+    meta_data['INSTRUME'] = HeaderEntry(data.instrume, 'Camera ID')
+    meta_data['ORIGIN'] = HeaderEntry(data.origin, 'Mission imagin instrument')
+    meta_data['MISSPHAS'] = HeaderEntry(data.missphas, 'Mission phase ID')
+    meta_data['OSERV_ID'] = HeaderEntry(data.observ, 'Observation ID')
+    meta_data['ORIGFILE'] = HeaderEntry(orig_file, 'Original filename')
+    meta_data['SWCREATE'] = HeaderEntry(data.swcreate, 'Software identification')
+    meta_data['DATE_OBS'] = HeaderEntry(date_obs, 'Observation time UTC')
+    meta_data['OBJECT'] = HeaderEntry(data.object, 'Observation target')
+    meta_data['PROCLEVL'] = HeaderEntry('0A', 'Calibration level')
+    meta_data['FILENAME'] = HeaderEntry('UNK', 'Filename')
+    meta_data['DATE'] = HeaderEntry(get_current_utc_time_str(), 'File creation UTC')
+    meta_data['SC_CLK'] = HeaderEntry('UNK', 'Spacecraft clock')
     
     return (AcqMetadata(**meta_data), issues)
 
@@ -243,7 +225,7 @@ def collect_instrument_metadata(telemetry_path: Path, channel: str, missphas: st
         issues.append(
             Issue(
                 level="warning",
-                message=(f"Failed to read telemetry JSON: {telemetry_path};"
+                message=(f"Failed to read telemetry JSON: {telemetry_path}; "
                          f"Continuing with UNK defaults (reson: {type(e).__name__})"
                         ),
                 source=__name__,
@@ -252,10 +234,10 @@ def collect_instrument_metadata(telemetry_path: Path, channel: str, missphas: st
         )
         data = InstrumentMetadata(
             CHANNELS= HeaderEntry(channel, 'channels'),
-            NIR_CCDTEMP= HeaderEntry('UNK', 'NIR detector temperature [DN]'),
+            NIR_TEMP= HeaderEntry('UNK', 'NIR detector temperature [DN]'),
             NIR_FPI_TEMP1= HeaderEntry('UNK', 'NIR FPI 1 temperature [DN]'),
             NIR_FPI_TEMP2= HeaderEntry('UNK', 'NIR FPI 2 temperature [DN]'),
-            MIR_CCDTEMP= HeaderEntry('UNK', 'MIR detector temperature [DN]'),
+            MIR_TEMP= HeaderEntry('UNK', 'MIR detector temperature [DN]'),
             MIR_FPI_TEMP1= HeaderEntry('UNK', 'MIR FPI 1 temperature [DN]'),
             MIR_FPI_TEMP2= HeaderEntry('UNK', 'MIR FPI 2 temperature [DN]'),
         )
@@ -266,11 +248,12 @@ def collect_instrument_metadata(telemetry_path: Path, channel: str, missphas: st
         try: 
             det_temp = channel_specific_telemetry['DET_TEMP']
             meta_data[f'{ch}_CCDTEMP'] = HeaderEntry(str(det_temp), f'{ch} detector temperature [DN]')
-        except KeyError:
+        except KeyError as e:
+            print('issue happened')
             issues.append(
                 Issue(
                     level="warning",
-                    message=(f"Missing field in telemetry for {ch}_CCDTEMP;"
+                    message=(f"Missing field in telemetry for {ch}_CCDTEMP; "
                             f"Continuing with UNK defaults (reson: {type(e).__name__})"
                             ),
                     source=__name__,
@@ -280,34 +263,34 @@ def collect_instrument_metadata(telemetry_path: Path, channel: str, missphas: st
             meta_data[f'{ch}_CCDTEMP'] = HeaderEntry('UNK', f'{ch} detector temperature [DN]')
         try:
             fpi_temp1 = channel_specific_telemetry['FPI_TEMP1']
-            meta_data[f'{ch}_FPI_TEMP1'] = HeaderEntry(str(fpi_temp1), 'NIR FPI 1 temperature [DN]'),
-        except KeyError:
+            meta_data[f'{ch}_FPI_TEMP1'] = HeaderEntry(str(fpi_temp1), 'NIR FPI 1 temperature [DN]')
+        except KeyError as e:
             issues.append(
                 Issue(
                     level="warning",
-                    message=(f"Missing field in telemetry for {ch}_FPI_TEMP1;"
+                    message=(f"Missing field in telemetry for {ch}_FPI_TEMP1; "
                             f"Continuing with UNK defaults (reson: {type(e).__name__})"
                             ),
                     source=__name__,
 
                 )
             )
-            meta_data[f'{ch}_FPI_TEMP1'] = HeaderEntry('UNK', f'{channel} FPI 1 temperature [DN]'),
+            meta_data[f'{ch}_FPI_TEMP1'] = HeaderEntry('UNK', f'{channel} FPI 1 temperature [DN]')
         try:
             fpi_temp2 = channel_specific_telemetry['FPI_TEMP2']
-            meta_data[f'{ch}_FPI_TEMP2'] = HeaderEntry(str(fpi_temp2), f'{channel} FPI 2 temperature [DN]'),
-        except KeyError:
+            meta_data[f'{ch}_FPI_TEMP2'] = HeaderEntry(str(fpi_temp2), f'{channel} FPI 2 temperature [DN]')
+        except KeyError as e:
             issues.append(
                 Issue(
                     level="warning",
-                    message=(f"Missing field in telemetry for {ch}_FPI_TEMP2;"
+                    message=(f"Missing field in telemetry for {ch}_FPI_TEMP2; "
                             f"Continuing with UNK defaults (reson: {type(e).__name__})"
                             ),
                     source=__name__,
 
                 )
             )
-            meta_data[f'{ch}_FPI_TEMP2'] = HeaderEntry('UNK', f'{channel} FPI 2 temperature [DN]'),
+            meta_data[f'{ch}_FPI_TEMP2'] = HeaderEntry('UNK', f'{channel} FPI 2 temperature [DN]')
 
     data = InstrumentMetadata(**meta_data)      
     return (data, issues)
@@ -342,7 +325,7 @@ def collect_instrument_specific_metadata(config_path: Path, acq_path: Path, chan
     try:
         match channel:
             case 'NIR':
-                taskFile = config_data['nir1TaskFile']
+                taskFile = config_data['nirTaskFile']
             case 'MIR':
                 taskFile = config_data['mirTaskFile']
     except KeyError as e:

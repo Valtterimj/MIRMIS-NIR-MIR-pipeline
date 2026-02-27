@@ -68,6 +68,3 @@ wheels/
 # Runtime outputs
 logs/
 runs/
-
-# Data and documentation
-docs/

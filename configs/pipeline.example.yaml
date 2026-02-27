@@ -6,7 +6,7 @@
 # mirmis run --config configs/pipeline.example.yaml
 #
 # Copy this file to e.g.:
-#   configs/my_run.yaml
+#   configs/pipeline.yaml
 # and edit the paths and settings as needed.
 # For detailed descriptions of the fields check README.md
 # ========================================================
@@ -18,13 +18,13 @@
 # --------------------------------------------------------
 run:
 
-  # Path to input data.
-  input_dir: "data/ASPECT_data/NIR"
+  # (Required) Path to input data. Relative or absolute
+  input_dir: "data/ASPECT_data/MIR"
 
-  # Root output directory for generated products
+  # (Optional) Root output directory for generated products. Relative or absolute. If left empty outputs folder is used from the repo.
   output_dir: ""
 
-  # SPICE meta kernel path
+  # (Optional) SPICE meta kernel path. Should be absolute. Optional only from the pipeline perspective
   spice_dir: ""
 
   # Overwrite existing outputs if they already exists
@@ -33,6 +33,7 @@ run:
 
 # --------------------------------------------------------
 # Metadata settings
+# All these fields are required for the pipeline to work
 # --------------------------------------------------------
 data:
 
@@ -55,19 +56,22 @@ data:
   object: "test"
 
   # Observed target (SPICE)
-  target: "test"
+  target: "TEST"
 
 
 # --------------------------------------------------------
 # Pipeline settings
+# All these fields are required for the pipeline to work
 # --------------------------------------------------------
 pipeline:
 
-  # Ordered list of pipeline levels to execute.
+  # List of pipeline levels to execute.
   # Values: "0", "1", "2", "3"
+  # E.g. ["0","1"]
   levels: ["0"]
 
-  # list of channels included in processin
-  # Values: "nir", "mir"
-  channels: ["nir", "mir"]
+  # List of channels included in processin
+  # Values: "NIR", "MIR"
+  # E.g. ["NIR"]
+  channels: ["MIR"]
 

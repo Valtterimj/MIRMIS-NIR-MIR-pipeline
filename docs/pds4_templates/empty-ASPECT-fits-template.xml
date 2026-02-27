@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1M00.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1M00_1510.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/sp/v1/PDS4_SP_1M00_1320.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1N00_1980.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+
+<Product_Observational xmlns="http://pds.nasa.gov/pds4/pds/v1"
+                        xmlns:disp="http://pds.nasa.gov/pds4/disp/v1"
+                        xmlns:sp="http://pds.nasa.gov/pds4/sp/v1"
+                        xmlns:geom="http://pds.nasa.gov/pds4/geom/v1"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:pds="http://pds.nasa.gov/pds4/pds/v1"
+                        xsi:schemaLocation="
+                           http://pds.nasa.gov/pds4/pds/v1 https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1M00.xsd
+                           http://pds.nasa.gov/pds4/disp/v1 https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1M00_1510.xsd
+                           http://pds.nasa.gov/pds4/sp/v1 https://pds.nasa.gov/pds4/sp/v1/PDS4_SP_1M00_1320.xsd
+                           http://pds.nasa.gov/pds4/geom/v1 https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1N00_1980.xsd">
+   
+   <!-- 
+   This file is a template for .fits labels.
+   Most of the fields are empty and need to be filled or discarded.
+   I have marked the optional fields according to the documentation.
+
+   Some general help:
+   https://pds.nasa.gov/datastandards/documents/
+   https://pds.nasa.gov/datastandards/dictionaries/index-1.22.0.0.shtml
+   https://sbnwiki.asteroiddata.org/Notes_for_Labelling_FITS_files.html#Discipline_Dictionaries
+   -->
+
+   <!--
+   Instructions for filling the missing fields can be found in:
+   Common (pds): https://pds.nasa.gov/datastandards/documents/dd/v1/PDS4_PDS_DD_1M00.html
+   Display dictionary (disp): https://sbnwiki.asteroiddata.org/Filling_Out_the_Display_Dictionary_Classes.html
+   Spectral dictionary (sp): https://sbnwiki.asteroiddata.org/Filling_Out_the_Spectral_Dictionary_Classes.html
+   Geometry dictionary (geom): https://sbnwiki.asteroiddata.org/Filling_Out_the_Geometry_Dictionary_Classes.html
+   -->
+
+   <Identification_Area>
+      <logical_identifier>urn:esa:psa:bundle_hera_aspect:collection:product</logical_identifier><!-- Edit later -->
+      <version_id>1.0</version_id>
+      <title>ASPECT .fits cubes: VIS_h.fits, NIR1_h.fits, NIR2.fits</title>
+      <information_model_version>1.22.0.0</information_model_version>
+      <product_class>Product_Observational</product_class>
+   </Identification_Area>
+
+   <Observation_Area>
+      <comment></comment><!-- Optional -->
+      <Time_Coordinates>
+         <start_date_time></start_date_time><!-- Example: 2024-08-20T21:58:35.202Z -->
+         <stop_date_time></stop_date_time>
+      </Time_Coordinates>
+      <Primary_Result_Summary><!-- Optional -->
+         <purpose></purpose>
+         <processing_level></processing_level>
+         <description></description><!-- Optional -->
+         <Science_Facets><!-- Optional -->
+            <wavelength_range></wavelength_range><!-- Optional -->
+            <domain></domain><!-- Optional -->
+            <discipline_name></discipline_name>
+            <facet1></facet1><!-- Optional -->
+            <subfacet1></subfacet1><!-- Optional -->
+            <facet2></facet2><!-- Optional -->
+            <subfacet2></subfacet2><!-- Optional -->
+         </Science_Facets>
+      </Primary_Result_Summary>
+      <Investigation_Area>
+         <name></name>
+         <type>Mission</type>
+         <Internal_Reference>
+            <lid_reference></lid_reference>
+            <reference_type>data_to_investigation</reference_type>
+            <comment></comment><!-- Optional -->
+         </Internal_Reference>
+      </Investigation_Area>
+      <Observing_System>
+         <name></name><!-- Optional -->
+         <description></description><!-- Optional -->
+         <Observing_System_Component>
+            <name>ASPECT hyperspectral imager</name>
+            <type>Instrument</type>
+            <description></description><!-- Optional -->
+            <Internal_Reference><!-- Optional -->
+               <lid_reference></lid_reference>
+               <reference_type></reference_type>
+               <comment></comment><!-- Optional -->
+            </Internal_Reference>
+            <External_Reference></External_Reference><!-- Optional -->
+         </Observing_System_Component>
+      </Observing_System>
+      <Target_Identification>
+         <name></name>
+         <alternate_designation></alternate_designation><!-- Optional -->
+         <type></type>
+         <description></description><!-- Optional -->
+         <Internal_Reference><!-- Optional -->
+            <lid_reference></lid_reference>
+            <reference_type></reference_type>
+            <comment></comment><!-- Optional -->
+         </Internal_Reference>
+      </Target_Identification>
+      
+      <Discipline_Area>
+
+         <!--
+         Display dictionary section.
+         Instructions can be found at https://sbnwiki.asteroiddata.org/Filling_Out_the_Display_Dictionary_Classes.html
+         -->
+         <disp:Display_Settings><!-- VIS_h -->
+            <pds:Local_Internal_Reference>
+               <pds:comment></pds:comment><!-- Optional -->
+               <pds:local_identifier_reference>VIS_h</pds:local_identifier_reference>
+               <pds:local_reference_type>display_settings_to_array</pds:local_reference_type>
+            </pds:Local_Internal_Reference>
+            <disp:Display_Direction>
+               <disp:comment></disp:comment><!-- Optional -->
+               <disp:horizontal_display_axis>Sample</disp:horizontal_display_axis>
+               <disp:horizontal_display_direction>Left to Right</disp:horizontal_display_direction>
+               <disp:vertical_display_axis>Line</disp:vertical_display_axis>
+               <disp:vertical_display_direction>Top to Bottom</disp:vertical_display_direction>
+            </disp:Display_Direction>
+         </disp:Display_Settings>
+         <disp:Display_Settings><!-- NIR1_h -->
+            <pds:Local_Internal_Reference>
+               <pds:comment></pds:comment><!-- Optional -->
+               <pds:local_identifier_reference>NIR1_h</pds:local_identifier_reference>
+               <pds:local_reference_type>display_settings_to_array</pds:local_reference_type>
+            </pds:Local_Internal_Reference>
+            <disp:Display_Direction>
+               <disp:comment></disp:comment><!-- Optional -->
+               <disp:horizontal_display_axis>Sample</disp:horizontal_display_axis>
+               <disp:horizontal_display_direction>Left to Right</disp:horizontal_display_direction>
+               <disp:vertical_display_axis>Line</disp:vertical_display_axis>
+               <disp:vertical_display_direction>Top to Bottom</disp:vertical_display_direction>
+            </disp:Display_Direction>
+         </disp:Display_Settings>
+         <disp:Display_Settings><!-- NIR2_h -->
+            <pds:Local_Internal_Reference>
+               <pds:comment></pds:comment><!-- Optional -->
+               <pds:local_identifier_reference>NIR2_h</pds:local_identifier_reference>
+               <pds:local_reference_type>display_settings_to_array</pds:local_reference_type>
+            </pds:Local_Internal_Reference>
+            <disp:Display_Direction>
+               <disp:comment></disp:comment><!-- Optional -->
+               <disp:horizontal_display_axis>Sample</disp:horizontal_display_axis>
+               <disp:horizontal_display_direction>Left to Right</disp:horizontal_display_direction>
+               <disp:vertical_display_axis>Line</disp:vertical_display_axis>
+               <disp:vertical_display_direction>Top to Bottom</disp:vertical_display_direction>
+            </disp:Display_Direction>
+         </disp:Display_Settings>
+
+         <!--
+         Spectral dictionary section.
+         Not sure if Spectral dictionary is needed.
+         Separate Spectral_Characteristics sections need to be written for VIS_h, NIR1_h, and NIR2_h.
+         Instructions can be found at https://sbnwiki.asteroiddata.org/Filling_Out_the_Spectral_Dictionary_Classes.html
+         -->
+         <sp:Spectral_Characteristics><!-- VIS_h -->
+            <pds:Local_Internal_Reference>
+               <pds:comment></pds:comment><!-- Optional -->
+               <pds:local_identifier_reference>VIS_h</pds:local_identifier_reference>
+               <pds:local_reference_type>spectral_characteristics_to_array_object</pds:local_reference_type>
+            </pds:Local_Internal_Reference>
+            <sp:description></sp:description><!-- Optional -->
+            <sp:spectrum_format>3D</sp:spectrum_format>
+            <sp:spectral_bin_type>wavelength</sp:spectral_bin_type>
+            <sp:Observation_Parameters><!-- Optional, but should be present and complete in all cases where the attributes are applicable. -->
+               <sp:number_of_exposures></sp:number_of_exposures><!-- Optional -->
+               <sp:net_integration_time unit="day"></sp:net_integration_time><!-- Optional -->
+               <sp:resolution_limit_wavelength unit="AU"></sp:resolution_limit_wavelength><!-- Optional -->
+               <sp:solar_analog_star_name></sp:solar_analog_star_name><!-- Optional -->
+               <sp:absolute_calibration_star_name></sp:absolute_calibration_star_name><!-- Optional -->
+               <sp:comment></sp:comment><!-- Optional -->
+            </sp:Observation_Parameters>
+            <sp:Field_of_View>
+               <sp:description></sp:description>
+               <sp:Rectangular_FOV>
+                  <sp:width_angle unit="arcmin"></sp:width_angle>
+                  <sp:length_angle unit="arcmin"></sp:length_angle>
+                  <sp:celestial_north_position_angle unit="arcmin"></sp:celestial_north_position_angle><!-- Optional -->
+                  <sp:body_positive_pole_position_angle unit="arcmin"></sp:body_positive_pole_position_angle><!-- Optional -->
+               </sp:Rectangular_FOV>
+               <pds:Internal_Reference><!-- Optional -->
+                  <pds:lid_reference></pds:lid_reference>
+                  <pds:reference_type>spectral_characteristics_to_document</pds:reference_type>
+                  <pds:comment></pds:comment><!-- Optional -->
+               </pds:Internal_Reference>
+            </sp:Field_of_View>
+            <sp:Bin_Description>
+               <sp:bin_profile_description></sp:bin_profile_description>
+               <!-- You must use one of the three methods (Uniformly_Sampled_[unit], Axis_Bin_Set_[unit],
+               or Spectral_Lookup) to describe the spectral bins. -->
+               <sp:Uniformly_Sampled_Wavelength><!-- Optional -->
+                  <sp:axis_name>Color</sp:axis_name>
+                  <sp:sampling_interval_wavelength unit="AU"></sp:sampling_interval_wavelength>
+                  <sp:sampling_scale>Linear</sp:sampling_scale>
+                  <sp:bin_width_wavelength unit="AU"></sp:bin_width_wavelength>
+                  <sp:first_center_wavelength unit="AU"></sp:first_center_wavelength>
+                  <sp:last_center_wavelength unit="AU"></sp:last_center_wavelength>
+                  <sp:comment></sp:comment><!-- Optional -->
+               </sp:Uniformly_Sampled_Wavelength>
+               <sp:Axis_Bin_Set_Wavelength><!-- Optional. This is the class to use if your spectral bins are not uniform but it is reasonable to provide individual bin parameters in the product label. -->
+                  <sp:axis_name>Color</sp:axis_name>
+                  <sp:Bin_Wavelength>
+                     <sp:bin_sequence_number></sp:bin_sequence_number>
+                     <sp:center_wavelength unit="AU"></sp:center_wavelength>
+                     <sp:bin_width_wavelength unit="AU"></sp:bin_width_wavelength>
+                     <sp:detector_number></sp:detector_number><!-- Optional -->
+                     <sp:grating_position></sp:grating_position><!-- Optional -->
+                     <sp:Filter><!-- Optional -->
+                        <sp:filter_name></sp:filter_name><!-- Optional -->
+                        <sp:filter_number></sp:filter_number><!-- Optional -->
+                        <sp:comment></sp:comment><!-- Optional -->
+                     </sp:Filter>
+                  </sp:Bin_Wavelength>
+               </sp:Axis_Bin_Set_Wavelength>
+               <sp:Spectral_Lookup><!-- Optional -->
+                  <sp:Bin_Center_Lookup>
+                     <sp:bin_center_field_name></sp:bin_center_field_name><!-- Optional -->
+                     <sp:bin_center_field_number_list></sp:bin_center_field_number_list><!-- Optional -->
+                     <pds:Local_Internal_Reference></pds:Local_Internal_Reference><!-- Optional -->
+                     <pds:Internal_Reference></pds:Internal_Reference><!-- Optional -->
+                  </sp:Bin_Center_Lookup>
+                  <sp:Bin_Width_Constant><!-- Optional, but one of <Bin_Width_Constant> and <Bin_Width_Lookup> must be provided. -->
+                     <sp:bin_width_wavelength unit="AU"></sp:bin_width_wavelength>
+                  </sp:Bin_Width_Constant>
+                  <sp:Bin_Width_Lookup><!-- Optional, but one of <Bin_Width_Constant> and <Bin_Width_Lookup> must be provided. -->
+                     <sp:bin_width_field_name></sp:bin_width_field_name><!-- Optional -->
+                     <sp:bin_width_field_number_list></sp:bin_width_field_number_list><!-- Optional -->
+                     <pds:Local_Internal_Reference></pds:Local_Internal_Reference><!-- Optional -->
+                     <pds:Internal_Reference></pds:Internal_Reference><!-- Optional -->
+                  </sp:Bin_Width_Lookup>
+                  <sp:comment></sp:comment><!-- Optional -->
+               </sp:Spectral_Lookup>
+            </sp:Bin_Description>
+         </sp:Spectral_Characteristics>
+         <sp:Spectral_Characteristics><!-- NIR1_h -->
+         </sp:Spectral_Characteristics>
+         <sp:Spectral_Characteristics><!-- NIR2_h -->
+         </sp:Spectral_Characteristics>
+
+         <!--
+         Geometry dictionary section.
+         Any mission using NAIF software to calculate geometry should include the <SPICE_Kernel_Files> class;
+         you'll likely need to include the <Image_Display_Geometry> class for anything image-like; and one of
+         either <Geometry_Orbiter> or <Geometry_Lander> is required.
+         Instructions can be found at https://sbnwiki.asteroiddata.org/Filling_Out_the_Geometry_Dictionary_Classes.html
+         -->
+         <geom:Geometry>
+				<geom:SPICE_Kernel_Files><!-- Optional (use for missions using the NAIF SPICE Toolkit) -->
+					<geom:SPICE_Kernel_Identification>
+						<geom:kernel_type></geom:kernel_type><!-- Optional -->
+						<geom:spice_kernel_file_name></geom:spice_kernel_file_name>
+						<geom:kernel_provenance></geom:kernel_provenance><!-- Optional -->
+						<pds:Internal_Reference><!-- Optional -->
+							<pds:lidvid_reference></pds:lidvid_reference>
+							<pds:reference_type></pds:reference_type>
+							<pds:comment></pds:comment><!-- Optional -->
+						</pds:Internal_Reference>
+					</geom:SPICE_Kernel_Identification>
+					<geom:comment></geom:comment><!-- Optional -->
+				</geom:SPICE_Kernel_Files>
+				<geom:Expanded_Geometry><!-- Optional -->
+					<pds:Local_Internal_Reference><!-- Optional -->
+						<pds:comment></pds:comment><!-- Optional -->
+						<pds:local_identifier_reference></pds:local_identifier_reference>
+						<pds:local_reference_type></pds:local_reference_type>
+					</pds:Local_Internal_Reference>
+					<pds:Internal_Reference><!-- Optional -->
+						<pds:lidvid_reference></pds:lidvid_reference>
+						<pds:reference_type></pds:reference_type>
+						<pds:comment></pds:comment><!-- Optional -->
+					</pds:Internal_Reference>
+				</geom:Expanded_Geometry>
+				<geom:Image_Display_Geometry><!-- Optional -->
+					<pds:Local_Internal_Reference><!-- Optional -->
+						<pds:comment></pds:comment><!-- Optional -->
+						<pds:local_identifier_reference></pds:local_identifier_reference>
+						<pds:local_reference_type></pds:local_reference_type>
+					</pds:Local_Internal_Reference>
+					<geom:Display_Direction>
+						<geom:comment></geom:comment><!-- Optional -->
+						<geom:horizontal_display_axis></geom:horizontal_display_axis>
+						<geom:horizontal_display_direction></geom:horizontal_display_direction>
+						<geom:vertical_display_axis></geom:vertical_display_axis>
+						<geom:vertical_display_direction></geom:vertical_display_direction>
+					</geom:Display_Direction>
+					<geom:Central_Body_Identification><!-- Optional -->
+						<geom:body_spice_name></geom:body_spice_name><!-- Optional -->
+						<geom:name></geom:name><!-- Optional -->
+						<pds:Internal_Reference></pds:Internal_Reference><!-- Optional -->
+					</geom:Central_Body_Identification>
+					<geom:Geometry_Target_Identification><!-- Optional -->
+						<geom:body_spice_name></geom:body_spice_name><!-- Optional -->
+						<geom:name></geom:name><!-- Optional -->
+						<pds:Internal_Reference></pds:Internal_Reference><!-- Optional -->
+					</geom:Geometry_Target_Identification>
+					<geom:Object_Orientation_North_East><!-- One of <Object_Orientation_North_East>, <Object_Orientation_RA_DEC>, or <Object_Orientation_Clock_Angles> is required; all may be used. -->
+						<geom:north_azimuth unit="arcmin"></geom:north_azimuth>
+						<geom:east_azimuth unit="arcmin"></geom:east_azimuth>
+						<geom:Reference_Frame_Identification>
+							<geom:frame_spice_name></geom:frame_spice_name><!-- Optional -->
+							<geom:name></geom:name><!-- Optional -->
+							<geom:comment></geom:comment><!-- Optional -->
+							<pds:Internal_Reference></pds:Internal_Reference><!-- Optional -->
+						</geom:Reference_Frame_Identification>
+					</geom:Object_Orientation_North_East>
+					<geom:Object_Orientation_RA_Dec><!-- One of <Object_Orientation_North_East>, <Object_Orientation_RA_DEC>, or <Object_Orientation_Clock_Angles> is required; all may be used. -->
+						<geom:Reference_Pixel><!-- Optional -->
+							<geom:vertical_coordinate_pixel unit="DN"></geom:vertical_coordinate_pixel>
+							<geom:horizontal_coordinate_pixel unit="DN"></geom:horizontal_coordinate_pixel>
+						</geom:Reference_Pixel>
+						<geom:reference_pixel_location></geom:reference_pixel_location><!-- Optional -->
+						<geom:right_ascension_angle unit="arcmin"></geom:right_ascension_angle><!-- or <right_ascension_hour_angle> -->
+						<geom:declination_angle unit="arcmin"></geom:declination_angle><!-- Optional -->
+						<geom:celestial_north_clock_angle unit="arcmin"></geom:celestial_north_clock_angle><!-- Either <celestial_north_clock_angle> or <ecliptic_north_clock_angle> must be specified; both may be used -->
+						<geom:ecliptic_north_clock_angle unit="arcmin"></geom:ecliptic_north_clock_angle><!-- Either <celestial_north_clock_angle> or <ecliptic_north_clock_angle> must be specified; both may be used -->
+						<geom:Reference_Frame_Identification></geom:Reference_Frame_Identification>
+					</geom:Object_Orientation_RA_Dec>
+					<geom:Object_Orientation_Clock_Angles><!-- One of <Object_Orientation_North_East>, <Object_Orientation_RA_DEC>, or <Object_Orientation_Clock_Angles> is required; all may be used. -->
+						<geom:celestial_north_clock_angle unit="arcmin"></geom:celestial_north_clock_angle><!-- Optional -->
+						<geom:celestial_east_clock_angle unit="arcmin"></geom:celestial_east_clock_angle><!-- Optional -->
+						<geom:ecliptic_north_clock_angle unit="arcmin"></geom:ecliptic_north_clock_angle><!-- Optional -->
+						<geom:ecliptic_east_clock_angle unit="arcmin"></geom:ecliptic_east_clock_angle><!-- Optional -->
+						<geom:central_body_north_pole_clock_angle unit="arcmin"></geom:central_body_north_pole_clock_angle><!-- Optional -->
+						<geom:central_body_positive_pole_clock_angle unit="arcmin"></geom:central_body_positive_pole_clock_angle><!-- Optional -->
+						<geom:target_north_pole_clock_angle unit="arcmin"></geom:target_north_pole_clock_angle><!-- Optional -->
+						<geom:target_positive_pole_clock_angle unit="arcmin"></geom:target_positive_pole_clock_angle><!-- Optional -->
+						<geom:sun_direction_clock_angle unit="arcmin"></geom:sun_direction_clock_angle><!-- Optional -->
+					</geom:Object_Orientation_Clock_Angles>
+					<geom:Quaternion_Plus_To_From><!-- Optional -->
+						<geom:qcos></geom:qcos>
+						<geom:qsin1></geom:qsin1>
+						<geom:qsin2></geom:qsin2>
+						<geom:qsin3></geom:qsin3>
+						<geom:Rotate_From></geom:Rotate_From>
+						<geom:Rotate_To></geom:Rotate_To>
+					</geom:Quaternion_Plus_To_From>
+				</geom:Image_Display_Geometry>
+				<geom:Geometry_Orbiter><!-- Optional -->
+					<geom:geometry_reference_time_utc></geom:geometry_reference_time_utc><!-- Optional -->
+					<geom:geometry_start_time_utc></geom:geometry_start_time_utc><!-- Optional -->
+					<geom:geometry_stop_time_utc></geom:geometry_stop_time_utc><!-- Optional -->
+					<geom:geometry_reference_time_tdb unit="day"></geom:geometry_reference_time_tdb><!-- Optional -->
+					<geom:Orbiter_Identification><!-- Optional -->
+						<geom:Central_Body_Identification></geom:Central_Body_Identification><!-- Optional -->
+						<geom:Geometry_Target_Identification></geom:Geometry_Target_Identification><!-- Optional -->
+						<geom:Coordinate_System_Identification><!-- Optional -->
+							<geom:coordinate_system_type></geom:coordinate_system_type>
+							<geom:coordinate_system_time_utc></geom:coordinate_system_time_utc><!-- Optional -->
+							<geom:comment></geom:comment><!-- Optional -->
+							<geom:Coordinate_System_Origin_Identification></geom:Coordinate_System_Origin_Identification>
+							<geom:Reference_Frame_Identification></geom:Reference_Frame_Identification>
+						</geom:Coordinate_System_Identification>
+					</geom:Orbiter_Identification>
+					<geom:Pixel_Dimensions><!-- Optional -->
+						<geom:pixel_field_of_view_method></geom:pixel_field_of_view_method>
+						<geom:horizontal_pixel_field_of_view unit="deg"></geom:horizontal_pixel_field_of_view><!-- Optional -->
+						<geom:vertical_pixel_field_of_view unit="deg"></geom:vertical_pixel_field_of_view><!-- Optional -->
+						<geom:Pixel_Size_Projected><!-- Optional -->
+							<geom:reference_location></geom:reference_location><!-- Either <reference_location> or <reference_location> must be specified -->
+							<geom:distance></geom:distance><!-- Either <reference_location> or <reference_location> must be specified -->
+							<geom:horizontal_pixel_footprint unit="AU"></geom:horizontal_pixel_footprint>
+							<geom:vertical_pixel_footprint unit="AU"></geom:vertical_pixel_footprint>
+						</geom:Pixel_Size_Projected>
+					</geom:Pixel_Dimensions>
+					<geom:Distances><!-- Optional -->
+						<geom:comment></geom:comment><!-- Optional -->
+						<geom:Distances_Specific></geom:Distances_Specific><!-- Optional -->
+						<geom:Distances_Min_Max></geom:Distances_Min_Max><!-- Optional -->
+						<geom:Distances_Start_Stop></geom:Distances_Start_Stop><!-- Optional -->
+						<geom:Distance_Generic><!-- Optional -->
+							<geom:Observer_Identification></geom:Observer_Identification>
+							<geom:Geometry_Target_Identification></geom:Geometry_Target_Identification>
+							<geom:distance unit="AU"></geom:distance>
+						</geom:Distance_Generic>
+					</geom:Distances>
+					<geom:Surface_Geometry><!-- Optional -->
+						<geom:comment></geom:comment><!-- Optional -->
+						<geom:Surface_Geometry_Specific><!-- Optional -->
+							<geom:Pixel_Intercept><!-- Optional -->
+								<geom:reference_pixel_location></geom:reference_pixel_location><!-- Optional -->
+								<geom:Reference_Pixel></geom:Reference_Pixel><!-- Optional -->
+								<geom:pixel_latitude unit="arcmin"></geom:pixel_latitude>
+								<geom:pixel_longitude unit="arcmin"></geom:pixel_longitude>
+							</geom:Pixel_Intercept>
+							<geom:Footprint_Vertices><!-- Optional -->
+								<geom:Pixel_Intercept></geom:Pixel_Intercept>
+							</geom:Footprint_Vertices>
+						</geom:Surface_Geometry_Specific>
+						<geom:Surface_Geometry_Min_Max></geom:Surface_Geometry_Min_Max><!-- Optional -->
+						<geom:Surface_Geometry_Start_Stop><!-- Optional -->
+							<geom:lat_long_method></geom:lat_long_method><!-- Optional -->
+						</geom:Surface_Geometry_Start_Stop>
+					</geom:Surface_Geometry>
+					<geom:Illumination_Geometry><!-- Optional -->
+						<geom:comment></geom:comment><!-- Optional -->
+						<geom:Illumination_Specific><!-- Optional -->
+							<geom:reference_location></geom:reference_location><!-- Optional -->
+							<geom:reference_pixel_location></geom:reference_pixel_location><!-- Optional -->
+							<geom:Reference_Pixel></geom:Reference_Pixel><!-- Optional -->
+						</geom:Illumination_Specific>
+						<geom:Illumination_Min_Max></geom:Illumination_Min_Max><!-- Optional -->
+						<geom:Illumination_Start_Stop></geom:Illumination_Start_Stop><!-- Optional -->
+					</geom:Illumination_Geometry>
+					<geom:Vectors><!-- Optional -->
+						<geom:comment></geom:comment><!-- Optional -->
+						<geom:Vectors_Cartesian_Specific></geom:Vectors_Cartesian_Specific><!-- Optional -->
+						<geom:Vectors_Planetocentric_Specific></geom:Vectors_Planetocentric_Specific><!-- Optional -->
+						<geom:Generic_Vectors></geom:Generic_Vectors><!-- Optional -->
+					</geom:Vectors>
+				</geom:Geometry_Orbiter>
+         </geom:Geometry>
+
+      </Discipline_Area>
+   </Observation_Area>
+
+   <Reference_List><!-- Optional -->
+   </Reference_List>
+
+   <File_Area_Observational>
+      <File>
+         <file_name>VIS_h.fits</file_name>
+         <local_identifier>VIS_h</local_identifier><!-- Optional -->
+         <creation_date_time></creation_date_time><!-- Optional. Example: 2024-08-20T21:58:35.202Z -->
+         <file_size unit="byte"></file_size><!-- Optional -->
+         <records></records><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <comment></comment><!-- Optional -->
+         <file_URL></file_URL><!-- Optional -->
+      </File>
+      <Composite_Structure><!-- Optional, probably discarded -->
+      </Composite_Structure>
+      <Header>
+         <name>PrimaryHDU header</name><!-- Optional -->
+         <local_identifier></local_identifier><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <offset unit="byte">0</offset>
+         <object_length unit="byte">2880</object_length>
+         <parsing_standard_id>FITS 3.0</parsing_standard_id>
+         <description></description><!-- Optional -->
+      </Header>
+      <Header>
+         <name>ImageHDU header</name><!-- Optional -->
+         <local_identifier></local_identifier><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <offset unit="byte">2880</offset>
+         <object_length unit="byte">2880</object_length>
+         <parsing_standard_id>FITS 3.0</parsing_standard_id>
+         <description></description><!-- Optional -->
+      </Header>
+      <Array_3D_Spectrum>
+         <name></name><!-- Optional -->
+         <local_identifier></local_identifier><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <offset unit="byte">5760</offset>
+         <axes>3</axes>
+         <axis_index_order>Last Index Fastest</axis_index_order>
+         <description></description><!-- Optional -->
+         <Element_Array>
+            <data_type>SignedMSB2</data_type>
+            <unit></unit><!-- Optional -->
+            <scaling_factor>1</scaling_factor><!-- Optional -->
+            <value_offset>32768</value_offset><!-- Optional -->
+         </Element_Array>
+         <Axis_Array>
+            <axis_name>Color</axis_name>
+            <local_identifier></local_identifier><!-- Optional -->
+            <elements>10</elements>
+            <sequence_number>1</sequence_number>
+         </Axis_Array>
+         <Axis_Array>
+            <axis_name>Line</axis_name>
+            <local_identifier></local_identifier><!-- Optional -->
+            <elements>1024</elements>
+            <sequence_number>2</sequence_number>
+         </Axis_Array>
+         <Axis_Array>
+            <axis_name>Sample</axis_name>
+            <local_identifier></local_identifier><!-- Optional -->
+            <elements>1024</elements>
+            <sequence_number>3</sequence_number>
+         </Axis_Array>
+         <Special_Constants></Special_Constants><!-- Optional -->
+         <Object_Statistics></Object_Statistics><!-- Optional -->
+      </Array_3D_Spectrum>
+   </File_Area_Observational>
+
+   <File_Area_Observational>
+      <File>
+         <file_name>NIR1_h.fits</file_name>
+         <local_identifier>NIR1_h</local_identifier><!-- Optional -->
+         <creation_date_time></creation_date_time><!-- Optional. Example: 2024-08-20T21:58:35.202Z -->
+         <file_size unit="byte"></file_size><!-- Optional -->
+         <records></records><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <comment></comment><!-- Optional -->
+         <file_URL></file_URL><!-- Optional -->
+      </File>
+      <Composite_Structure><!-- Optional, probably discarded -->
+      </Composite_Structure>
+      <Header>
+         <name>PrimaryHDU header</name><!-- Optional -->
+         <local_identifier></local_identifier><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <offset unit="byte">0</offset>
+         <object_length unit="byte">2880</object_length>
+         <parsing_standard_id>FITS 3.0</parsing_standard_id>
+         <description></description><!-- Optional -->
+      </Header>
+      <Header>
+         <name>ImageHDU header</name><!-- Optional -->
+         <local_identifier></local_identifier><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <offset unit="byte">2880</offset>
+         <object_length unit="byte">2880</object_length>
+         <parsing_standard_id>FITS 3.0</parsing_standard_id>
+         <description></description><!-- Optional -->
+      </Header>
+      <Array_3D_Spectrum>
+         <name></name><!-- Optional -->
+         <local_identifier></local_identifier><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <offset unit="byte">5760</offset>
+         <axes>3</axes>
+         <axis_index_order>Last Index Fastest</axis_index_order>
+         <description></description><!-- Optional -->
+         <Element_Array>
+            <data_type>SignedMSB2</data_type>
+            <unit></unit><!-- Optional -->
+            <scaling_factor>1</scaling_factor><!-- Optional -->
+            <value_offset>32768</value_offset><!-- Optional -->
+         </Element_Array>
+         <Axis_Array>
+            <axis_name>Color</axis_name>
+            <local_identifier></local_identifier><!-- Optional -->
+            <elements>14</elements>
+            <sequence_number>1</sequence_number>
+         </Axis_Array>
+         <Axis_Array>
+            <axis_name>Line</axis_name>
+            <local_identifier></local_identifier><!-- Optional -->
+            <elements>518</elements>
+            <sequence_number>2</sequence_number>
+         </Axis_Array>
+         <Axis_Array>
+            <axis_name>Sample</axis_name>
+            <local_identifier></local_identifier><!-- Optional -->
+            <elements>648</elements>
+            <sequence_number>3</sequence_number>
+         </Axis_Array>
+         <Special_Constants></Special_Constants><!-- Optional -->
+         <Object_Statistics></Object_Statistics><!-- Optional -->
+      </Array_3D_Spectrum>
+   </File_Area_Observational>
+
+   <File_Area_Observational>
+      <File>
+         <file_name>NIR2_h.fits</file_name>
+         <local_identifier>NIR2_h</local_identifier><!-- Optional -->
+         <creation_date_time></creation_date_time><!-- Optional. Example: 1900-06-30T23:59:60.123Z -->
+         <file_size unit="byte"></file_size><!-- Optional -->
+         <records></records><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <comment></comment><!-- Optional -->
+         <file_URL></file_URL><!-- Optional -->
+      </File>
+      <Composite_Structure><!-- Optional, probably discarded -->
+      </Composite_Structure>
+      <Header>
+         <name>PrimaryHDU header</name><!-- Optional -->
+         <local_identifier></local_identifier><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <offset unit="byte">0</offset>
+         <object_length unit="byte">2880</object_length>
+         <parsing_standard_id>FITS 3.0</parsing_standard_id>
+         <description></description><!-- Optional -->
+      </Header>
+      <Header>
+         <name>ImageHDU header</name><!-- Optional -->
+         <local_identifier></local_identifier><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <offset unit="byte">2880</offset>
+         <object_length unit="byte">2880</object_length>
+         <parsing_standard_id>FITS 3.0</parsing_standard_id>
+         <description></description><!-- Optional -->
+      </Header>
+      <Array_3D_Spectrum>
+         <name></name><!-- Optional -->
+         <local_identifier></local_identifier><!-- Optional -->
+         <md5_checksum></md5_checksum><!-- Optional -->
+         <offset unit="byte">5760</offset>
+         <axes>3</axes>
+         <axis_index_order>Last Index Fastest</axis_index_order>
+         <description></description><!-- Optional -->
+         <Element_Array>
+            <data_type>SignedMSB2</data_type>
+            <unit></unit><!-- Optional -->
+            <scaling_factor>1</scaling_factor><!-- Optional -->
+            <value_offset>32768</value_offset><!-- Optional -->
+         </Element_Array>
+         <Axis_Array>
+            <axis_name>Color</axis_name>
+            <local_identifier></local_identifier><!-- Optional -->
+            <elements>14</elements>
+            <sequence_number>1</sequence_number>
+         </Axis_Array>
+         <Axis_Array>
+            <axis_name>Line</axis_name>
+            <local_identifier></local_identifier><!-- Optional -->
+            <elements>518</elements>
+            <sequence_number>2</sequence_number>
+         </Axis_Array>
+         <Axis_Array>
+            <axis_name>Sample</axis_name>
+            <local_identifier></local_identifier><!-- Optional -->
+            <elements>648</elements>
+            <sequence_number>3</sequence_number>
+         </Axis_Array>
+         <Special_Constants></Special_Constants><!-- Optional -->
+         <Object_Statistics></Object_Statistics><!-- Optional -->
+      </Array_3D_Spectrum>
+   </File_Area_Observational>
+
+</Product_Observational>

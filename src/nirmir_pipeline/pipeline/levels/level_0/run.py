@@ -4,20 +4,22 @@ from pathlib import Path
 
 from nirmir_pipeline.pipeline.levels.level_0.build_fits import build_fits
 
-from nirmir_pipeline.pipeline.utils.classes import Config, InputLayout
+from nirmir_pipeline.pipeline.utils.classes import Config, InputLayout, Issue
 from nirmir_pipeline.pipeline.utils.validate import _validate_level_0_input_dir
 from nirmir_pipeline.pipeline.utils.errors import ValidationError
+from nirmir_pipeline.pipeline.utils.utilities import log_issue
 
-logger = logging.getLogger(__name__)
 
-def run_level_0(cfg: Config, channel: str) -> Path:
+def run_level_0(cfg: Config, channel: str) -> tuple[Path, list[Issue]]:
+
+    all_issues: list[Issue] = []
 
     input_dir = cfg.run.input_dir
-    try:
-        input_layout = _validate_level_0_input_dir(input_dir=input_dir)
-        fits_path = build_fits(input=input_layout)
+    input_layout = _validate_level_0_input_dir(input_dir=input_dir)
+    
+    fits_path, issues = build_fits(input=input_layout, cfg=cfg, channel=channel)
+    all_issues.extend(issues)
+    return fits_path, all_issues
 
-    except ValidationError:
-        logger.error(f"Error in validating the input directory.")
-        raise
+
     

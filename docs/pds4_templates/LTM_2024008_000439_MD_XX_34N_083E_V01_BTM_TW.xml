@@ -1,0 +1,347 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml-model href="https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1I00.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1I00_1510.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1I00_1960.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/img/v1/PDS4_IMG_1I00_1860.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/proc/v1/PDS4_PROC_1I00_1210.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/mission/lt/v1/PDS4_LT_1I00_1000.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<Product_Observational xmlns="http://pds.nasa.gov/pds4/pds/v1" xmlns:disp="http://pds.nasa.gov/pds4/disp/v1" xmlns:img="http://pds.nasa.gov/pds4/img/v1" xmlns:proc="http://pds.nasa.gov/pds4/proc/v1" xmlns:geom="http://pds.nasa.gov/pds4/geom/v1" xmlns:lt="http://pds.nasa.gov/pds4/mission/lt/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pds.nasa.gov/pds4/pds/v1       https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1H00.xsd      http://pds.nasa.gov/pds4/disp/v1       https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1I00_1510.xsd     http://pds.nasa.gov/pds4/geom/v1       https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1I00_1960.xsd     http://pds.nasa.gov/pds4/img/v1        https://pds.nasa.gov/pds4/img/v1/PDS4_IMG_1H00_1860.xsd      http://pds.nasa.gov/pds4/proc/v1       https://pds.nasa.gov/pds4/proc/v1/PDS4_PROC_1I00_1210.xsd     http://pds.nasa.gov/pds4/mission/v1    https://pds.nasa.gov/pds4/mission/lt/v1/PDS4_LT_1I00_1000.xsd     ">
+  <Identification_Area>
+    <!-- TODO: check collection name! -->
+    <logical_identifier>urn:nasa:pds:mirmis_tiri_scimap:data_calibrated:ltm_2024008_000439_md_xx_34n_083e_v01_btm</logical_identifier>
+    <version_id>1.0</version_id>
+    <title>Lunar Trailblazer LTM Brightness Temperature Product ltm_2024008_000439_md_xx_34n_083e_v01_btm</title>
+    <information_model_version>1.18.0.0</information_model_version>
+    <product_class>Product_Observational</product_class>
+    <Citation_Information>
+      <publication_year>2023</publication_year>
+      <description>
+        <!-- TBD for team: Please provide description for each product type that we can put here -->
+        <!-- Filled in. -JLD -->
+                LTM calibrated brightness temperature data in units of Kelvin
+            </description>
+    </Citation_Information>
+    <Modification_History>
+      <Modification_Detail>
+        <modification_date>2023-10-01</modification_date>
+        <version_id>1.0</version_id>
+        <description>Initial release.</description>
+      </Modification_Detail>
+    </Modification_History>
+  </Identification_Area>
+  <Observation_Area>
+    <Time_Coordinates>
+      <start_date_time>2023-06-29T22:26:04Z</start_date_time>
+      <stop_date_time>2023-06-29T22:28:04Z</stop_date_time>
+    </Time_Coordinates>
+    <Primary_Result_Summary>
+      <purpose>Science</purpose>
+      <processing_level>Calibrated</processing_level>
+      <Science_Facets>
+        <wavelength_range>Infrared</wavelength_range>
+        <discipline_name>Imaging</discipline_name>
+      </Science_Facets>
+    </Primary_Result_Summary>
+    <Investigation_Area>
+      <name>LUNAR TRAILBLAZER</name>
+      <type>Mission</type>
+      <Internal_Reference>
+        <lid_reference>urn:nasa:pds:context:investigation:mission.lunar-trailblazer</lid_reference>
+        <reference_type>data_to_investigation</reference_type>
+      </Internal_Reference>
+    </Investigation_Area>
+    <Observing_System>
+      <Observing_System_Component>
+        <name>LUNAR TRAILBLAZER ORBITER</name>
+        <type>Host</type>
+        <Internal_Reference>
+          <lid_reference>urn:nasa:pds:context:instrument_host:spacecraft.lt</lid_reference>
+          <reference_type>is_instrument_host</reference_type>
+        </Internal_Reference>
+      </Observing_System_Component>
+      <Observing_System_Component>
+        <name>LUNAR THERMAL MAPPER</name>
+        <type>Instrument</type>
+        <Internal_Reference>
+          <lid_reference>urn:nasa:pds:context:instrument:lt.ltm</lid_reference>
+          <reference_type>is_instrument</reference_type>
+        </Internal_Reference>
+      </Observing_System_Component>
+    </Observing_System>
+    <Target_Identification>
+      <name>MOON</name>
+      <type>Satellite</type>
+      <Internal_Reference>
+        <lid_reference>urn:nasa:pds:context:target:satellite.earth.moon</lid_reference>
+        <reference_type>data_to_target</reference_type>
+      </Internal_Reference>
+    </Target_Identification>
+    <Mission_Area>
+      <lt:Lunar_Trailblazer_Parameters>
+        <!-- TBD for team: are there any items of metadata that are not in this label but should be? They will be added here. -->
+        <!-- None to add. -JLD -->
+        <lt:Observation_Information>
+          <lt:release_number>01</lt:release_number>
+          <lt:mission_phase_name>Development</lt:mission_phase_name>
+          <lt:orbit_number>37</lt:orbit_number>
+          <lt:spacecraft_clock_start>1/0123456789</lt:spacecraft_clock_start>
+          <!-- TBD for team: Confirm/fix sclock format -->
+          <!-- Confirmed. -JLD -->
+          <lt:spacecraft_clock_stop>1/0123456799</lt:spacecraft_clock_stop>
+          <lt:producer_institution_name>JET PROPULSION LABORATORY</lt:producer_institution_name>
+          <!-- TBD for team: The following attributes were added for HVM3.
+                        Are they also relevant to LTM? -->
+          <!-- These should be kept for BTM. -JLD -->
+          <lt:spacecraft_roll units="deg">0.243</lt:spacecraft_roll>
+          <lt:spacecraft_pitch units="deg">0.144</lt:spacecraft_pitch>
+          <lt:spacecraft_yaw units="deg">0.711</lt:spacecraft_yaw>
+          <lt:spacecraft_initial_roll units="deg">0.251</lt:spacecraft_initial_roll>
+          <lt:spacecraft_initial_pitch units="deg">0.132</lt:spacecraft_initial_pitch>
+          <lt:spacecraft_initial_yaw units="deg">0.651</lt:spacecraft_initial_yaw>
+          <lt:spacecraft_roll_rate units="deg/s">0.00314</lt:spacecraft_roll_rate>
+          <lt:spacecraft_pitch_rate units="deg/s">0.001353</lt:spacecraft_pitch_rate>
+          <lt:spacecraft_yaw_rate units="deg/s">0.7391</lt:spacecraft_yaw_rate>
+          <lt:spacecraft_rotation_x_axis units="deg">30</lt:spacecraft_rotation_x_axis>
+          <lt:spacecraft_rotation_y_axis units="deg">40</lt:spacecraft_rotation_y_axis>
+          <lt:spacecraft_rotation_z_axis units="deg">50</lt:spacecraft_rotation_z_axis>
+          <lt:solar_beta_angle units="deg">2.035</lt:solar_beta_angle>
+          <!-- TBD for team: are there any temperature(s) that need representing for LTM? -->
+          <!-- All instrument temperatures have been added below under "Device_Temperatures" -JLD -->
+        </lt:Observation_Information>
+        <lt:LTM_Parameters>
+          <!-- TBD for team: are there properties for LTM equivalent to the lt:hvm3_product_type, etc. found in the HVM3 labels? -->
+          <!-- Imported the parameters from HVM3 and adapted. -JLD -->
+          <lt:ltm_product_type>calibrated</lt:ltm_product_type>
+          <!-- TBD for team: what are the enumerated values of this attribute, and which one belongs in this product type? -->
+          <!-- Raw, Calibrated, Derived. This is "calibrated." -JLD -->
+          <lt:product_version_id>1</lt:product_version_id>
+          <!-- TBD for team: I'm not clear on the purpose of this one. What is it and what values might it have? -DVP -->
+          <!-- There may be successive versions of the datasets released, so this keeps track of that. Will be an integer. -JLD -->
+          <lt:instrument_mode>TD</lt:instrument_mode>
+          <!-- TBD for team: I'm not clear on the purpose of this one. What is it and what values might it have? -DVP -->
+          <!-- This will be "TD" for Time-Delay Integration or "SI" for Single Integration. -JLD -->
+          <!-- TODO These sample properties will be removed when this section is finalized -->
+          <lt:ltm_example3_realnumber unit="m">34.1</lt:ltm_example3_realnumber>
+          <lt:ltm_example4_integer unit="s">51</lt:ltm_example4_integer>
+        </lt:LTM_Parameters>
+      </lt:Lunar_Trailblazer_Parameters>
+    </Mission_Area>
+    <Discipline_Area>
+      <disp:Display_Settings>
+        <Local_Internal_Reference>
+          <local_identifier_reference>data_cube</local_identifier_reference>
+          <local_reference_type>display_settings_to_array</local_reference_type>
+        </Local_Internal_Reference>
+        <disp:Display_Direction>
+          <disp:horizontal_display_axis>Sample</disp:horizontal_display_axis>
+          <disp:horizontal_display_direction>Left to Right</disp:horizontal_display_direction>
+          <disp:vertical_display_axis>Line</disp:vertical_display_axis>
+          <disp:vertical_display_direction>Top to Bottom</disp:vertical_display_direction>
+        </disp:Display_Direction>
+      </disp:Display_Settings>
+      <img:Imaging>
+        <Local_Internal_Reference>
+          <local_identifier_reference>data_cube</local_identifier_reference>
+          <local_reference_type>imaging_parameters_to_image_object</local_reference_type>
+        </Local_Internal_Reference>
+        <img:Instrument_State>
+          <img:Device_Temperatures>
+            <img:Device_Temperature>
+              <!-- TBD for team: is a temperature property like this needed for LTM? (It's copied from HVM3.) -->
+              <!-- Filled in with list of temp sensors from LTM. -JLD -->
+              <img:device_name>LTM BB_Baffle</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM BB_Edge</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM BB_Centre</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM BB_Interface</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM Filter_Assy</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM Filter_Assy_Interface</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM Detector</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM Detector_Mount</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM Instrument_Interface</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM Housing</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM Motor</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM Detector_Inbuilt</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+            <img:Device_Temperature>
+              <img:device_name>LTM Motor Encoder Position</img:device_name>
+              <img:temperature_value unit="K">161.34</img:temperature_value>
+            </img:Device_Temperature>
+          </img:Device_Temperatures>
+        </img:Instrument_State>
+      </img:Imaging>
+      <geom:Geometry>
+        <geom:Geometry_Orbiter>
+          <geom:geometry_start_time_utc>2023-06-29T22:26:04Z</geom:geometry_start_time_utc>
+          <geom:geometry_stop_time_utc>2023-06-29T22:28:04Z</geom:geometry_stop_time_utc>
+          <geom:Distances>
+            <geom:Distances_Specific>
+              <geom:target_heliocentric_distance unit="AU">1.0134</geom:target_heliocentric_distance>
+            </geom:Distances_Specific>
+          </geom:Distances>
+          <geom:Surface_Geometry>
+            <geom:Surface_Geometry_Specific>
+              <geom:Footprint_Vertices>
+                <geom:Pixel_Intercept>
+                  <geom:reference_pixel_location>Upper Left Corner</geom:reference_pixel_location>
+                  <geom:pixel_latitude unit="deg">0</geom:pixel_latitude>
+                  <geom:pixel_longitude unit="deg">0</geom:pixel_longitude>
+                </geom:Pixel_Intercept>
+                <geom:Pixel_Intercept>
+                  <geom:reference_pixel_location>Upper Right Corner</geom:reference_pixel_location>
+                  <geom:pixel_latitude unit="deg">1</geom:pixel_latitude>
+                  <geom:pixel_longitude unit="deg">30.5</geom:pixel_longitude>
+                </geom:Pixel_Intercept>
+                <geom:Pixel_Intercept>
+                  <geom:reference_pixel_location>Lower Left Corner</geom:reference_pixel_location>
+                  <geom:pixel_latitude unit="deg">-17.3</geom:pixel_latitude>
+                  <geom:pixel_longitude unit="deg">0</geom:pixel_longitude>
+                </geom:Pixel_Intercept>
+                <geom:Pixel_Intercept>
+                  <geom:reference_pixel_location>Lower Right Corner</geom:reference_pixel_location>
+                  <geom:pixel_latitude unit="deg">-12.56</geom:pixel_latitude>
+                  <geom:pixel_longitude unit="deg">23.8</geom:pixel_longitude>
+                </geom:Pixel_Intercept>
+              </geom:Footprint_Vertices>
+            </geom:Surface_Geometry_Specific>
+          </geom:Surface_Geometry>
+          <geom:Illumination_Geometry>
+            <geom:Illumination_Specific>
+              <geom:reference_location>Boresight Intercept Point</geom:reference_location>
+              <!-- TBD for team: does this describe the location with these angles adequately? -->
+              <!-- Yes. -JLD -->
+              <geom:emission_angle unit="deg">30</geom:emission_angle>
+              <geom:incidence_angle unit="deg">50</geom:incidence_angle>
+              <geom:phase_angle unit="deg">50</geom:phase_angle>
+            </geom:Illumination_Specific>
+          </geom:Illumination_Geometry>
+        </geom:Geometry_Orbiter>
+      </geom:Geometry>
+      <proc:Processing_Information>
+        <Local_Internal_Reference>
+          <local_identifier_reference>data_cube</local_identifier_reference>
+          <local_reference_type>processing_information_to_data_object</local_reference_type>
+        </Local_Internal_Reference>
+        <proc:Process>
+          <proc:description>TBD product processing</proc:description>
+          <proc:Software>
+            <proc:name>m3_igds_l0_v18.pl</proc:name>
+            <proc:software_version_id>18</proc:software_version_id>
+          </proc:Software>
+        </proc:Process>
+      </proc:Processing_Information>
+    </Discipline_Area>
+  </Observation_Area>
+  <Reference_List>
+    <Internal_Reference>
+      <lid_reference>urn:nasa:pds:ltb_ltm_scimap:document:user-guide</lid_reference>
+      <reference_type>data_to_document</reference_type>
+    </Internal_Reference>
+    <Internal_Reference>
+      <lid_reference>urn:nasa:pds:ltb_ltm_scimap:data_calibrated:ltm_2024008_000439_md_xx_34n_083e_v01_loc</lid_reference>
+      <!-- TODO TBD: which collection is LOC in, anyway? -->
+      <!-- Calibrated. -JLD -->
+      <reference_type>data_to_ancillary_data</reference_type>
+      <comment>
+                The LOC ancillary data associated with this product. 
+            </comment>
+    </Internal_Reference>
+    <Internal_Reference>
+      <lid_reference>urn:nasa:pds:ltb_ltm_scimap:data_calibrated:ltm_2024008_000439_md_xx_34n_083e_v01_obs</lid_reference>
+      <!-- TODO TBD: which collection is OBS in, anyway? -->
+      <!-- Calibrated. -JLD -->
+      <reference_type>data_to_ancillary_data</reference_type>
+      <comment>
+                The OBS ancillary data associated with this product.
+            </comment>
+    </Internal_Reference>
+    <Internal_Reference>
+      <lid_reference>urn:nasa:pds:ltb_ltm_scimap:data_calibrated:ltm_2024008_000439_md_xx_34n_083e_v01_rad</lid_reference>
+      <!-- TBD by team: what is BTM considered to be derived from? -->
+      <!-- Calibrated. -JLD -->
+      <reference_type>data_to_calibrated_product</reference_type>
+    </Internal_Reference>
+  </Reference_List>
+  <File_Area_Observational>
+    <File>
+      <file_name>ltm_2024008_000439_md_xx_34n_083e_v01_btm.img</file_name>
+      <local_identifier>data_file</local_identifier>
+      <creation_date_time>2023-09-16T16:20:00</creation_date_time>
+    </File>
+    <Array_3D_Image>
+      <name>LTM Image Cube</name>
+      <local_identifier>data_cube</local_identifier>
+      <offset unit="byte">0</offset>
+      <axes>3</axes>
+      <axis_index_order>Last Index Fastest</axis_index_order>
+      <description>
+                Brightness Temperature LTM image. <!-- TBD for team: More details of product, if desired) --><!-- Filled in. -JLD --></description>
+      <Element_Array>
+        <data_type>IEEE754LSBSingle</data_type>
+        <unit>K</unit>
+        <!-- LTM team to check. -JLD I think this is OK - TW-->
+      </Element_Array>
+      <Axis_Array>
+        <axis_name>Line</axis_name>
+        <elements>2700</elements>
+        <sequence_number>1</sequence_number>
+      </Axis_Array>
+      <Axis_Array>
+        <axis_name>Band</axis_name>
+        <elements>15</elements>
+        <sequence_number>2</sequence_number>
+      </Axis_Array>
+      <Axis_Array>
+        <axis_name>Sample</axis_name>
+        <elements>384</elements>
+        <sequence_number>3</sequence_number>
+      </Axis_Array>
+    </Array_3D_Image>
+  </File_Area_Observational>
+  <File_Area_Observational_Supplemental>
+    <File>
+      <file_name>ltm_2024008_000439_md_xx_34n_083e_v01_btm.hdr</file_name>
+      <comment>
+                Supplemental information used to display image with ENVI commercial software
+            </comment>
+    </File>
+    <Stream_Text>
+      <offset unit="byte">0</offset>
+      <parsing_standard_id>7-Bit ASCII Text</parsing_standard_id>
+      <record_delimiter>Carriage-Return Line-Feed</record_delimiter>
+    </Stream_Text>
+  </File_Area_Observational_Supplemental>
+</Product_Observational>

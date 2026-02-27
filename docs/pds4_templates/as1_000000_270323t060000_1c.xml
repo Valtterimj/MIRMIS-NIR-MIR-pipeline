@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1M00.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1M00_1510.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/sp/v1/PDS4_SP_1M00_1320.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/img/v1/PDS4_IMG_1N00_1920.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1N00_1980.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://psa.esa.int/psa/v1/PDS4_PSA_1F00_1300.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+
+<Product_Observational xmlns="http://pds.nasa.gov/pds4/pds/v1"
+                        xmlns:disp="http://pds.nasa.gov/pds4/disp/v1"
+                        xmlns:sp="http://pds.nasa.gov/pds4/sp/v1"
+                        xmlns:img="http://pds.nasa.gov/pds4/img/v1"
+                        xmlns:geom="http://pds.nasa.gov/pds4/geom/v1"
+                        xmlns:psa="http://psa.esa.int/psa/v1"
+                        xmlns:hera="http://psa.esa.int/psa/hera/v1"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xmlns:pds="http://pds.nasa.gov/pds4/pds/v1"
+                        xsi:schemaLocation="
+                           http://pds.nasa.gov/pds4/pds/v1 https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1M00.xsd
+                           http://pds.nasa.gov/pds4/disp/v1 https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1M00_1510.xsd
+                           http://pds.nasa.gov/pds4/sp/v1 https://pds.nasa.gov/pds4/sp/v1/PDS4_SP_1M00_1320.xsd
+                           http://pds.nasa.gov/pds4/img/v1 https://pds.nasa.gov/pds4/img/v1/PDS4_IMG_1N00_1920.xsd
+                           http://pds.nasa.gov/pds4/geom/v1 https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1N00_1980.xsd
+                           http://psa.esa.int/psa/v1 https://psa.esa.int/psa/v1/PDS4_PSA_1F00_1300.xsd">
+                           <!-- http://psa.esa.int/psa/hera/v1 https://pds.esa.int/psa/hera/v1/PDS4_HERA_1E00_1000.xsd -->
+   
+   <!-- 
+   This file is a template for .fits labels.
+
+   Some general help:
+   https://pds.nasa.gov/datastandards/documents/
+   https://pds.nasa.gov/datastandards/dictionaries/index-1.22.0.0.shtml
+   https://sbnwiki.asteroiddata.org/Notes_for_Labelling_FITS_files.html#Discipline_Dictionaries
+   -->
+
+   <!--
+   Instructions for filling the missing fields can be found in:
+   Common (pds): https://pds.nasa.gov/datastandards/documents/dd/v1/PDS4_PDS_DD_1M00.html
+   Display dictionary (disp): https://sbnwiki.asteroiddata.org/Filling_Out_the_Display_Dictionary_Classes.html
+   Spectral dictionary (sp): https://sbnwiki.asteroiddata.org/Filling_Out_the_Spectral_Dictionary_Classes.html
+   Geometry dictionary (geom): https://sbnwiki.asteroiddata.org/Filling_Out_the_Geometry_Dictionary_Classes.html
+   -->
+
+   <Identification_Area>
+      <logical_identifier>urn:esa:psa:hera_milani_aspect:data_partially_processed:as1_000000_270323t060000_1c</logical_identifier>
+      <version_id>1.0</version_id>
+      <title>1C Partially Processed datacube AS1_000000_270323T060000_1C.fits from the Aspect hyperspectral imager on Milani in the Hera Mission</title>
+      <information_model_version>1.22.0.0</information_model_version>
+      <product_class>Product_Observational</product_class>
+      
+      <Modification_History>
+         <Modification_Detail>
+            <modification_date>2026-02-06</modification_date>
+            <version_id>1.0</version_id>
+            <description>This PDS4 label was generated based on fits metadata.</description>
+         </Modification_Detail>
+      </Modification_History>
+   </Identification_Area>
+
+   <Observation_Area>
+      <Time_Coordinates>
+         <start_date_time>2025-08-22T16:32:49.000Z</start_date_time><!-- Example: 2024-08-20T21:58:35.202Z -->
+         <stop_date_time>2027-03-23T06:00:00.000Z</stop_date_time>
+      </Time_Coordinates>
+
+      <Primary_Result_Summary>
+         <purpose>Science</purpose>
+         <processing_level>Partially Processed</processing_level>
+         <Science_Facets>
+            <wavelength_range>Near Infrared</wavelength_range>
+            <discipline_name>Spectroscopy</discipline_name>
+         </Science_Facets>
+      </Primary_Result_Summary>
+
+      <Investigation_Area>
+         <name>Hera</name>
+         <type>Mission</type>
+         <Internal_Reference>
+            <lid_reference>urn:esa:psa:context:investigation:mission.hera</lid_reference>
+            <reference_type>data_to_investigation</reference_type>
+         </Internal_Reference>
+      </Investigation_Area>
+
+      <Observing_System>
+         <Observing_System_Component>
+            <name>Milani</name>
+            <type>Host</type>
+            <Internal_Reference>
+               <lid_reference>urn:esa:psa:context:instrument_host:spacecraft.milani</lid_reference>
+               <reference_type>is_instrument_host</reference_type>
+            </Internal_Reference>
+         </Observing_System_Component>
+         <Observing_System_Component>
+            <name>ASPECT</name>
+            <type>Instrument</type>
+            <description>Hyperspectral Imager</description>
+            <Internal_Reference>
+               <lid_reference>urn:esa:psa:context:instrument:milani.aspect</lid_reference>
+               <reference_type>is_instrument</reference_type>
+            </Internal_Reference>
+         </Observing_System_Component>
+      </Observing_System>
+
+      <Target_Identification>
+         <name>Didymos</name>
+         <type>Asteroid</type>
+         <Internal_Reference>
+            <lid_reference>urn:nasa:pds:context:target:asteroid.65803_didymos</lid_reference>
+            <reference_type>data_to_target</reference_type>
+         </Internal_Reference>
+      </Target_Identification>
+
+      <Mission_Area>
+         <psa:Mission_Information>
+            <psa:spacecraft_clock_start_count>UNK</psa:spacecraft_clock_start_count>
+            <psa:spacecraft_clock_stop_count>UNK</psa:spacecraft_clock_stop_count>
+            <psa:mission_phase_name>SIMULATED</psa:mission_phase_name>
+            <psa:mission_phase_identifier>urn:esa:psa:context:...</psa:mission_phase_identifier>
+         </psa:Mission_Information>
+         <!-- <hera:Hera_Parameters>To be defined later...
+            <hera:Aspect_Parameters>
+               <hera:detector_temp unit="degC">0</hera:detector_temp>Example
+            </hera:Aspect_Parameters>
+         </hera:Hera_Parameters> -->
+      </Mission_Area>
+      
+      <Discipline_Area>
+         <img:Imaging>
+            <Local_Internal_Reference>
+               <local_identifier_reference>as1_000000_270323t060000_1c</local_identifier_reference>
+               <local_reference_type>imaging_parameters_to_image_object</local_reference_type>
+            </Local_Internal_Reference>
+            <img:Detector> <!-- To be defined later in collaboration with ESA -->
+               <img:gain_number>0</img:gain_number> <!-- Example -->
+            </img:Detector>
+            <img:Exposure>
+               <img:exposure_count>13</img:exposure_count>
+               <img:exposure_duration unit="s">UNKNOWN</img:exposure_duration>
+               <img:exposure_type>Manual</img:exposure_type><!-- Manual, Auto, or Test -->
+            </img:Exposure>
+         </img:Imaging>
+
+         <!--
+         Display dictionary section.
+         Instructions can be found at https://sbnwiki.asteroiddata.org/Filling_Out_the_Display_Dictionary_Classes.html
+         -->
+         <disp:Display_Settings>
+            <pds:Local_Internal_Reference>
+               <pds:local_identifier_reference>as1_000000_270323t060000_1c</pds:local_identifier_reference>
+               <pds:local_reference_type>display_settings_to_array</pds:local_reference_type>
+            </pds:Local_Internal_Reference>
+            <disp:Display_Direction>
+               <disp:horizontal_display_axis>Sample</disp:horizontal_display_axis>
+               <disp:horizontal_display_direction>Left to Right</disp:horizontal_display_direction>
+               <disp:vertical_display_axis>Line</disp:vertical_display_axis>
+               <disp:vertical_display_direction>Top to Bottom</disp:vertical_display_direction>
+            </disp:Display_Direction>
+         </disp:Display_Settings>
+
+         <!--
+         Spectral dictionary section.
+         Instructions can be found at https://sbnwiki.asteroiddata.org/Filling_Out_the_Spectral_Dictionary_Classes.html
+         -->
+         <sp:Spectral_Characteristics>
+            <pds:Local_Internal_Reference>
+               <pds:local_identifier_reference>as1_000000_270323t060000_1c</pds:local_identifier_reference>
+               <pds:local_reference_type>spectral_characteristics_to_array_object</pds:local_reference_type>
+            </pds:Local_Internal_Reference>
+            <sp:spectrum_format>3D</sp:spectrum_format>
+            <sp:spectral_bin_type>wavelength</sp:spectral_bin_type>
+            <sp:Observation_Parameters>
+               <sp:number_of_exposures>13</sp:number_of_exposures>
+               <sp:net_integration_time unit="s">UNKNOWN</sp:net_integration_time>
+               <sp:resolution_limit_wavelength unit="nm">UNKNOWN</sp:resolution_limit_wavelength>
+            </sp:Observation_Parameters>
+            <sp:Field_of_View>
+               <sp:description>NIR1 has a rectangular FoV.</sp:description>
+               <sp:Rectangular_FOV>
+                  <sp:width_angle unit="deg">5.4</sp:width_angle>
+                  <sp:length_angle unit="deg">6.7</sp:length_angle>
+               </sp:Rectangular_FOV>
+            </sp:Field_of_View>
+            <sp:Bin_Description>
+               <sp:bin_profile_description>The spectral bins follow a gaussian distribution. The band widths are approximately 30 nm across all bins.</sp:bin_profile_description>
+               <sp:Spectral_Lookup>
+                  <sp:Bin_Center_Lookup>
+                     <sp:bin_center_field_number_list>(UNKNOWN)</sp:bin_center_field_number_list>
+                  </sp:Bin_Center_Lookup>
+                  <sp:Bin_Width_Constant>
+                     <sp:bin_width_wavelength unit="nm">30</sp:bin_width_wavelength>
+                  </sp:Bin_Width_Constant>
+               </sp:Spectral_Lookup>
+            </sp:Bin_Description>
+         </sp:Spectral_Characteristics>
+
+         <!--
+         Geometry dictionary section.
+         Instructions can be found at https://sbnwiki.asteroiddata.org/Filling_Out_the_Geometry_Dictionary_Classes.html
+         -->
+         <geom:Geometry>
+				<geom:SPICE_Kernel_Files>
+					<geom:SPICE_Kernel_Identification>
+						<geom:kernel_type>MK</geom:kernel_type>
+						<geom:spice_kernel_file_name>hera_plan_v180_20250616_001</geom:spice_kernel_file_name>
+					</geom:SPICE_Kernel_Identification>
+				</geom:SPICE_Kernel_Files>
+         </geom:Geometry>
+
+      </Discipline_Area>
+   </Observation_Area>
+
+   <Reference_List>
+      <Source_Product_Internal>
+         <lidvid_reference>urn:esa:psa:hera_milani_aspect:data_partially_processed:as1_000000_270323t060000_1b</lidvid_reference>
+         <reference_type>data_to_partially_processed_source_product</reference_type>
+      </Source_Product_Internal>
+   </Reference_List>
+
+   <File_Area_Observational>
+      <File>
+         <file_name>AS1_000000_270323T060000_1C.fits</file_name>
+         <creation_date_time>2025-12-17T13:18:03</creation_date_time>
+      </File>
+      <Header>
+         <name>PrimaryHDU</name>
+         <offset unit="byte">0</offset>
+         <object_length unit="byte">8640</object_length>
+         <parsing_standard_id>FITS 3.0</parsing_standard_id>
+         <description>Fits header. Contains metadata about the datacube.</description>
+      </Header>
+      <Array_3D_Spectrum>
+         <pds:local_identifier>as1_000000_270323t060000_1c</pds:local_identifier>
+         <offset unit="byte">8640</offset><!-- Always a multiple of 2880 -->
+         <axes>3</axes>
+         <axis_index_order>Last Index Fastest</axis_index_order>
+         <Element_Array>
+            <data_type>IEEE754MSBSingle</data_type>
+            <unit>nm</unit>
+         </Element_Array>
+         <Axis_Array>
+            <axis_name>Wavelength</axis_name>
+            <elements>13</elements>
+            <sequence_number>1</sequence_number>
+         </Axis_Array>
+         <Axis_Array>
+            <axis_name>Line</axis_name>
+            <elements>512</elements>
+            <sequence_number>2</sequence_number>
+         </Axis_Array>
+         <Axis_Array>
+            <axis_name>Sample</axis_name>
+            <elements>640</elements>
+            <sequence_number>3</sequence_number>
+         </Axis_Array>
+      </Array_3D_Spectrum>
+   </File_Area_Observational>
+
+</Product_Observational>
