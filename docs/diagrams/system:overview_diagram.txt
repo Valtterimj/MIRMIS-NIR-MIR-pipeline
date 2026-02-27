@@ -1,0 +1,26 @@
+flowchart LR
+
+    %% Entry
+    U["User"] --> CLI["<b>mirmis CLI</b><br/>Run from command line using:<br/>mirmis run<br/><br/>Optional: --config path/to/config.yaml<br/>If omitted, defaults to configs/pipeline.yaml<br/>when executed from project root"]  
+    CLI --> CFG["<b>Configuration YAML</b><br/>Defines pipeline execution parameters<br/><br/>Minimum required:<br/>- input_dir<br/>- pipeline levels<br/>- channels<br/>- required metadata fields<br/><br/>See pipeline.example.yaml for reference"]
+    %% Core
+    CFG --> ORCH["<b>Pipeline Orchestrator</b><br/>pipeline/run.py<br/>Loads configuration<br/>Creates output directory for acquisition<br/>Runs selected steps for each channel<br/>Collects and logs info, warnings and errors"]
+
+
+    %% inputs and dependencies
+    SPICE["SPICE kernels"] --> L0
+    RAW["Raw instrument data<br/>acquisitions, telemetry and configs"] --> L0
+    CAL["Calibration files"] --> L1
+    DIS["Distortion coefficients"] --> L2
+
+    %% Processing levels
+    ORCH --> L0["Level 0<br/>Converts raw data into FITS<br/>Uncalibrated image binary and metadata"]
+    L0 --> L1["Level 1<br/>Calibration<br/>1A: calibrates header values<br/>1B: pixels into radiance [W/m2/sr/nm]"<br/>1C: pixels into reflectance units I/f]
+    L1 --> L2["Level 2<br/>Distortion correction"]
+
+    %% Outputs
+    L0 --> OUT0["Output directory<br/>'*_0A.fits' products"]
+    L1 --> OUT1["Output directory<br/>'*_1A.fits',<br/>'*_1B.fits',<br/>'*_1C.fits'<br/>products"]
+    L2 --> OUT2["Output directory<br/>'*_2A.fits' products"]
+
+    ORCH --> LOGS["Logs and QA report<br/>Warnings and info"]
