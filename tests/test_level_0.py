@@ -141,23 +141,90 @@ def test_output_dir_invalid(tmp_path: Path, repo_root: Path) -> None:
 
 
 
-# def test_build_fits(tmp_path: Path) -> None:
-#     raw = _minimal_raw(tmp_path)
-#     input = raw["run"]["input_dir"]
-#     raw["run"]["input_dir"] = str(_resolve_path(input))
+def test_build_fits_NIR(tmp_path: Path, repo_root: Path) -> None:
 
-#     config_file = tmp_path / "pipeline.yaml"
-#     config_file.write_text(yaml.safe_dump(raw), encoding="utf-8")
-#     c = cfg.load_config(config_file)
+    config_file = repo_root / "tests" / "configs" / "test.yaml"
 
-#     level0_result = run_level_0(c, 'NIR')
-#     assert str(level0_result[0]) == f'{tmp_path}/output/NIR_000000_200101T015948_0A.fits'
+    c = cfg.load_config(config_file)
+    c.run.output_dir = tmp_path
 
-#     with fits.open(level0_result[0]) as hdul:
+    level0_result = run_level_0(c, 'NIR')
+    assert str(level0_result[0]) == f'{tmp_path}/NIR_000000_200101T015948_0A.fits'
 
-#         header = hdul[0].header
-#         data = hdul[0].data
+    with fits.open(level0_result[0]) as hdul:
 
-#         missphas = header.get("MISSPHAS")
-#         assert missphas == 'pytest'
-     
+        header = hdul[0].header
+        data = hdul[0].data
+
+        assert header['INSTRUME'] == 'NIRMIR'
+        assert header['ORIGIN'] == "ESA-COMET-INTERCEPTOR"
+        assert header['MISSPHAS'] == "pytest"
+        assert header['OSERV_ID'] == "pytest"
+        assert header['FILENAME'] == "NIR_000000_200101T015948_0A.fits"
+        assert header['ORIGFILE'] == "dc_0_exp_000.bin.jp2"
+        assert header['SWCREATE'] == "pytest"
+        assert header['PROCLEVL'] == "0A"
+        #Instrument data
+        assert header['DATE_OBS'] == "2020-01-01T01:59:48.000"
+        assert header['SC_CLK'] == 'UNK' # TODO: alter this once spacecraft clock count is available
+        assert header['OBJECT'] == 'pytest'
+        # Spice data
+        # TODO: Implement spice data check when a spice kernel is available
+        # Instrument Specific data
+        assert header['CHANNELS'] == 'NIR'
+        assert header['NIR_CCDTEMP'] == '0'
+        assert header['NIR_FPI_TEMP1'] == '2143'
+        assert header['NIR_FPI_TEMP2'] == '2168'
+        assert header['MIR_CCDTEMP'] == '0'
+        assert header['MIR_FPI_TEMP1'] == '0'
+        assert header['MIR_FPI_TEMP2'] == '0'
+        assert header['NIR_FRAMES'] == '000,001,002,003,004,005,006,007'
+        assert header['NIR_TASK_NUMBER'] == '8'
+        assert header['NIR_TASK_000'] == '17615 17879 17579 100'
+
+        # Image data
+        assert data.shape[0] == 8
+        assert data.shape[1] == 518
+        assert data.shape[2] == 648
+        assert data[0].dtype == 'uint16'
+        assert data[0][250][250] == 6030
+
+
+def test_build_fits_MIR(tmp_path: Path, repo_root: Path) -> None:
+
+    config_file = repo_root / "tests" / "configs" / "test.yaml"
+
+    c = cfg.load_config(config_file)
+    c.run.output_dir = tmp_path
+
+    level0_result = run_level_0(c, 'MIR')
+    assert str(level0_result[0]) == f'{tmp_path}/MIR_000000_200101T015948_0A.fits'
+
+    with fits.open(level0_result[0]) as hdul:
+
+        header = hdul[0].header
+        data = hdul[0].data
+
+        assert header['INSTRUME'] == 'NIRMIR'
+        assert header['ORIGIN'] == "ESA-COMET-INTERCEPTOR"
+        assert header['MISSPHAS'] == "pytest"
+        assert header['OSERV_ID'] == "pytest"
+        assert header['FILENAME'] == "MIR_000000_200101T015948_0A.fits"
+        assert header['ORIGFILE'] == "dc_1_exp_000.bin"
+        assert header['SWCREATE'] == "pytest"
+        assert header['PROCLEVL'] == "0A"
+        #Instrument data
+        assert header['DATE_OBS'] == "2020-01-01T01:59:48.000"
+        assert header['SC_CLK'] == 'UNK' # TODO: alter this once spacecraft clock count is available
+        assert header['OBJECT'] == 'pytest'
+        # Spice data
+        # TODO: Implement spice data check when a spice kernel is available
+        # Instrument Specific data
+        assert header['CHANNELS'] == 'MIR'
+        assert header['MIR_FRAMES'] == '000,001,002,003,004,005'
+        assert header['MIR_TASK_NUMBER'] == '6'
+
+        # Image data
+        assert data.shape[0] == 6
+        assert data[0].dtype == 'uint32'
+        assert data[0] == 1194

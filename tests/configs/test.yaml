@@ -19,7 +19,7 @@
 run:
 
   # (Required) Path to input data. Relative to this config file or absolute
-  input_dir: "../data/NIR_valid"
+  input_dir: "../data/valid"
 
   # (Optional) Root output directory for generated products. Relative to this config file or absolute. If left empty outputs folder is used from the repo.
   output_dir: ""
@@ -73,5 +73,5 @@ pipeline:
   # List of channels included in processin
   # Values: "NIR", "MIR"
   # E.g. ["NIR"]
-  channels: ["NIR"]
+  channels: ["NIR", "MIR"]
 

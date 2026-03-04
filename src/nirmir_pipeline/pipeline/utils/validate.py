@@ -107,7 +107,7 @@ def _validate_level_0_input_dir(input_dir: Path) -> InputLayout:
     if not meta_dir.exists():
         raise ValidationError(f"Missing required directory: {meta_dir}")
     if not meta_dir.is_dir():
-        raise ValidationError(f"'meta' exists but its not a directory: {meta_dir}")
+        raise ValidationError(f"'meta' exists but it's not a directory: {meta_dir}")
     
     telemetry_json = meta_dir / "telemetry.json"
     config_json = meta_dir / "config.json"
