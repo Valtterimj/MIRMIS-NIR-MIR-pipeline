@@ -39,20 +39,19 @@ def _require_list_of_str(d: dict[str, Any], key:str) -> list[str]:
         out.append(item.strip())
     return out
 
-def _resolve_path(raw_path: str) -> Path:
+def _resolve_path(raw_path: str, base_dir: Path) -> Path:
     p = Path(raw_path).expanduser()
     if not p.is_absolute():
-        project_root = Path.cwd()
-        p = project_root / p
+        p = base_dir / p
     return p.resolve()
 
-def _resolve_optional_path(raw_value: Any) -> Path | None:
+def _resolve_optional_path(raw_value: Any, base_dir: Path) -> Path | None:
     if raw_value is None:
         return None
     if isinstance(raw_value, str):
         if raw_value.strip() == "":
             return None
-        return _resolve_path(raw_path=raw_value)
+        return _resolve_path(raw_path=raw_value, base_dir=base_dir)
     raise ValidationError(f"Resolving path failed, (must be a string, Path or empty)")
 
 def _validate_levels(levels: Sequence[str]) -> None:
@@ -71,7 +70,7 @@ def _validate_channels(channels: Sequence[str]) -> None:
             f"Allowed: {sorted(ALLOWED_CHANNELS)}"
         )
 
-def _validate_output_dir(output_dir: Path, missphas: str) -> Path:
+def _validate_output_dir(output_dir: Path | None, missphas: str, base_dir: Path | None = None) -> Path:
 
     if output_dir:
         output_path = output_dir.expanduser()
@@ -79,8 +78,9 @@ def _validate_output_dir(output_dir: Path, missphas: str) -> Path:
             raise ValidationError(f"Output path exists but is not a directory: {output_path}")
         base_output = output_path
     else:
-        project_root = Path.cwd()
-        base_output = project_root / "outputs"
+        if not base_dir:
+            base_dir = Path.cwd()
+        base_output = base_dir / "outputs"
     
     final_output = base_output / missphas
 
@@ -107,7 +107,7 @@ def _validate_level_0_input_dir(input_dir: Path) -> InputLayout:
     if not meta_dir.exists():
         raise ValidationError(f"Missing required directory: {meta_dir}")
     if not meta_dir.is_dir():
-        raise ValidationError(f"'meta' exists but its not a directory: {meta_dir}")
+        raise ValidationError(f"'meta' exists but it's not a directory: {meta_dir}")
     
     telemetry_json = meta_dir / "telemetry.json"
     config_json = meta_dir / "config.json"

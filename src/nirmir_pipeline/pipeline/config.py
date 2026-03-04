@@ -103,14 +103,15 @@ def _parse_config_dict(raw: dict[str, Any], *, config_path: Path) -> Config:
     :rtype: Config
     """
 
+    base_dir = config_path.parent
     run_raw = _require_mapping(raw, "run")
     data_raw = _require_mapping(raw, "data")
     pipeline_raw = _require_mapping(raw, "pipeline")
 
     run = RunConfig(
-        input_dir=_resolve_path(_require_str(run_raw, "input_dir")),
-        output_dir=_resolve_optional_path(run_raw.get("output_dir", "")),
-        spice_dir=_resolve_optional_path(run_raw.get("spice_dir", "")),
+        input_dir=_resolve_path(_require_str(run_raw, "input_dir"), base_dir),
+        output_dir=_resolve_optional_path(run_raw.get("output_dir", ""), base_dir),
+        spice_dir=_resolve_optional_path(run_raw.get("spice_dir", ""), base_dir),
         overwrite=_require_bool(run_raw, "overwrite"),
     )
 
