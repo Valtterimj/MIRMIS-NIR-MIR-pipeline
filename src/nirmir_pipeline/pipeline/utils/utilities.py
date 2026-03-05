@@ -1,5 +1,6 @@
 import re
 import subprocess
+import numbers
 
 from datetime import datetime, timezone
 from pathlib import Path
@@ -9,6 +10,8 @@ from nirmir_pipeline.pipeline.utils.classes import Issue, IssueLevel
 
 import logging
 logger = logging.getLogger(__name__)
+
+kelvin: float = 273.15
 
 channel_to_id = {
     "NIR" : 0,
@@ -134,6 +137,20 @@ def form_fits_name(channel: str, image_number: str, utc_time: str, calib_lvl: st
     file_name = f'{channel}_{image_number}_{utc_format}_{calib_lvl}.fits'
     return file_name
 
+def form_fits_header_val(key: str, value: str, comment: str, hierarch: bool) -> tuple[str, str]:
+    try: 
+        key = str(key)
+        value = str(value)
+        comment = str(comment)
+        k = f"HIERARCH {key}" if hierarch else key
+        card_length = len(k) + len(value) + len(comment) + 7
+        if card_length <= 80:
+            return (value, comment)
+        else: 
+            return (value, "")
+    except Exception as e:
+        raise ValueError(f"Fits header value and comment should be stings. (key: {type(key)}, value: {type(value)}, comment: {type(comment)})") from e
+
 def log_issue(issue: Issue) -> None:
     issue_logger = logging.getLogger(issue.source)
     if issue.level == "info":
@@ -148,3 +165,101 @@ def fits_in_dir(folder: Path) -> list[Path]:
     for pat in ("*.fits", "*.fit", "*fts"):
         files.extend(folder.glob(pat))
     return sorted(set(files))
+
+def exposure_conversion(value: float, channel: str) -> float:
+    """
+    Converts exposure DN into seconds.
+
+    Parameters:
+        value (float): exposure DN
+        channel (str): channel
+    
+    Returns: 
+        float exposure in seconds
+    """
+    if not isinstance(value, numbers.Number):
+        raise ValueError(f"Invalid value for exposure conversion: {value} ({type(value)}); Should be a number.")
+    # TODO: add specific coefs for MIRMIS instrument
+    if channel == 'NIR':
+        return value / 100000
+    elif channel == 'MIR':
+        return value
+    raise ValueError(f"Invalid channel for exposure conversion: {channel}; Should be 'NIR' or 'MIR'.")
+
+def det_temp_conversion(value: float, channel: str) -> tuple[float, float]:
+    """
+    Converts the 'DET_TEMP' entries from instrument DNs to Celcius and Kelvin.
+
+    Parameters:
+        value (float): Detector temperature DN value
+        channel (str): Instrument channel
+
+    Returns:
+        Tuple[Celsius, Kelvin]
+    """
+    if not isinstance(value, numbers.Number):
+        raise ValueError(f"Invalid value for detector temperature conversion: {value} ({type(value)}); Should be a number.")
+    # TODO: add specific values for MIRMIS instrument
+    if channel == 'NIR': 
+        return ('N/A', 'N/A')
+    elif channel == 'MIR':
+        if value == 0:
+            return ('UNK', 'UNK')
+        c = (-6e-11) * value**3 + 3e-6 * value**2 - 0.0188 * value + 17.291
+        k = c + kelvin
+        return (c, k)
+    raise ValueError(f"Invalid channel for detector temperature conversion: {channel}; Should be 'NIR' or 'MIR'.")
+
+def fpi_temp_conversion(value:float, fpi: int) -> tuple[float, float]:
+    """
+    Converts the FPI temperatures from instrument DNs to Celcius and Kelvin.
+
+    Parameters:
+        value (float): Temperature DN value
+        channel (str): Instrument channel
+
+    Returns:
+        Tuple(Celsius, Kelvin)
+    """
+    if not isinstance(value, numbers.Number):
+        raise ValueError(f"Invalid value for FPI temperature conversion: {value} ({type(value)}); Should be a number.")
+    if fpi not in [1, 2]:
+        raise ValueError(f"Invalid FPI value for FPI temperature conversion: {fpi}; Should be 1 or 2.")
+    # TODO: add specific coefs for MIRMIS instrument
+    if fpi == 1:
+        c = -0.034 * value + 110.93
+    else:
+        c = -0.026 * value + 81.01
+    k = c + kelvin
+    return (c, k)
+
+def wavelength_conversion(channel: str, sp: float) -> float:
+    """
+    Converts the wavelength [nm] from Piezo actuator setpoint value
+
+    Parameters:
+        channel: instrument channel
+        sp: Piezo actuator setpoint value
+
+    Returns:
+        wavelength [nm]
+    """
+    if not isinstance(sp, numbers.Number):
+        raise ValueError(f"Invalid Piezo actuator setpoint value: {sp} ({type(sp)}); Should be a number.")
+    
+    if channel == 'NIR':
+        wavelength = round(0.1331 * sp - 1823.1)
+        return wavelength
+    elif channel == 'MIR':
+        wavelength = round(0.2869 * sp - 3847.2)
+        return wavelength
+    raise ValueError(f"Invalid channel in wavelength conversion: {channel}.")
+
+
+
+
+
+
+
+
+

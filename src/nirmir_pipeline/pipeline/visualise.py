@@ -13,13 +13,11 @@ def visualise_fits(file: str | Path, cmap: str ='gray') -> None:
         header = hdul[0].header
     
     print(repr(header))
+
     
     if data is None:
         raise ValueError(f"{file.name}: Primary HDU has no data")
     
-    print(data[0])
-    data = np.asarray(data)
-
     if data.ndim == 1:
         print('Data is a one dimentional array')
         

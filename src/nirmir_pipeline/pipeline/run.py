@@ -9,7 +9,7 @@ from nirmir_pipeline.pipeline.levels.level_0.run import run_level_0
 from nirmir_pipeline.pipeline.utils.validate import _validate_output_dir
 from nirmir_pipeline.pipeline.visualise import visualise_fits
 from nirmir_pipeline.pipeline.utils.utilities import fits_in_dir, log_issue
-
+from nirmir_pipeline.pipeline.levels.level_1.run import run_level_1
 logger = logging.getLogger(__name__)
 
 def run_pipeline(config_path: Path) -> None:
@@ -20,6 +20,7 @@ def run_pipeline(config_path: Path) -> None:
     except ConfigError as e: 
         logger.error(f"[%s] Loading config failed.", type(e).__name__)
         raise
+
     cfg_path = cfg.config_path
     levels = cfg.pipeline.levels
     channels = cfg.pipeline.channels
@@ -36,14 +37,24 @@ def run_pipeline(config_path: Path) -> None:
         raise
     
     logger.info(f"Running pipeline levels: {levels} for channels: {channels}")
+
     for channel in cfg.pipeline.channels:
         logger.info(f"Channel: {channel}")
         try:
             if "0" in levels:
+                logger.info(f"Running level 0 for channel {channel}.")
                 fits_file, all_issues = run_level_0(cfg=cfg, channel=channel)
                 for issue in all_issues:
                     log_issue(issue)
                 logger.info(f"Level 0 run succesfully for channel {channel}.")
+
+            if "1" in levels: 
+                logger.info(f"Running level 1 for channel {channel}.")
+                fits_file, all_issues = run_level_1(fits=fits_file, output_dir=output_path, channel=channel)
+                for issue in all_issues:
+                    log_issue(issue)
+                logger.info(f"Level 1 run succesfully for channel {channel}.")
+
         except PipelineError as e:
             logger.error(
                 f"Error running pipeline for channel %s. Continuing. %s",
@@ -51,6 +62,7 @@ def run_pipeline(config_path: Path) -> None:
                 format_exeption_chain(e)
                 )
             continue
+
 
 
 def view_fits(path: Path, level: str | None = None) -> None:

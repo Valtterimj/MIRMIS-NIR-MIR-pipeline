@@ -162,11 +162,5 @@ def build_fits(input: InputLayout, cfg: Config, channel: str) -> tuple[Path, lis
                 )
             )
     except Exception as e:
-            all_issues.append(
-                Issue(
-                    level="error",
-                    message=(f"Error writing a fits file: {e}"),
-                    source=__name__,
-                )
-            )
+            raise PipelineError(f'Error writing a fits file.') from e
     return fits_file, all_issues

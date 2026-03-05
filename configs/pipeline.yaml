@@ -68,7 +68,7 @@ pipeline:
   # List of pipeline levels to execute.
   # Values: "0", "1", "2", "3"
   # E.g. ["0","1"]
-  levels: ["0"]
+  levels: ["0", "1"]
 
   # List of channels included in processin
   # Values: "NIR", "MIR"
