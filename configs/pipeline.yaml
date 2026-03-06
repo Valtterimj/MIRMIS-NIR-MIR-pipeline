@@ -19,7 +19,7 @@
 run:
 
   # (Required) Path to input data. Relative to this config file or absolute.
-  input_dir: "../data/ASPECT_data/NIR"
+  input_dir: "../data/ASPECT_data/NIR_2"
 
   # (Optional) Root output directory for generated products. Relative to this config file or absolute. If left empty outputs folder is used from the repo.
   output_dir: ""

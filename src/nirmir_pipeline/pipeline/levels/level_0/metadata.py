@@ -263,7 +263,7 @@ def collect_instrument_metadata(telemetry_path: Path, channel: str, missphas: st
             meta_data[f'{ch}_CCDTEMP'] = HeaderEntry('UNK', f'{ch} detector temperature [DN]')
         try:
             fpi_temp1 = channel_specific_telemetry['FPI_TEMP1']
-            meta_data[f'{ch}_FPI_TEMP1'] = HeaderEntry(str(fpi_temp1), 'NIR FPI 1 temperature [DN]')
+            meta_data[f'{ch}_FPI_TEMP1'] = HeaderEntry(str(fpi_temp1), f'{ch} FPI 1 temperature [DN]')
         except KeyError as e:
             issues.append(
                 Issue(
