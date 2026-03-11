@@ -304,7 +304,6 @@ def collect_instrument_specific_metadata(config_path: Path, acq_path: Path, chan
     frame_numbers = extract_frames(list_of_frames)
     frame_number_string = ','.join(frame_numbers)
     meta_data[f'{channel}_FRAMES'] = HeaderEntry(frame_number_string, 'All frames')
-    meta_data[f'{channel}_TASK_NUMBER'] = HeaderEntry(frame_count, 'Number of frames')
 
     try: 
         config_data = json.loads(config_path.read_text(encoding='utf-8'))
@@ -345,6 +344,7 @@ def collect_instrument_specific_metadata(config_path: Path, acq_path: Path, chan
         taskValues = [taskFile[i:i + 8] for i in range(0, len(taskFile), 8)]
         sp_expos_values = [task[1:5] for task in taskValues]
         task_number = len(taskValues)
+        meta_data[f'{channel}_TASK_NUMBER'] = HeaderEntry(task_number, 'Number of tasks')
     except Exception as e:
         issues.append(
             Issue(
@@ -355,6 +355,7 @@ def collect_instrument_specific_metadata(config_path: Path, acq_path: Path, chan
                 source=__name__,
             )
         )
+        meta_data[f'{channel}_TASK_NUMBER'] = HeaderEntry(frame_count, 'Number of tasks')
         return (InstrumentSpecificMetadata(fields=meta_data), issues)
     if task_number != len(frame_numbers):
         issues.append(

@@ -4,7 +4,10 @@ from astropy.io import fits
 
 from nirmir_pipeline.pipeline.utils.classes import Issue, Channel
 from nirmir_pipeline.pipeline.utils.errors import CalibrationError, PipelineError
-from nirmir_pipeline.pipeline.utils.utilities import det_temp_conversion, fpi_temp_conversion, exposure_conversion, form_fits_header_val, wavelength_conversion
+
+from nirmir_pipeline.pipeline.utils.utilities import form_fits_header_val
+from nirmir_pipeline.pipeline.utils.calib_conversions import det_temp_conversion, fpi_temp_conversion, exposure_conversion, wavelength_conversion
+
 
 
 def calibrate_header(fits_path: Path, output_dir: Path, channel: str) -> tuple[str, list[Issue]]:

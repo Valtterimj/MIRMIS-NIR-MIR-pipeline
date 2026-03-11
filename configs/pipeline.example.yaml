@@ -14,18 +14,21 @@
 
 # --------------------------------------------------------
 # Run-time settings
-# The paths can be absolute or relative to project root.
+# 
 # --------------------------------------------------------
 run:
 
-  # (Required) Path to input data. Relative to this config file or absolute
+  # (Required) Path to input data. Relative to this config file or absolute.
   input_dir: "../data/ASPECT_data/MIR"
 
-  # (Optional) Root output directory for generated products. Absolute or empty. If left empty outputs folder is created to where the pipeline is run
+  # (Optional) Root output directory for generated products. Absolute or empty. If left empty outputs folder is created to where the pipeline is run.
   output_dir: ""
 
-  # (Optional) SPICE meta kernel path. Should be absolute. Optional only from the pipeline perspective
+  # (Optional) SPICE meta kernel path. Should be absolute. Optional only from the pipeline perspective.
   spice_dir: ""
+
+  # (Required) Path to directory containing calibration files. Relative to this config file or absolute.
+  calibration_dir: "../calibration"
 
   # Overwrite existing outputs if they already exists
   overwrite: true
@@ -73,5 +76,4 @@ pipeline:
   # List of channels included in processin
   # Values: "NIR", "MIR"
   # E.g. ["NIR"]
-  channels: ["MIR"]
-
+  channels: ["NIR"]

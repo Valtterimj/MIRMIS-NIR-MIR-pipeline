@@ -112,6 +112,7 @@ def _parse_config_dict(raw: dict[str, Any], *, config_path: Path) -> Config:
         input_dir=_resolve_path(_require_str(run_raw, "input_dir"), base_dir),
         output_dir=_resolve_optional_path(run_raw.get("output_dir", ""), base_dir),
         spice_dir=_resolve_optional_path(run_raw.get("spice_dir", ""), base_dir),
+        calibration_dir=_resolve_path(_require_str(run_raw, "calibration_dir"), base_dir),
         overwrite=_require_bool(run_raw, "overwrite"),
     )
 

@@ -11,6 +11,7 @@ class RunConfig:
     input_dir: Path
     output_dir: Path
     spice_dir: Path | None
+    calibration_dir: Path
     overwrite: bool
 
 @dataclass(frozen=True)
@@ -119,3 +120,29 @@ class Issue:
     level: IssueLevel
     message: str
     source: str
+
+@dataclass
+class BadRegion:
+    """
+    One bad-pixel region specification from the BADPIXELS TXT file
+
+    type: str
+        Region type code:
+        'P' = single pixel,
+        'H' = horizontal cluster,
+        'V' = vertical cluster,
+        'R' = rectangular region
+    col: int | None
+        Column (x) start coordinate in pixels. None if file contains '-'
+    row: int | None
+        Row (y) start coordinate in pixels. None if file contains '-'
+    size_x: int
+        width of the region in pixels
+    size_y: int
+        height of the region in pixels
+    """
+    type: str
+    col: int | None
+    row: int | None
+    size_x: int
+    size_y: int

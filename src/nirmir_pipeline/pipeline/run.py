@@ -50,7 +50,7 @@ def run_pipeline(config_path: Path) -> None:
 
             if "1" in levels: 
                 logger.info(f"Running level 1 for channel {channel}.")
-                fits_file, all_issues = run_level_1(fits=fits_file, output_dir=output_path, channel=channel)
+                fits_file, all_issues = run_level_1(fits=fits_file, output_dir=output_path, calibration_dir=cfg.run.calibration_dir, channel=channel)
                 for issue in all_issues:
                     log_issue(issue)
                 logger.info(f"Level 1 run succesfully for channel {channel}.")
