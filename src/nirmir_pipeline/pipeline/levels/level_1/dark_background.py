@@ -43,14 +43,10 @@ def dark_subtraction(hdul: HDUList, dark: Path) -> tuple[HDUList, list[Issue]]:
     # Do dark fram correction
     try:
         # To store the calibrated datacube
-        new_data_cube = hdu.data.astype(np.float64, copy=True)
+        new_data_cube = data.astype(np.float64, copy=True)
 
-        # Loop over the 2D images inside the extension
-        for i, image in enumerate(data):
-            # Subtract the dark frame from image
-            corrected = image - dark_frame
-            corrected = np.clip(corrected, 0, None)
-            new_data_cube[i] = corrected
+        new_data_cube -= dark_frame
+        new_data_cube = np.clip(new_data_cube, 0, None)
 
         hdul[0].data = new_data_cube
         all_issues.append(

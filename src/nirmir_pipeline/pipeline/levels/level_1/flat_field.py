@@ -45,10 +45,8 @@ def flat_field_calibration(hdul: HDUList, flat: Path) -> tuple[HDUList, list[Iss
         # To store the calibrated datacube
         new_data_cube = hdu.data.astype(np.float64, copy=True)
 
-        # loop over the 2D images inside the extension
-        for i, image in enumerate(data):
-            # Divide the image with the flatfield 
-            new_data_cube[i] = image / flat_field
+        new_data_cube /= flat_field
+        new_data_cube = np.nan_to_num(new_data_cube, nan=0.0)
         
         hdul[0].data = new_data_cube
         all_issues.append(

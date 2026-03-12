@@ -3,6 +3,7 @@ from pathlib import Path
 from astropy.io.fits import HDUList
 
 from nirmir_pipeline.pipeline.utils.classes import BadRegion, Issue
+from nirmir_pipeline.pipeline.utils.errors import CalibrationError
 
 def parse_bad_pixel_list(txt_path: str | Path) -> tuple[list[BadRegion], list[Issue]]:
     """
@@ -110,7 +111,7 @@ def slices_to_mask(shape: tuple[int, int], slice_list: list[tuple[slice, slice]]
         mask[ys, xs] = True
     return mask
 
-def repace_nan_8neighor(frame: np.ndarray, max_iter: int = 50) -> np.ndarray:
+def replace_nan_8neighbor(frame: np.ndarray, max_iter: int = 100) -> np.ndarray:
     """
     Fill NaN pixels in a frame by interatively averaging finite 8-neighbours
     
@@ -161,8 +162,6 @@ def repace_nan_8neighor(frame: np.ndarray, max_iter: int = 50) -> np.ndarray:
         
         a[fill] = s[fill] / c[fill]
 
-
-
     return a
 
 def replace_bad_pixels(hdul: HDUList, bp_file: Path) -> tuple[HDUList, list[Issue]]:
@@ -192,8 +191,8 @@ def replace_bad_pixels(hdul: HDUList, bp_file: Path) -> tuple[HDUList, list[Issu
     channel = header.get('CHANNELS')
 
     if channel == 'MIR':
-            return hdul, all_issues
- 
+        return hdul, all_issues
+  
         
     regions, parsing_issues = parse_bad_pixel_list(bp_file)
     all_issues.extend(parsing_issues)
@@ -213,17 +212,27 @@ def replace_bad_pixels(hdul: HDUList, bp_file: Path) -> tuple[HDUList, list[Issu
             )
             
     try:
-        bad_mask = slices_to_mask(data[0].shape, slice_list)
+        if data.ndim == 2:
+            bad_mask = slices_to_mask(data.shape, slice_list)
 
-        new_data_cube = data.astype(np.float64, copy=True)
-        for i, frame in enumerate(data):
-            bad_frame = frame.astype(np.float64, copy=True)
-            bad_frame[bad_mask] = np.nan
+            new_data = data.astype(np.float64, copy=True)
+            new_data[bad_mask] = np.nan
+            new_data = replace_nan_8neighbor(new_data)
 
-            new_data_cube[i] = (repace_nan_8neighor(bad_frame))
+        elif data.ndim == 3:
+            bad_mask = slices_to_mask(data.shape[1:], slice_list)
+
+            new_data = data.astype(np.float64, copy=True)
+            for i in range(data.shape[0]):
+                bad_frame = new_data[i].copy()
+                bad_frame[bad_mask] = np.nan
+                new_data[i] = (replace_nan_8neighbor(bad_frame))
         
+        else: 
+            raise CalibrationError(f"Unsupported data dimensionality: {data.ndim}")
 
-        hdul[0].data = new_data_cube
+        hdul[0].data = new_data
+
         all_issues.append(
                     Issue(
                         level="info",

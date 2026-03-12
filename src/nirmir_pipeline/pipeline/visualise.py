@@ -33,6 +33,10 @@ def visualise_fits(file: str | Path, cmap: str ='gray') -> None:
         return
     
     if data.ndim == 2:
+        print(f"Dtype       : {data.dtype}")
+        print(f"Min         : {np.nanmin(data):.4g}")
+        print(f"Mean        : {np.nanmean(data):.4g}")
+        print(f"Max         : {np.nanmax(data):.4g}")
         plt.figure()
         plt.imshow(data, cmap=cmap)
         plt.title(file.name)
@@ -42,6 +46,7 @@ def visualise_fits(file: str | Path, cmap: str ='gray') -> None:
     if data.ndim != 3: 
         raise ValueError(f"{file.name}: expected 1D, 2D, or 3D data, got shape={data.shape}")
     
+    print(f"Dtype       : {data.dtype}")
     n_frames = data.shape[0]
 
     fig, ax = plt.subplots()

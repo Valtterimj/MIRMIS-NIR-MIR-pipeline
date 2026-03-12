@@ -27,6 +27,9 @@ run:
   # (Optional) SPICE meta kernel path. Should be absolute. Optional only from the pipeline perspective
   spice_dir: ""
 
+  # (Required) Path to directory containing calibration files. Relative to this config file or absolute.
+  calibration_dir: "../calibration"
+
   # Overwrite existing outputs if they already exists
   overwrite: true
 

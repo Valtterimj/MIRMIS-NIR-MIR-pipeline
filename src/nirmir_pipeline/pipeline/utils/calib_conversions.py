@@ -98,9 +98,9 @@ def wavelength_conversion(channel: str, sp: float) -> float:
     
     # TODO: add specific coefs for MIRMIS instrument
     if channel == 'NIR':
-        wavelength = round(0.1331 * sp - 1823.1)
+        wavelength = round(0.1331 * sp - 1823.1, 2)
         return wavelength
     elif channel == 'MIR':
-        wavelength = round(0.2869 * sp - 3847.2)
+        wavelength = round(0.2869 * sp - 3847.2, 2)
         return wavelength
     raise ValueError(f"Invalid channel in wavelength conversion: {channel}.")

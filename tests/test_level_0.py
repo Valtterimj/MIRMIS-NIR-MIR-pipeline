@@ -19,12 +19,14 @@ def _minimal_raw(tmp_path: Path) -> dict:
     input_dir = "../tests/data/NIR_valid"
     spice_dir = tmp_path / "spice"
     output_dir = tmp_path / "output"
+    calibration_dir = tmp_path / "../tests/data/calib"
     spice_dir.mkdir()
     return {
         "run": {
             "input_dir" : str(input_dir),
             "output_dir": str(output_dir),
             "spice_dir" : str(spice_dir),
+            "calibration_dir" : str(calibration_dir),
             "overwrite" : False
         },
         "data" : {
@@ -222,7 +224,7 @@ def test_build_fits_MIR(tmp_path: Path, repo_root: Path) -> None:
         # Instrument Specific data
         assert header['CHANNELS'] == 'MIR'
         assert header['MIR_FRAMES'] == '000,001,002,003,004,005'
-        assert header['MIR_TASK_NUMBER'] == '6'
+        assert header['MIR_TASK_NUMBER'] == '24'
 
         # Image data
         assert data.shape[0] == 6
