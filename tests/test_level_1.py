@@ -13,6 +13,8 @@ from nirmir_pipeline.pipeline.levels.level_1.extract_cds import extract_cds_pixe
 from nirmir_pipeline.pipeline.levels.level_1.dark_background import dark_subtraction
 from nirmir_pipeline.pipeline.levels.level_1.flat_field import flat_field_calibration
 from nirmir_pipeline.pipeline.levels.level_1.bad_pixels import replace_bad_pixels
+from nirmir_pipeline.pipeline.levels.level_1.radiometric import radiometric_calibration
+from nirmir_pipeline.pipeline.levels.level_1.level_1b import run_level_1b
 
 
 @pytest.fixture
@@ -25,8 +27,7 @@ def test_temperature_calibration(tmp_path: Path, repo_root: Path) -> None:
     level_0A = repo_root / 'tests' / 'data' / 'fits' / 'NIR_0A.fits'
 
     result, issues = calibrate_header(level_0A, tmp_path, 'NIR')
-
-    assert len(issues) == 1
+    assert all(issue.level == "info" for issue in issues)
     assert 'New fits file created:' in issues[0].message
 
     with fits.open(result) as hdul:
@@ -39,17 +40,17 @@ def test_wl_exp_calibration(tmp_path: Path, repo_root: Path) -> None:
     level_0A = repo_root / 'tests' / 'data' / 'fits' / 'NIR_0A.fits'
 
     result, issues = calibrate_header(level_0A, tmp_path, 'NIR')
-
+    assert all(issue.level == "info" for issue in issues)
     with fits.open(result) as hdul:
         header = hdul[0].header
-        assert header['NIR_WL_000'] == '521'
-        assert header['NIR_WL_001'] == '521'
-        assert header['NIR_WL_002'] == '521'
-        assert header['NIR_WL_003'] == '521'
-        assert header['NIR_WL_004'] == '582'
-        assert header['NIR_WL_005'] == '582'
-        assert header['NIR_WL_006'] == '582'
-        assert header['NIR_WL_007'] == '582'
+        assert header['NIR_WL_000'] == '521.46'
+        assert header['NIR_WL_001'] == '521.46'
+        assert header['NIR_WL_002'] == '521.46'
+        assert header['NIR_WL_003'] == '521.46'
+        assert header['NIR_WL_004'] == '582.28'
+        assert header['NIR_WL_005'] == '582.28'
+        assert header['NIR_WL_006'] == '582.28'
+        assert header['NIR_WL_007'] == '582.28'
 
         assert header['NIR_EXP_000'] == '0.001'
         assert header['NIR_EXP_001'] == '0.001'
@@ -71,10 +72,12 @@ def test_convert_to_64_32(tmp_path: Path) -> None:
     hdu = fits.PrimaryHDU(data=data)
     hdul = fits.HDUList([hdu])
 
-    data_64, _ = convert_to_float64(hdul)
+    data_64, issues = convert_to_float64(hdul)
+    assert all(issue.level == "info" for issue in issues)
     assert data_64[0].data.dtype == np.dtype(np.float64)
 
-    data_32, _ = convert_to_float32(data_64)
+    data_32, issues = convert_to_float32(data_64)
+    assert all(issue.level == "info" for issue in issues)
     assert data_32[0].data.dtype == np.dtype(np.float32)
 
 
@@ -84,7 +87,8 @@ def test_extract_cds(tmp_path: Path, repo_root: Path) -> None:
 
     with fits.open(level_1A) as hdul:
 
-        result, _ = extract_cds_pixels(hdul)
+        result, issues = extract_cds_pixels(hdul)
+        assert all(issue.level == "info" for issue in issues)
 
     assert result[0].data.shape == (2, 512, 640)
 
@@ -116,7 +120,8 @@ def test_dark_background(tmp_path: Path, repo_root: Path) -> None:
     hdul = fits.HDUList([hdu])
     twos = repo_root / 'tests' / 'data' / 'calib' / 'twos.fits'
 
-    result, _ = dark_subtraction(hdul, twos)
+    result, issues = dark_subtraction(hdul, twos)
+    assert all(issue.level == "info" for issue in issues)
     assert np.all(result[0].data == 0)
 
     # range
@@ -147,7 +152,8 @@ def test_flat_field(repo_root: Path) -> None:
     hdul = fits.HDUList([hdu])
     twos = repo_root / 'tests' / 'data' / 'calib' / 'twos.fits'
 
-    result, _ = flat_field_calibration(hdul, twos)
+    result, issues = flat_field_calibration(hdul, twos)
+    assert all(issue.level == "info" for issue in issues)
     assert result[0].data[0][0][1] == 0.5
 
 
@@ -177,7 +183,8 @@ def test_bad_pixel(repo_root: Path) -> None:
     hdul = fits.HDUList([hdu])
     badpixels = repo_root / 'tests' / 'data' / 'calib' / 'pixels.txt'
 
-    results, _ = replace_bad_pixels(hdul, badpixels)
+    results, issues = replace_bad_pixels(hdul, badpixels)
+    assert all(issue.level == "info" for issue in issues)
 
     assert results[0].data[7, 3] == 73.
 
@@ -190,8 +197,8 @@ def test_bad_pixel(repo_root: Path) -> None:
     hdul = fits.HDUList([hdu])
     badpixels = repo_root / 'tests' / 'data' / 'calib' / 'col_row.txt'
 
-    results, _ = replace_bad_pixels(hdul, badpixels)
-
+    results, issues = replace_bad_pixels(hdul, badpixels)
+    assert all(issue.level == "info" for issue in issues)
     assert results[0].data[0, 5, 3] == 53
 
     # region cluster
@@ -204,6 +211,55 @@ def test_bad_pixel(repo_root: Path) -> None:
     results, _ = replace_bad_pixels(hdul, badpixels)
 
     assert results[0].data[0, 4, 4] == 44
+
+def test_radiometric(tmp_path: Path, repo_root: Path) -> None:
+
+    nir = repo_root / 'tests' / 'data' / 'fits' / 'NIR_1A.fits'
+    nir_radiance = repo_root / 'calibration' / 'RADIANCE' / 'NIR_RADIANCE.txt'
+
+    with fits.open(nir) as nir_hdul:
+        converted, _ = convert_to_float64(nir_hdul)
+        nir_radiometric, _ = radiometric_calibration(converted, nir_radiance)
+        val_0 = nir_radiometric[0].data[0, 0, 0]
+        val_1 = nir_radiometric[0].data[1, 0, 0]
+        assert val_0 <= 1
+        assert val_1 <= 1
+
+    mir = repo_root / 'tests' / 'data' / 'fits' / 'MIR_1A.fits'
+    mir_radiance = repo_root / 'calibration' / 'RADIANCE' / 'MIR_RADIANCE.txt'
+
+    with fits.open(mir) as mir_hdul:
+        val = mir_hdul[0].data
+        print(val)
+        mir_radiometric, issues = radiometric_calibration(mir_hdul, mir_radiance)
+        assert all(issue.level == "info" for issue in issues)
+
+        val_0 = mir_radiometric[0].data
+        assert val_0 <= 1
+
+def test_level_1b(tmp_path: Path, repo_root: Path) -> None:
+
+    nir = repo_root / 'tests' / 'data' / 'fits' / 'NIR_1A.fits'
+    mir = repo_root / 'tests' / 'data' / 'fits' / 'MIR_1A.fits'
+    calib_dir = repo_root / 'calibration'
+
+    results_nir, nir_issues = run_level_1b(nir, tmp_path, calib_dir, 'NIR')
+    assert all(issue.level == "info" for issue in nir_issues)
+    
+    with fits.open(results_nir) as nir_hdul:
+        assert nir_hdul[0].header['PROCLEVL'] == '1B'
+        val_nir = nir_hdul[0].data[0, 0, 0]
+        assert val_nir <= 1
+
+    results_mir, mir_issues = run_level_1b(mir, tmp_path, calib_dir, 'MIR')
+
+    assert all(issue.level == "info" for issue in mir_issues)
+
+    with fits.open(results_mir) as mir_hdul:
+        assert mir_hdul[0].header['PROCLEVL'] == '1B'
+        val_mir = mir_hdul[0].data[0]
+        assert val_mir <= 1
+
 
 
 

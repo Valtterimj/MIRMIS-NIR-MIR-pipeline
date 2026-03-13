@@ -193,9 +193,18 @@ def replace_bad_pixels(hdul: HDUList, bp_file: Path) -> tuple[HDUList, list[Issu
     if channel == 'MIR':
         return hdul, all_issues
   
-        
-    regions, parsing_issues = parse_bad_pixel_list(bp_file)
-    all_issues.extend(parsing_issues)
+    try:
+        regions, parsing_issues = parse_bad_pixel_list(bp_file)
+        all_issues.extend(parsing_issues)
+    except Exception as e:
+        all_issues.append(
+            Issue(
+                level='warning',
+                message=f'Parsing bad pixel list failed; reason: {e}',
+                source=__name__,
+            )
+        )
+        return hdul, all_issues
 
     slice_list = []
 

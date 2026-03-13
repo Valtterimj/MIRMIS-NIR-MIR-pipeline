@@ -41,10 +41,12 @@ def run_level_1b(fits_file: Path, output_dir: Path, calibration_dir: Path, chann
         all_issues.extend(issues)
 
         # Apply radiometric calibration
-        radiance_coefs = calibration_dir / 'RADIANCE' / f'{channel}_RADIANNCE.txt'
+        radiance_coefs = calibration_dir / 'RADIANCE' / f'{channel}_RADIANCE.txt'
         hdul, issues = radiometric_calibration(hdul, radiance_file=radiance_coefs)
         all_issues.extend(issues)
 
+        hdul, issue = convert_to_float32(hdul)
+        all_issues.append(issue)
 
         stem = fits_file.stem
         suffix = fits_file.suffix
@@ -53,9 +55,6 @@ def run_level_1b(fits_file: Path, output_dir: Path, calibration_dir: Path, chann
         primary_header = hdul[0].header
         primary_header['FILENAME'] = file_name
         primary_header['PROCLEVL'] = new_calibration_level
-
-        hdul, issue = convert_to_float32(hdul)
-        all_issues.append(issue)
 
     # create the new fits
     fits_file = Path(output_dir) / file_name

@@ -106,7 +106,7 @@ def calibrate_header(fits_path: Path, output_dir: Path, channel: str) -> tuple[s
             for i, val in enumerate(values):
                 num = f'{i:03d}' # e.g. 1 -> '001'
                 wl = wavelength_conversion(channel, val) # convert DN values to nm
-                com = f'{channel} TASK {num} wavelength [nm])'
+                com = f'{channel} TASK {num} wavelength [nm]'
                 value, comment = form_fits_header_val(key=f'{channel}_WL_{num}', value=wl, comment=com, hierarch=True)
                 header.insert(task_idx, (f'HIERARCH {channel}_WL_{num}', value, comment), after=True)
                 task_idx += 1 # increase the counter 
@@ -144,7 +144,7 @@ def calibrate_header(fits_path: Path, output_dir: Path, channel: str) -> tuple[s
             for i, val in enumerate(values):
                 num = f'{i:03d}'
                 exp = exposure_conversion(val, channel)
-                com = f'{channel} TASK {num} exposure [s])'
+                com = f'{channel} TASK {num} exposure [s]'
                 value, comment = form_fits_header_val(key=f'{channel}_EXP_{num}', value=exp, comment=com, hierarch=True)
                 header.insert(task_idx, (f'HIERARCH {channel}_EXP_{num}', value, comment), after=True)
                 task_idx += 1

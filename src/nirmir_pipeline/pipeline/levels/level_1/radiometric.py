@@ -80,11 +80,7 @@ def radiometric_calibration(hdul: HDUList, radiance_file: Path) -> HDUList:
     data = hdu.data
     channel = header.get('CHANNELS')
 
-    if channel == 'MIR':
-        return hdul
-
     try: 
-
 
         df = parse_radiance_file(radiance_file)
 
@@ -92,15 +88,17 @@ def radiometric_calibration(hdul: HDUList, radiance_file: Path) -> HDUList:
         frames = header.get(f'{channel}_FRAMES').split(',')
 
         new_data_cube = data.astype(np.float64, copy=True)
-        for i, frame in enumerate(data):
-            wl = header.get(f'{channel}_WL_{frames[i]}')
-            exposure = header.get(f'{channel}_EXP_{frames[i]}')
+
+        for i, frame in enumerate(frames):
+            image = new_data_cube[i]
+            wl = header.get(f'{channel}_WL_{frame}')
+            exposure = header.get(f'{channel}_EXP_{frame}')
 
             interp_vals = interp_values(df, float(wl))
             response = float(interp_vals.get('response_dn_per_w'))
             coefficient = float(exposure) * response
 
-            new_data_cube[i] = frame / coefficient
+            new_data_cube[i] = image / coefficient
         
         hdul[0].data = new_data_cube
         all_issues.append(
