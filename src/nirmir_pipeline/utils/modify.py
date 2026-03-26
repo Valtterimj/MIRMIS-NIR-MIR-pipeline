@@ -2,7 +2,7 @@ from astropy.io import fits
 from astropy.io.fits import HDUList, Header, PrimaryHDU
 from pathlib import Path
 import numbers
-
+import numpy as np
 
 # to run this file from root: python3 src/nirmir_pipeline/utils/modify.py
 
@@ -37,21 +37,19 @@ def add_header_field(header: Header, field: str, value: tuple[str, str], index: 
 def print_header(header: Header) -> None:
     print(repr(header))
 
+def create_binary(path: Path, w: int, h: int, dtype= np.uint16):
+
+    path = Path(path)
+    data = np.ones((h, w), dtype=dtype)
+    data.tofile(path)
+
+    print(f'new bin file: {path}')
 
 def main() -> None:
-    # fill the fits file path here
-    fits_file = repo_root / 'tests' / 'data' / 'fits' / 'MIR_1A.fits'
 
-    # Open the fits file
-    with fits.open(fits_file, mode="update") as hdul:
-        primary = hdul[0]
-        header = primary.header
-        data = primary.data
-
-        print_header(header)
-        print(data)
-
-
+    bin_path = repo_root / 'tests' / 'data' / 'binary' / 'invalid_nir_shape' / 'acq_000' / 'dc_0_exp_004.bin'    
+    create_binary(bin_path, 10, 10)
 
 if __name__ == "__main__":
+    # to run this file from root: python3 src/nirmir_pipeline/utils/modify.py
     main()

@@ -14,7 +14,7 @@ from nirmir_pipeline.pipeline.levels.level_0.run import run_level_0
 @pytest.fixture
 def repo_root(pytestconfig) -> Path:
     return pytestconfig.rootpath
-
+    
 def _minimal_raw(tmp_path: Path) -> dict:
     input_dir = "../tests/data/NIR_valid"
     spice_dir = tmp_path / "spice"
@@ -28,6 +28,15 @@ def _minimal_raw(tmp_path: Path) -> dict:
             "spice_dir" : str(spice_dir),
             "calibration_dir" : str(calibration_dir),
             "overwrite" : False
+        },
+        "calibration": {
+            "calibration_dir": str(calibration_dir),
+            "dark": "",
+            "flat": "",
+            "badpixels": "",
+            "nir_radiance": "",
+            "mir_radiance": "",
+            "solar_ssi": "",
         },
         "data" : {
             "instrume" : "MIRMIS",
@@ -51,8 +60,9 @@ def test_load_config_valid(tmp_path: Path, repo_root: Path) -> None:
     # Test laoding config
     c = cfg.load_config(config_file)
 
+    input = repo_root / "tests" / "data" / "valid"
     # Test data exists
-    assert c.run.input_dir == repo_root / "tests" / "data" / "NIR_valid"
+    assert c.run.input_dir == input
     assert c.config_path == config_file.resolve()
 
     fields = c.data.__dataclass_fields__.keys()
@@ -67,9 +77,9 @@ def test_load_config_valid(tmp_path: Path, repo_root: Path) -> None:
     }
     assert c.data.swcreate == "pytest"
     assert c.pipeline.levels == ("0",)
-    assert c.pipeline.channels == ("NIR", )
+    assert c.pipeline.channels == ("NIR", "MIR")
 
-def test_load_config_valid(tmp_path: Path, repo_root: Path) -> None:
+def test_load_config_invalid(tmp_path: Path, repo_root: Path) -> None:
 
     config_file = repo_root / "tests" / "configs"
 

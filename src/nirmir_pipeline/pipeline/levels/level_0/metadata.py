@@ -32,10 +32,9 @@ def collect_metadata(input: InputLayout, spice: Path, cfg: DataConfig, channel: 
     acq_dir = input.acquisition_dir
     conf_path = input.config_json
     target = cfg.target
-    missphase = cfg.missphas
 
     frame_number, list_of_frames = list_channel_frames(acq_dir=acq_dir, channel=channel)
-    if len(list_of_frames) == 0:
+    if frame_number == 0:
         raise PipelineError(f"No acquisitions", channel=channel, level='0A', stage='collect_metadata', path=acq_dir)
     else: 
         original_filename = list_of_frames[0]
@@ -45,7 +44,7 @@ def collect_metadata(input: InputLayout, spice: Path, cfg: DataConfig, channel: 
     utc_ob = acq_metadata.DATE_OBS # should use SC_CLK for more accurate?
     spice_metadata, spice_issues = collect_spice_metadata(mk=spice, target=target, utc_ob=utc_ob)
     all_issues.extend(spice_issues)
-    instrument_metadata, inst_issues = collect_instrument_metadata(telemetry_path=tel_path, channel=channel, missphas=missphase)
+    instrument_metadata, inst_issues = collect_instrument_metadata(telemetry_path=tel_path, channel=channel)
     all_issues.extend(inst_issues)
     instrument_specific_metadata, inst_spec_issues = collect_instrument_specific_metadata(config_path=conf_path, acq_path=acq_dir, channel=channel)
     all_issues.extend(inst_spec_issues)
@@ -205,7 +204,7 @@ def collect_config_metadata(telemetry_path: Path, data: DataConfig, orig_file: s
     
     return (AcqMetadata(**meta_data), issues)
 
-def collect_instrument_metadata(telemetry_path: Path, channel: str, missphas: str) -> tuple[InstrumentMetadata, list[Issue]]: 
+def collect_instrument_metadata(telemetry_path: Path, channel: str) -> tuple[InstrumentMetadata, list[Issue]]: 
     # AcqMetadata(**meta_data)
 
     issues: list[Issue] = []
@@ -341,6 +340,11 @@ def collect_instrument_specific_metadata(config_path: Path, acq_path: Path, chan
         return (InstrumentSpecificMetadata(fields=meta_data), issues)
     try:
         #Extract sp values from taskValues
+        if len(taskFile) % 8 != 0:
+            issues.append(Issue(
+                level="warning",
+                message=f"{channel} taskFile length ({len(taskFile)}) is not divisible by 8. Header data for task values might be corrupted."
+            ))
         taskValues = [taskFile[i:i + 8] for i in range(0, len(taskFile), 8)]
         sp_expos_values = [task[1:5] for task in taskValues]
         task_number = len(taskValues)

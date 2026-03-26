@@ -5,10 +5,10 @@ from typing import Any, Sequence
 import yaml 
 
 from nirmir_pipeline.pipeline.utils.validate import (Level, Channel, _require_mapping, _require_bool, _require_list_of_str, _require_str, 
-                                                     _resolve_path, _resolve_optional_path, _validate_levels, _validate_channels)
+                                                     _resolve_str, _resolve_path, _resolve_optional_path, _validate_path, _validate_levels, _validate_channels)
 
 from nirmir_pipeline.pipeline.utils.errors import ConfigError
-from nirmir_pipeline.pipeline.utils.classes import Config, RunConfig, DataConfig, PipelineConfig
+from nirmir_pipeline.pipeline.utils.classes import Config, RunConfig, CalibConfig, DataConfig, PipelineConfig
 
 
 DEFAULT_CANDIDATES = [
@@ -105,15 +105,25 @@ def _parse_config_dict(raw: dict[str, Any], *, config_path: Path) -> Config:
 
     base_dir = config_path.parent
     run_raw = _require_mapping(raw, "run")
+    cal_raw = _require_mapping(raw, 'calibration')
     data_raw = _require_mapping(raw, "data")
     pipeline_raw = _require_mapping(raw, "pipeline")
 
     run = RunConfig(
-        input_dir=_resolve_path(_require_str(run_raw, "input_dir"), base_dir),
+        input_dir=_validate_path(_resolve_path(_require_str(run_raw, "input_dir"), base_dir), kind='dir'),
         output_dir=_resolve_optional_path(run_raw.get("output_dir", ""), base_dir),
         spice_dir=_resolve_optional_path(run_raw.get("spice_dir", ""), base_dir),
-        calibration_dir=_resolve_path(_require_str(run_raw, "calibration_dir"), base_dir),
         overwrite=_require_bool(run_raw, "overwrite"),
+    )
+
+    calibration = CalibConfig(
+        calibration_dir=_validate_path(_resolve_path(_require_str(cal_raw, "calibration_dir"), base_dir)),
+        dark=_resolve_str(cal_raw, "dark"),
+        flat=_resolve_str(cal_raw, "flat"),
+        badpixels=_resolve_str(cal_raw, "badpixels"),
+        nir_radiance=_resolve_str(cal_raw, "nir_radiance"),
+        mir_radiance=_resolve_str(cal_raw, "mir_radiance"),
+        solar_ssi=_resolve_str(cal_raw, "solar_ssi")
     )
 
     data = DataConfig(
@@ -137,6 +147,6 @@ def _parse_config_dict(raw: dict[str, Any], *, config_path: Path) -> Config:
         channels=tuple(channels),
     )
 
-    return Config(run=run, data=data, pipeline=pipeline, config_path=config_path)
+    return Config(run=run, calib=calibration, data=data, pipeline=pipeline, config_path=config_path)
 
 

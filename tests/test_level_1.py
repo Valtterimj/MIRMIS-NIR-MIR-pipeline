@@ -6,7 +6,7 @@ from astropy.io import fits
 from astropy.io.fits import HDUList
 
 from nirmir_pipeline.pipeline.levels.level_1.calibrate_header import calibrate_header
-from nirmir_pipeline.pipeline.utils.classes import Issue
+from nirmir_pipeline.pipeline.utils.classes import Issue, CalibConfig
 from nirmir_pipeline.pipeline.utils.utilities import convert_to_float32, convert_to_float64
 
 from nirmir_pipeline.pipeline.levels.level_1.extract_cds import extract_cds_pixels
@@ -15,6 +15,9 @@ from nirmir_pipeline.pipeline.levels.level_1.flat_field import flat_field_calibr
 from nirmir_pipeline.pipeline.levels.level_1.bad_pixels import replace_bad_pixels
 from nirmir_pipeline.pipeline.levels.level_1.radiometric import radiometric_calibration
 from nirmir_pipeline.pipeline.levels.level_1.level_1b import run_level_1b
+
+from nirmir_pipeline.pipeline.levels.level_1.reflectance import reflectance_calibration
+from nirmir_pipeline.pipeline.levels.level_1.run import run_level_1
 
 
 @pytest.fixture
@@ -72,12 +75,12 @@ def test_convert_to_64_32(tmp_path: Path) -> None:
     hdu = fits.PrimaryHDU(data=data)
     hdul = fits.HDUList([hdu])
 
-    data_64, issues = convert_to_float64(hdul)
-    assert all(issue.level == "info" for issue in issues)
+    data_64, issue = convert_to_float64(hdul)
+    assert issue.level == "info" 
     assert data_64[0].data.dtype == np.dtype(np.float64)
 
-    data_32, issues = convert_to_float32(data_64)
-    assert all(issue.level == "info" for issue in issues)
+    data_32, issue = convert_to_float32(data_64)
+    assert issue.level == "info"
     assert data_32[0].data.dtype == np.dtype(np.float32)
 
 
@@ -235,15 +238,24 @@ def test_radiometric(tmp_path: Path, repo_root: Path) -> None:
         assert all(issue.level == "info" for issue in issues)
 
         val_0 = mir_radiometric[0].data
-        assert val_0 <= 1
+        assert np.all(val_0 < 1)
 
 def test_level_1b(tmp_path: Path, repo_root: Path) -> None:
 
     nir = repo_root / 'tests' / 'data' / 'fits' / 'NIR_1A.fits'
     mir = repo_root / 'tests' / 'data' / 'fits' / 'MIR_1A.fits'
-    calib_dir = repo_root / 'calibration'
 
-    results_nir, nir_issues = run_level_1b(nir, tmp_path, calib_dir, 'NIR')
+    calib = CalibConfig(
+        calibration_dir=repo_root / 'calibration',
+        dark= "DARKS/NIR_DARK.fits",
+        flat= "FLATS/NIR_FLAT.fits",
+        badpixels= "BADPIXELS/NIR_BADPIXELS.txt",
+        nir_radiance= "RADIANCE/NIR_RADIANCE.txt",
+        mir_radiance= "RADIANCE/MIR_RADIANCE.txt",
+        solar_ssi= "SOLAR/ssi_yearly_avg_e2024_c20250221.csv",
+    )
+
+    results_nir, nir_issues = run_level_1b(nir, tmp_path, calib, 'NIR')
     assert all(issue.level == "info" for issue in nir_issues)
     
     with fits.open(results_nir) as nir_hdul:
@@ -251,18 +263,94 @@ def test_level_1b(tmp_path: Path, repo_root: Path) -> None:
         val_nir = nir_hdul[0].data[0, 0, 0]
         assert val_nir <= 1
 
-    results_mir, mir_issues = run_level_1b(mir, tmp_path, calib_dir, 'MIR')
+    results_mir, mir_issues = run_level_1b(mir, tmp_path, calib, 'MIR')
 
     assert all(issue.level == "info" for issue in mir_issues)
 
     with fits.open(results_mir) as mir_hdul:
         assert mir_hdul[0].header['PROCLEVL'] == '1B'
         val_mir = mir_hdul[0].data[0]
-        assert val_mir <= 1
+        assert np.all(val_mir <= 1)
 
 
+def test_reflectance_calibration(tmp_path: Path, repo_root: Path) -> None:
+
+    nir = repo_root / 'tests' / 'data' / 'fits' / 'NIR_1B.fits'
+    mir = repo_root / 'tests' / 'data' / 'fits' / 'MIR_1B.fits'
+
+    with fits.open(nir, mode='update') as nir_hdul:
+        header = nir_hdul[0].header
+        header['SOLAR_D'] = '1'
+
+    solar_ssi = repo_root / 'calibration' / 'SOLAR' / 'ssi_yearly_avg_e2024_c20250221.csv'
+    results_nir, nir_issues = reflectance_calibration(nir, tmp_path, solar_ssi)
+
+    assert all(issue.level == "info" for issue in nir_issues)
+
+    with fits.open(mir, mode='update') as mir_hdul:
+        header = mir_hdul[0].header
+        header['SOLAR_D'] = '1'
+
+    results_mir, mir_issues = reflectance_calibration(mir, tmp_path, solar_ssi, fwhm_nm=40)
+    assert all(issue.level == "info" for issue in mir_issues)
+
+def test_reflectance_calibration_2(tmp_path: Path, repo_root: Path) -> None:
 
 
+    ones = np.ones(shape=(10,10,10), dtype=np.float64)
+    dict= {
+        'CHANNELS'   : 'NIR',
+        'NIR_FRAMES' : '000,001,002,003,004,005,006,007,008,009',
+        'NIR_WL_000' : '950',
+        'NIR_WL_001' : '1000',
+        'NIR_WL_002' : '1050',
+        'NIR_WL_003' : '1100',
+        'NIR_WL_004' : '1150',
+        'NIR_WL_005' : '1200',
+        'NIR_WL_006' : '1250',
+        'NIR_WL_007' : '1300',
+        'NIR_WL_008' : '1350',
+        'NIR_WL_009' : '1400',
+        'SOLAR_D'    : '1'
+    }
+    header = fits.Header(cards=dict)
+    hdu = fits.PrimaryHDU(ones, header)
+    hdul = fits.HDUList([hdu])
+    file_path = tmp_path / 'NIR_000000_200101T015948_1B.fits'
+    hdul.writeto(file_path, overwrite=True)
+
+    solar_ssi = repo_root / 'calibration' / 'SOLAR' / 'ssi_yearly_avg_e2024_c20250221.csv'
+    new_file, issues = reflectance_calibration(file_path, tmp_path, solar_ssi)
+
+    with fits.open(new_file) as hdul:
+        data = hdul[0].data
+
+    assert all(issue.level == 'info' for issue in issues)
+    assert np.all(data == data[:, 0:1, 0:1])
+    assert np.all(data.min(axis=(1,2)) == data.max(axis=(1,2)))
 
 
+def test_run_level_1_valid(tmp_path, repo_root) -> None:
 
+    nir_level_0 = repo_root / 'tests' / 'data' / 'fits' / 'NIR_000000_0000000000000_0A.fits'
+    mir_level_0 = repo_root / 'tests' / 'data' / 'fits' / 'MIR_000000_0000000000000_0A.fits'
+    calib_dir = repo_root / 'calibration'
+
+    calib = CalibConfig(
+        calibration_dir=calib_dir,
+        dark="DARKS/NIR_DARK.fits",
+        flat="FLATS/NIR_FLAT.fits",
+        badpixels="BADPIXELS/NIR_BADPIXELS.TXT",
+        nir_radiance="RADIANCE/NIR_RADIANCE.txt",
+        mir_radiance="RADIANCE/MIR_RADIANCE.txt",
+        solar_ssi="SOLAR/ssi_yearly_avg_e2024_c20250221.csv"
+    )
+
+    results, issues = run_level_1(nir_level_0, tmp_path, calib, 'NIR')
+    assert all(issue.level == 'info' for issue in issues)
+
+    with fits.open(results) as nir_hdul:
+        # assert np.all(nir_hdul[0].data < 1)
+        n_data = nir_hdul[0].data
+        shape = n_data.shape
+        assert shape == (7, 512, 640)

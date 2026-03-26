@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Sequence, Literal, Optional
 
-Level = Literal["0", "1", "2", "3"]
+Level = Literal["0", "1"]
 Channel = Literal["NIR", "MIR"]
 IssueLevel = Literal["info", "warning", "error"]
 
@@ -11,8 +11,17 @@ class RunConfig:
     input_dir: Path
     output_dir: Path
     spice_dir: Path | None
-    calibration_dir: Path
     overwrite: bool
+
+@dataclass(frozen=True)
+class CalibConfig:
+    calibration_dir: Path
+    dark: str | None
+    flat: str | None
+    badpixels: str | None
+    nir_radiance: str | None
+    mir_radiance: str | None
+    solar_ssi: str | None
 
 @dataclass(frozen=True)
 class DataConfig:
@@ -33,6 +42,7 @@ class PipelineConfig:
 # The main config class
 class Config:
     run: RunConfig
+    calib: CalibConfig
     data: DataConfig
     pipeline: PipelineConfig
     config_path: Path

@@ -3,14 +3,14 @@ from pathlib import Path
 from astropy.io import fits 
 
 from nirmir_pipeline.pipeline.utils.utilities import convert_to_float64, convert_to_float32
-from nirmir_pipeline.pipeline.utils.classes import Issue
+from nirmir_pipeline.pipeline.utils.classes import Issue, CalibConfig
 from nirmir_pipeline.pipeline.levels.level_1.extract_cds import extract_cds_pixels
 from nirmir_pipeline.pipeline.levels.level_1.dark_background import dark_subtraction
 from nirmir_pipeline.pipeline.levels.level_1.flat_field import flat_field_calibration
 from nirmir_pipeline.pipeline.levels.level_1.bad_pixels import replace_bad_pixels
 from nirmir_pipeline.pipeline.levels.level_1.radiometric import radiometric_calibration
 
-def run_level_1b(fits_file: Path, output_dir: Path, calibration_dir: Path, channel: str) -> tuple[Path, list[Issue]]:
+def run_level_1b(fits_file: Path, output_dir: Path, calibration: CalibConfig, channel: str) -> tuple[Path, list[Issue]]:
 
     all_issues: list[Issue] = []
 
@@ -25,23 +25,29 @@ def run_level_1b(fits_file: Path, output_dir: Path, calibration_dir: Path, chann
         hdul, issues = extract_cds_pixels(hdul)
         all_issues.extend(issues)
 
+        calibration_dir = Path(calibration.calibration_dir)
         # Subtrack the dark frame from each image
-        dark = calibration_dir / 'DARKS' / f'{channel}_DARK.fits'
+        dark = calibration_dir / calibration.dark
         hdul, issues = dark_subtraction(hdul, dark)
         all_issues.extend(issues)
 
         # Apply flatfield correction
-        flat = calibration_dir / 'FLATS' / f'{channel}_FLAT.fits'
+        flat = calibration_dir / calibration.flat
         hdul, issues = flat_field_calibration(hdul, flat)
         all_issues.extend(issues)
 
         # Replace bad pixels with neigbours
-        badpixels = calibration_dir / 'BADPIXELS' / f'{channel}_BADPIXELS.txt'
+        badpixels = calibration_dir / calibration.badpixels
         hdul, issues = replace_bad_pixels(hdul, bp_file=badpixels)
         all_issues.extend(issues)
 
         # Apply radiometric calibration
-        radiance_coefs = calibration_dir / 'RADIANCE' / f'{channel}_RADIANCE.txt'
+        if channel == 'NIR':
+            radiance = calibration.nir_radiance
+        else:
+            radiance = calibration.mir_radiance
+
+        radiance_coefs = calibration_dir / radiance
         hdul, issues = radiometric_calibration(hdul, radiance_file=radiance_coefs)
         all_issues.extend(issues)
 

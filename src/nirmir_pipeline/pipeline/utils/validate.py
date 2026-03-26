@@ -22,6 +22,13 @@ def _require_str(d: dict[str, Any], key: str) -> str:
         raise ValidationError(f"Missing or invalid string: {key}")
     return v.strip()
 
+def _resolve_str(d: dict[str, Any], key: str) -> str | None:
+    s = d.get(key)
+    if not isinstance(s, str) or s.strip() == "":
+        return None
+    else:
+        return s.strip()
+
 def _require_bool(d: dict[str, Any], key: str) -> bool:
     v = d.get(key)
     if not isinstance(v, bool):
@@ -34,9 +41,10 @@ def _require_list_of_str(d: dict[str, Any], key:str) -> list[str]:
         raise ValidationError(f"Missing or invalid list: {key}, must be non-empty list")
     out: list[str] = []
     for i, item in enumerate(v):
-        if not isinstance(item, str) or item.strip() == "":
+        itm = str(item)
+        if not isinstance(itm, str) or itm.strip() == "":
             raise ValidationError(f"Invalid item in {key}[{i}], must be non-empty string")
-        out.append(item.strip())
+        out.append(itm.strip())
     return out
 
 def _resolve_path(raw_path: str, base_dir: Path) -> Path:
@@ -53,6 +61,22 @@ def _resolve_optional_path(raw_value: Any, base_dir: Path) -> Path | None:
             return None
         return _resolve_path(raw_path=raw_value, base_dir=base_dir)
     raise ValidationError(f"Resolving path failed, (must be a string, Path or empty)")
+
+def _validate_path(path: Path, kind: Literal["file", "dir"] | None = None) -> Path:
+    """Validate that path exists. Can specify type (file or dir) use None if both are fine"""
+    if kind not in {"file", "dir", None}:
+        raise ValueError(f"Invalid kind '{kind}', expected 'file', 'dir', or None.")
+    
+    if not path.exists():
+        raise ValidationError(f"Path does not exists: {path}")
+    
+    if kind == 'file' and not path.is_file():
+        raise ValidationError(f"Path is not an existing file: {path}")
+    
+    if kind == 'dir' and not path.is_dir():
+        raise ValidationError(f"Path is not an existing directory: {path}")
+
+    return path
 
 def _validate_levels(levels: Sequence[str]) -> None:
     bad = [x for x in levels if x not in ALLOWED_LEVELS]
@@ -72,6 +96,8 @@ def _validate_channels(channels: Sequence[str]) -> None:
 
 def _validate_output_dir(output_dir: Path | None, missphas: str, base_dir: Path | None = None) -> Path:
 
+    if output_dir is not None and not output_dir.exists():
+        raise ValidationError(f"Output path does not exists: {output_dir}")
     if output_dir:
         output_path = output_dir.expanduser()
         if not output_path.is_dir():
@@ -129,7 +155,7 @@ def _validate_level_0_input_dir(input_dir: Path) -> InputLayout:
     
     candidates.sort(key=lambda p: p.name)
     acq_dir = candidates[0]
-
+    
     return InputLayout(
         root=root,
         meta_dir=meta_dir,
