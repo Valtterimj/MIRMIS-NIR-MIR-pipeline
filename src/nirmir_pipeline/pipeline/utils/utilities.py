@@ -24,6 +24,26 @@ id_to_channel = {
     1 : "MIR"
 }
 
+def parse_levels_to_run(levels: list[str]) -> list[str]:
+    levels_to_run: list[str] = []
+    seen: set[str] = set()
+
+    def add(level: str) -> None:
+        if level not in seen:
+            levels_to_run.append(level)
+            seen.add(level)
+    
+    if "1" in levels:
+        for level in ("1A", "1B", "1C"):
+            add(level)
+    for level in levels:
+        if level == "1":
+            continue
+        if level.startswith("1"):
+            add(level)
+    
+    return levels_to_run
+
 def get_current_utc_time_str():
     return datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
 

@@ -6,6 +6,7 @@ from datetime import datetime
 
 from nirmir_pipeline.pipeline.utils.classes import InputLayout, Metadata, AcqMetadata, SpiceMetadata, InstrumentMetadata, InstrumentSpecificMetadata, DataConfig, Issue, HeaderEntry
 from nirmir_pipeline.pipeline.utils.utilities import channel_to_id, get_current_utc_time_str, list_channel_frames, extract_frames
+from nirmir_pipeline.pipeline.utils.validate import _validate_float_string
 from nirmir_pipeline.pipeline.utils.errors import PipelineError
 import nirmir_pipeline.pipeline.levels.level_0.spice as spice
 
@@ -32,6 +33,7 @@ def collect_metadata(input: InputLayout, spice: Path, cfg: DataConfig, channel: 
     acq_dir = input.acquisition_dir
     conf_path = input.config_json
     target = cfg.target
+    solar_d = cfg.solar_d
 
     frame_number, list_of_frames = list_channel_frames(acq_dir=acq_dir, channel=channel)
     if frame_number == 0:
@@ -42,7 +44,7 @@ def collect_metadata(input: InputLayout, spice: Path, cfg: DataConfig, channel: 
     acq_metadata, acq_issues = collect_config_metadata(telemetry_path=tel_path, data=cfg, orig_file=original_filename)
     all_issues.extend(acq_issues)
     utc_ob = acq_metadata.DATE_OBS # should use SC_CLK for more accurate?
-    spice_metadata, spice_issues = collect_spice_metadata(mk=spice, target=target, utc_ob=utc_ob)
+    spice_metadata, spice_issues = collect_spice_metadata(mk=spice, target=target, solar_d=solar_d, utc_ob=utc_ob)
     all_issues.extend(spice_issues)
     instrument_metadata, inst_issues = collect_instrument_metadata(telemetry_path=tel_path, channel=channel)
     all_issues.extend(inst_issues)
@@ -60,10 +62,12 @@ def collect_metadata(input: InputLayout, spice: Path, cfg: DataConfig, channel: 
     return (meta_data, all_issues)
 
 
-def collect_spice_metadata(mk: Path, target: str, utc_ob: str) -> tuple[SpiceMetadata, list[Issue]]:
+def collect_spice_metadata(mk: Path, target: str, solar_d: str | None, utc_ob: str) -> tuple[SpiceMetadata, list[Issue]]:
 
     issues: list[Issue] = []
     meta_data = {}
+
+    solar_d = _validate_float_string(value=solar_d) # either a valid string or None
 
     mk = str(mk)
     try:
@@ -79,13 +83,16 @@ def collect_spice_metadata(mk: Path, target: str, utc_ob: str) -> tuple[SpiceMet
 
             )
         )
+        if solar_d is None:
+            solar_d = 'UNK'
+
         meta_data['SPICE_MK'] = HeaderEntry('UNK', 'SPICE metakernel')
         meta_data['SPICEVER'] = HeaderEntry('UNK', 'SPICE dataset version')
         meta_data['SPICECLK'] = HeaderEntry('UNK', 'SC clock SPICE format')
         meta_data['SUN_POSX'] = HeaderEntry('UNK', 'Sun position vector X [km]')
         meta_data['SUN_POSY'] = HeaderEntry('UNK', 'Sun position vector Y [km]')
         meta_data['SUN_POSZ'] = HeaderEntry('UNK', 'Sun position vector Z [km]')
-        meta_data['SOLAR_D']  = HeaderEntry('UNK', 'Solar distance')
+        meta_data['SOLAR_D']  = HeaderEntry(solar_d, 'Solar distance')
         meta_data['EARTPOSX'] = HeaderEntry('UNK', 'Earth position vector X [km]')
         meta_data['EARTPOSY'] = HeaderEntry('UNK', 'Earth position vector Y [km]')
         meta_data['EARTPOSZ'] = HeaderEntry('UNK', 'Earth position vector Z [km]')
@@ -121,6 +128,17 @@ def collect_spice_metadata(mk: Path, target: str, utc_ob: str) -> tuple[SpiceMet
 
     # Sun position vector and distnace from observer
     sun_position, sun_distance_au = spice.query_position_distance(target='SUN', et=et, frame='J2000', abcorr='NONE', observer=milani_frame)
+
+    if solar_d is not None:
+        sun_distance_au = solar_d
+        if sun_distance_au != 'UNK':
+            issues.append(
+                Issue(
+                    level='warning',
+                    message=f"A valid solar distance was found from SPICE kernel but overrided with solar_d configuration parameter.\n SPICE: {sun_distance_au}, used: {solar_d}.",
+                    source=__name__,
+                )
+            )
     meta_data['SUN_POSX'] = HeaderEntry(sun_position[0], 'Sun position vector X [km]')
     meta_data['SUN_POSY'] = HeaderEntry(sun_position[1], 'Sun position vector Y [km]')
     meta_data['SUN_POSZ'] = HeaderEntry(sun_position[2], 'Sun position vector Z [km]')

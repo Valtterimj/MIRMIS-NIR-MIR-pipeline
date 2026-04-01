@@ -61,6 +61,11 @@ calibration:
   # Should be csv file
   solar_ssi: "SOLAR/ssi_yearly_avg_e2024_c20250221.csv"
 
+  # Solar distance
+  # Manually set the solar distance, used in reflectance calibration.
+  # Warning setting this value will override the solar distance from SPICE kernel
+  # usage: solar disrtance in AU E.G. "1" or "1.2" | "" or None if not used.
+  solar_distance: ""
 
 # --------------------------------------------------------
 # Metadata settings
@@ -97,7 +102,7 @@ data:
 pipeline:
 
   # List of pipeline levels to execute.
-  # Values: "0", "1", "2", "3"
+  # Values: "0", "1", "1A", "1A-extra", "1B", "1C"
   # E.g. ["0","1"]
   levels: ["0"]
 

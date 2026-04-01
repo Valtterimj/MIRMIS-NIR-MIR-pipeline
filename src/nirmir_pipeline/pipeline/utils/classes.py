@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Sequence, Literal, Optional
 
-Level = Literal["0", "1"]
+Level = Literal["0", "1", "1A", "1A-extra", "1B", "1C"]
 Channel = Literal["NIR", "MIR"]
 IssueLevel = Literal["info", "warning", "error"]
 
@@ -32,6 +32,7 @@ class DataConfig:
     observ: str
     object: str
     target: str
+    solar_d: str | None
 
 @dataclass(frozen=True)
 class PipelineConfig:

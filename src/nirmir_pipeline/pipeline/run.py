@@ -46,15 +46,17 @@ def run_pipeline(config_path: Path) -> None:
                 fits_file, all_issues = run_level_0(cfg=cfg, channel=channel)
                 for issue in all_issues:
                     log_issue(issue)
-                logger.info(f"Level 0 run succesfully for channel {channel}.")
+                logger.info(f"Level 0 run finished for channel {channel}.")
+                cfg.run.input_dir = cfg.run.output_dir
 
-            if "1" in levels: 
+            if any(x in levels for x in ["1", "1A", "1A-extra", "1B", "1C"]):
                 logger.info(f"Running level 1 for channel {channel}.")
-                fits_file, all_issues = run_level_1(fits=fits_file, output_dir=output_path, calibration=cfg.calib, channel=channel)
+                fits_file, all_issues = run_level_1(cfg=cfg, channel=channel)
                 for issue in all_issues:
                     log_issue(issue)
-                logger.info(f"Level 1 run succesfully for channel {channel}.")
+                logger.info(f"Level 1 finished for channel {channel}.")
 
+            
         except PipelineError as e:
             logger.error(
                 f"Error running pipeline for channel %s. Continuing. %s",

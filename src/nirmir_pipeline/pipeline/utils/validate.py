@@ -94,6 +94,20 @@ def _validate_channels(channels: Sequence[str]) -> None:
             f"Allowed: {sorted(ALLOWED_CHANNELS)}"
         )
 
+def _validate_float_string(value) -> str | None:
+    if value is None:
+        return None
+    
+    s = str(value).strip()
+    if not s:
+        return None
+    
+    try:
+        float(s)
+        return s
+    except (ValueError, TypeError):
+        return None
+
 def _validate_output_dir(output_dir: Path | None, missphas: str, base_dir: Path | None = None) -> Path:
 
     if output_dir is not None and not output_dir.exists():
@@ -163,5 +177,24 @@ def _validate_level_0_input_dir(input_dir: Path) -> InputLayout:
         config_json=config_json,
         acquisition_dir=acq_dir,
     )
+
+def _resolve_level_fits_path(input_dir: Path, channel: str,  lvl: str) -> Path:
+    """
+        Resolve to path to correct fits file inside the input_dir according to the lvl.
+        E.g. if lvl = 1B the input dir should contain a file ending to '*1A.fits'
+    """
+    if not input_dir.exists() or not input_dir.is_dir():
+        raise ValidationError(f"Not a valid input directory found.")
+    
+    suffix = f"{lvl}.fits"
+    matches = list(input_dir.glob(f"*{suffix}"))
+    matches = [p for p in matches if p.name.startswith(channel)]
+
+    if not matches:
+        raise ValidationError(f"No level '{lvl}' file for channel '{channel}' found in {input_dir}.")
+    
+    return matches[0]
+
+
 
     

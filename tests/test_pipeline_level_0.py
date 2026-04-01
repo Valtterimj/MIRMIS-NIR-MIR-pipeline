@@ -94,7 +94,7 @@ def test_corrupted_telemetry(tmp_path: Path, repo_root: Path) -> None:
 
 def test_spice_data_missing()-> None:
 
-    result, issues = collect_spice_metadata("", 'test', '')
+    result, issues = collect_spice_metadata("", 'test', '1', '')
     warnings = [i for i in issues if i.level == "warning"]
     assert len(warnings) == 1
     assert "Failed to load meta kernel" in warnings[0].message

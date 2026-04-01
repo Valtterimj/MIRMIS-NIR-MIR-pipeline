@@ -123,7 +123,7 @@ def _parse_config_dict(raw: dict[str, Any], *, config_path: Path) -> Config:
         badpixels=_resolve_str(cal_raw, "badpixels"),
         nir_radiance=_resolve_str(cal_raw, "nir_radiance"),
         mir_radiance=_resolve_str(cal_raw, "mir_radiance"),
-        solar_ssi=_resolve_str(cal_raw, "solar_ssi")
+        solar_ssi=_resolve_str(cal_raw, "solar_ssi"),
     )
 
     data = DataConfig(
@@ -134,6 +134,7 @@ def _parse_config_dict(raw: dict[str, Any], *, config_path: Path) -> Config:
         observ=_require_str(data_raw, "observ"),
         object=_require_str(data_raw, "object"),
         target=_require_str(data_raw, "target"),
+        solar_d=_resolve_str(cal_raw, "solar_distance"),
     )
 
     levels = _require_list_of_str(pipeline_raw, "levels")

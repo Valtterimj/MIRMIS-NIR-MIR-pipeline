@@ -3,6 +3,7 @@ from pathlib import Path
 from astropy.io import fits 
 
 from nirmir_pipeline.pipeline.utils.utilities import convert_to_float64, convert_to_float32
+from nirmir_pipeline.pipeline.utils.errors import PipelineError
 from nirmir_pipeline.pipeline.utils.classes import Issue, CalibConfig
 from nirmir_pipeline.pipeline.levels.level_1.extract_cds import extract_cds_pixels
 from nirmir_pipeline.pipeline.levels.level_1.dark_background import dark_subtraction
@@ -10,7 +11,7 @@ from nirmir_pipeline.pipeline.levels.level_1.flat_field import flat_field_calibr
 from nirmir_pipeline.pipeline.levels.level_1.bad_pixels import replace_bad_pixels
 from nirmir_pipeline.pipeline.levels.level_1.radiometric import radiometric_calibration
 
-def run_level_1b(fits_file: Path, output_dir: Path, calibration: CalibConfig, channel: str) -> tuple[Path, list[Issue]]:
+def run_level_1b(fits_file: Path, output_dir: Path, calibration: CalibConfig, channel: str, extra: bool) -> tuple[Path, list[Issue]]:
 
     all_issues: list[Issue] = []
 
@@ -41,6 +42,45 @@ def run_level_1b(fits_file: Path, output_dir: Path, calibration: CalibConfig, ch
         hdul, issues = replace_bad_pixels(hdul, bp_file=badpixels)
         all_issues.extend(issues)
 
+        if extra:
+            hdul_extra = hdul.copy()
+            hdul_extra, issue = convert_to_float32(hdul_extra)
+            all_issues.append(issue)
+            stem = fits_file.stem
+            suffix = fits_file.suffix
+            extra_calibration_level = '1A-extra'
+            extra_file = stem[:25] + extra_calibration_level + suffix
+            extra_primary_header = hdul_extra[0].header
+            extra_primary_header['FILENAME'] = extra_file
+            extra_primary_header['PROCLEVL'] = extra_calibration_level
+            try:
+                extra_fits_file = Path(output_dir) / extra_file
+                hdul.writeto(extra_fits_file, overwrite=True)
+                all_issues.append(
+                        Issue(
+                            level="info",
+                            message=(f"1A-extra fits file created: {extra_fits_file}"),
+                            source=__name__,
+                        )
+                    )
+            except Exception as e:
+                all_issues.append(
+                        Issue(
+                            level="warning",
+                            message=(f"Writing 1A-extra fits file failed: {e}"),
+                            source=__name__,
+                        )
+                    )
+            extra_fits = Path(output_dir / extra_file)
+            hdul_extra.writeto(extra_fits, overwrite=True)
+            all_issues.append(
+                Issue(
+                    level='info',
+                    message='1A-extra calibration file created: {extra_fits}',
+                    source=__name__,
+                )
+            )
+
         # Apply radiometric calibration
         if channel == 'NIR':
             radiance = calibration.nir_radiance
@@ -63,7 +103,17 @@ def run_level_1b(fits_file: Path, output_dir: Path, calibration: CalibConfig, ch
         primary_header['PROCLEVL'] = new_calibration_level
 
     # create the new fits
-    fits_file = Path(output_dir) / file_name
-    hdul.writeto(fits_file, overwrite=True)
+    try:
+        fits_file = Path(output_dir) / file_name
+        hdul.writeto(fits_file, overwrite=True)
+        all_issues.append(
+                Issue(
+                    level="info",
+                    message=(f"New fits file created: {fits_file}"),
+                    source=__name__,
+                )
+            )
+    except Exception as e:
+        raise PipelineError(f'Error writing a fits file.') from e
 
     return fits_file, all_issues

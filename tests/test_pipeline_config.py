@@ -82,6 +82,7 @@ def test_config_file_contains_everything(tmp_path: Path, repo_root: Path) -> Non
     assert isinstance(data_cfg.observ, str)
     assert isinstance(data_cfg.object, str)
     assert isinstance(data_cfg.target, str)
+    assert isinstance(data_cfg.solar_d, str | None)
 
     pipeline_cfg = cfg.pipeline
     assert isinstance(pipeline_cfg.channels, Sequence)
@@ -257,7 +258,7 @@ def test_all_correct_config(tmp_path: Path, repo_root: Path) -> None:
     modified["data"]["object"] = "test"
     modified["data"]["target"] = "TEST"
 
-    modified["pipeline"]["levels"] = ["0", "1"]
+    modified["pipeline"]["levels"] = ["0", "1", "1A-extra"]
     modified["pipeline"]["channles"] = ["NIR", "MIR"]
 
     write_yaml(modified_config, modified)
@@ -285,6 +286,6 @@ def test_all_correct_config(tmp_path: Path, repo_root: Path) -> None:
     assert cfg.data.object == "test"
     assert cfg.data.target == "TEST"
 
-    assert cfg.pipeline.levels == ("0", "1")
+    assert cfg.pipeline.levels == ("0", "1", "1A-extra")
     assert cfg.pipeline.channels == ("NIR", "MIR")
 
