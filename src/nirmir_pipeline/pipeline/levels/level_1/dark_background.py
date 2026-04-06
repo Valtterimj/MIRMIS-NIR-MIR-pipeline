@@ -33,7 +33,7 @@ def dark_subtraction(hdul: HDUList, dark: Path) -> tuple[HDUList, list[Issue]]:
     except Exception as e:
         all_issues.append(
                     Issue(
-                        level="Error",
+                        level="error",
                         message=(f"Caught Exception while reading dark frame for channel {channel}: {e}"),
                         source=__name__,
                     )

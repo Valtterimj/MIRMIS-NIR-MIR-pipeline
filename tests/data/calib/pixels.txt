@@ -1,4 +1,0 @@
-Type    Col		Row		SizeX	SizeY
-P		0		0		1		1
-P		0		1		1		1
-P		3		7	    1		1

@@ -1,3 +1,0 @@
-Type    Col		Row		SizeX	SizeY
-H		-		5		10		1
-V		3		-	    1		10

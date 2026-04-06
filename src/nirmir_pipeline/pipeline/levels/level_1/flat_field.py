@@ -33,8 +33,8 @@ def flat_field_calibration(hdul: HDUList, flat: Path) -> tuple[HDUList, list[Iss
     except Exception as e:
         all_issues.append(
                     Issue(
-                        level="Error",
-                        message=(f"Caught Exception while reading dark frame for channel {channel}: {e}"),
+                        level="error",
+                        message=(f"Caught Exception while reading flat field for channel {channel}: {e}"),
                         source=__name__,
                     )
         )

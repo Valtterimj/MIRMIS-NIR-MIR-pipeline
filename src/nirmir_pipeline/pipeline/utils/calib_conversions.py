@@ -65,7 +65,7 @@ def fpi_temp_conversion(value:float, fpi: int) -> tuple[float, float]:
 
     Parameters:
         value (float): Temperature DN value
-        channel (str): Instrument channel
+        channel (str): FPI number
 
     Returns:
         Tuple(Celsius, Kelvin)
@@ -82,7 +82,7 @@ def fpi_temp_conversion(value:float, fpi: int) -> tuple[float, float]:
     k = c + kelvin
     return (c, k)
 
-def wavelength_conversion(channel: str, sp: float) -> float:
+def wavelength_conversion(sp: float, channel: str) -> float:
     """
     Converts the wavelength [nm] from Piezo actuator setpoint value
 

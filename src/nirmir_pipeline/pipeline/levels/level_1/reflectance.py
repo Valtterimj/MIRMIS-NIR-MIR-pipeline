@@ -53,6 +53,8 @@ def reflectance_calibration(
             primary_hdu = new_hdul[0]
             primary_header = primary_hdu.header.copy()
             data = primary_hdu.data.copy()
+            new_hdul[0].header = primary_header
+            new_hdul[0].data = data
             channel = primary_header.get('CHANNELS')
             sun_dist = primary_header.get('SOLAR_D')
             frames = primary_header.get(f'{channel}_FRAMES').split(',')
@@ -144,3 +146,4 @@ def reflectance_calibration(
         )
     
     return fits_file, all_issues
+

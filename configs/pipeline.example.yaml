@@ -19,7 +19,7 @@
 run:
 
   # (Required) Path to input data. Relative to this config file or absolute.
-  input_dir: "../data/ASPECT_data/NIR"
+  input_dir: "../data/ASPECT_data/MIR"
 
   # (Optional) Root output directory for generated products. Absolute or empty. If left empty outputs folder is created to where the pipeline is run.
   output_dir: ""
@@ -105,9 +105,9 @@ pipeline:
   # List of pipeline levels to execute.
   # Values: "0", "1", "1A", "1A-extra", "1B", "1C"
   # E.g. ["0","1"]
-  levels: ["0", "1A", "1A-extra"]
+  levels: ["0", "1"]
 
   # List of channels included in processin
   # Values: "NIR", "MIR"
   # E.g. ["NIR"]
-  channels: ["NIR"]
+  channels: ["MIR"]

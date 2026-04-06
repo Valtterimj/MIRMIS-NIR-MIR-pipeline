@@ -45,10 +45,44 @@ def create_binary(path: Path, w: int, h: int, dtype= np.uint16):
 
     print(f'new bin file: {path}')
 
+def create_fits(path: Path, header: Path | None, shape: tuple[int, int, int] | None, limit: int = 3, dtype: str ='uint16'):
+    """
+    create a fits file to path. if copying an existing header give the path header. Determine the shape or use copy the shape from header. Limit the number of frames
+    """
+    if header is not None:
+        with fits.open(header) as hdr_hdul:
+            hdr = hdr_hdul[0].header
+            copy_shape = hdr_hdul[0].data.shape
+            dtype= hdr_hdul[0].data.dtype
+    else: 
+        hdr = fits.Header()
+        # if shape is None:
+        #     raise(ValueError(f"header and shape cannot be none"))
+        copy_shape = shape
+    
+    # if shape is None:
+    #     copy_shape = (min(copy_shape[0], limit), copy_shape[1], copy_shape[2])
+    
+    # data = np.ones(copy_shape, dtype=dtype)
+    data = np.full((512, 640), 0.5, dtype=np.float32)
+
+    hdu = fits.PrimaryHDU()
+    # hdu.header = hdr
+    hdu.data = data
+    hdul = fits.HDUList(hdu)
+
+    hdul.writeto(path, overwrite=True)
+
+
 def main() -> None:
 
-    bin_path = repo_root / 'tests' / 'data' / 'binary' / 'invalid_nir_shape' / 'acq_000' / 'dc_0_exp_004.bin'    
-    create_binary(bin_path, 10, 10)
+    # fits_path = repo_root / 'tests' / 'data' / 'fits' / 'lvl_1B' / 'MIR_000000_1111111111111_1B.fits'
+    fits_path = repo_root / 'tests' / 'data' / 'calib' / 'FLAT_05.fits'
+    # copy_header = repo_root / 'outputs' / '000_test' / 'MIR_000000_200101T015157_1A.fits'
+
+    create_fits(path=fits_path, header=None, shape=(1, 512, 640))
+
+    
 
 if __name__ == "__main__":
     # to run this file from root: python3 src/nirmir_pipeline/utils/modify.py

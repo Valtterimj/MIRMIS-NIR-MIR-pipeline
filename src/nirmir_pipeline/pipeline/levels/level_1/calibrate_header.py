@@ -51,7 +51,7 @@ def calibrate_header(fits_path: Path, output_dir: Path, channel: str) -> tuple[s
                     Issue(
                         level="warning",
                         message=(
-                            f"Failed to compute detector temperatue for {ch}_CCDTEMP; (reason: {type(e).__name__}: {e})"
+                            f"Failed to compute detector temperature for {ch}_CCDTEMP; (reason: {type(e).__name__}: {e})"
                         ),
                         source=__name__,
                     )
@@ -77,20 +77,22 @@ def calibrate_header(fits_path: Path, output_dir: Path, channel: str) -> tuple[s
                         Issue(
                             level="warning",
                             message=(
-                                f"Failed to compute FPI {i} temperatue for {ch}_FPI_TEMP{i}; (reason: {type(e).__name__}: {e})"
+                                f"Failed to compute FPI {i} temperature for {ch}_FPI_TEMP{i}; (reason: {type(e).__name__}: {e})"
                             ),
                             source=__name__,
                         )
                     )
 
+        task_number = header.get(f'{channel}_TASK_NUMBER')
+        if task_number is None:
+            raise CalibrationError(f'{channel}_TASK_NUMBER is not found from header.')
+        try:
+            tn = int(task_number)
+        except (ValueError, TypeError):
+            raise CalibrationError(f'{channel}_TASK_NUMBER is not convertable to integer.')
+
         # Wavelength calibration
         try:
-            task_number = header.get(f'{channel}_TASK_NUMBER') # Number of task from configurations
-            if task_number is None:
-                raise ValueError(f'{channel}_TASK_NUMBER')
-            
-            tn = int(task_number)
-
             setpoint1 = [] # Gather all setpoint 1 values
             for i in range(0, tn):
                 num = f'{i:03d}'
@@ -105,7 +107,7 @@ def calibrate_header(fits_path: Path, output_dir: Path, channel: str) -> tuple[s
             task_idx += tn # index to insert new fields in chronological order
             for i, val in enumerate(values):
                 num = f'{i:03d}' # e.g. 1 -> '001'
-                wl = wavelength_conversion(channel, val) # convert DN values to nm
+                wl = wavelength_conversion(val, channel) # convert DN values to nm
                 com = f'{channel} TASK {num} wavelength [nm]'
                 value, comment = form_fits_header_val(key=f'{channel}_WL_{num}', value=wl, comment=com, hierarch=True)
                 header.insert(task_idx, (f'HIERARCH {channel}_WL_{num}', value, comment), after=True)
@@ -123,11 +125,6 @@ def calibrate_header(fits_path: Path, output_dir: Path, channel: str) -> tuple[s
                 )  
         
         try:
-            task_number = header.get(f'{channel}_TASK_NUMBER')
-
-            if task_number is None:
-                raise ValueError(f'{channel}_TASK_NUMBER')
-            tn = int(task_number)
 
             setpoint1 = []
             for i in range(0, tn):
