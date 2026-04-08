@@ -6,6 +6,7 @@ from datetime import datetime
 
 from nirmir_pipeline.pipeline.utils.classes import InputLayout, Metadata, AcqMetadata, SpiceMetadata, InstrumentMetadata, InstrumentSpecificMetadata, DataConfig, Issue, HeaderEntry
 from nirmir_pipeline.pipeline.utils.utilities import channel_to_id, get_current_utc_time_str, list_channel_frames, extract_frames
+from nirmir_pipeline.pipeline.utils.validate import _validate_float_string
 from nirmir_pipeline.pipeline.utils.errors import PipelineError
 import nirmir_pipeline.pipeline.levels.level_0.spice as spice
 
@@ -32,10 +33,10 @@ def collect_metadata(input: InputLayout, spice: Path, cfg: DataConfig, channel: 
     acq_dir = input.acquisition_dir
     conf_path = input.config_json
     target = cfg.target
-    missphase = cfg.missphas
+    solar_d = cfg.solar_d
 
     frame_number, list_of_frames = list_channel_frames(acq_dir=acq_dir, channel=channel)
-    if len(list_of_frames) == 0:
+    if frame_number == 0:
         raise PipelineError(f"No acquisitions", channel=channel, level='0A', stage='collect_metadata', path=acq_dir)
     else: 
         original_filename = list_of_frames[0]
@@ -43,9 +44,9 @@ def collect_metadata(input: InputLayout, spice: Path, cfg: DataConfig, channel: 
     acq_metadata, acq_issues = collect_config_metadata(telemetry_path=tel_path, data=cfg, orig_file=original_filename)
     all_issues.extend(acq_issues)
     utc_ob = acq_metadata.DATE_OBS # should use SC_CLK for more accurate?
-    spice_metadata, spice_issues = collect_spice_metadata(mk=spice, target=target, utc_ob=utc_ob)
+    spice_metadata, spice_issues = collect_spice_metadata(mk=spice, target=target, solar_d=solar_d, utc_ob=utc_ob)
     all_issues.extend(spice_issues)
-    instrument_metadata, inst_issues = collect_instrument_metadata(telemetry_path=tel_path, channel=channel, missphas=missphase)
+    instrument_metadata, inst_issues = collect_instrument_metadata(telemetry_path=tel_path, channel=channel)
     all_issues.extend(inst_issues)
     instrument_specific_metadata, inst_spec_issues = collect_instrument_specific_metadata(config_path=conf_path, acq_path=acq_dir, channel=channel)
     all_issues.extend(inst_spec_issues)
@@ -61,10 +62,12 @@ def collect_metadata(input: InputLayout, spice: Path, cfg: DataConfig, channel: 
     return (meta_data, all_issues)
 
 
-def collect_spice_metadata(mk: Path, target: str, utc_ob: str) -> tuple[SpiceMetadata, list[Issue]]:
+def collect_spice_metadata(mk: Path, target: str, solar_d: str | None, utc_ob: str) -> tuple[SpiceMetadata, list[Issue]]:
 
     issues: list[Issue] = []
     meta_data = {}
+
+    solar_d = _validate_float_string(value=solar_d) # either a valid string or None
 
     mk = str(mk)
     try:
@@ -80,13 +83,16 @@ def collect_spice_metadata(mk: Path, target: str, utc_ob: str) -> tuple[SpiceMet
 
             )
         )
+        if solar_d is None:
+            solar_d = 'UNK'
+
         meta_data['SPICE_MK'] = HeaderEntry('UNK', 'SPICE metakernel')
         meta_data['SPICEVER'] = HeaderEntry('UNK', 'SPICE dataset version')
         meta_data['SPICECLK'] = HeaderEntry('UNK', 'SC clock SPICE format')
         meta_data['SUN_POSX'] = HeaderEntry('UNK', 'Sun position vector X [km]')
         meta_data['SUN_POSY'] = HeaderEntry('UNK', 'Sun position vector Y [km]')
         meta_data['SUN_POSZ'] = HeaderEntry('UNK', 'Sun position vector Z [km]')
-        meta_data['SOLAR_D']  = HeaderEntry('UNK', 'Solar distance')
+        meta_data['SOLAR_D']  = HeaderEntry(solar_d, 'Solar distance')
         meta_data['EARTPOSX'] = HeaderEntry('UNK', 'Earth position vector X [km]')
         meta_data['EARTPOSY'] = HeaderEntry('UNK', 'Earth position vector Y [km]')
         meta_data['EARTPOSZ'] = HeaderEntry('UNK', 'Earth position vector Z [km]')
@@ -122,6 +128,17 @@ def collect_spice_metadata(mk: Path, target: str, utc_ob: str) -> tuple[SpiceMet
 
     # Sun position vector and distnace from observer
     sun_position, sun_distance_au = spice.query_position_distance(target='SUN', et=et, frame='J2000', abcorr='NONE', observer=milani_frame)
+
+    if solar_d is not None:
+        sun_distance_au = solar_d
+        if sun_distance_au != 'UNK':
+            issues.append(
+                Issue(
+                    level='warning',
+                    message=f"A valid solar distance was found from SPICE kernel but overrided with solar_d configuration parameter.\n SPICE: {sun_distance_au}, used: {solar_d}.",
+                    source=__name__,
+                )
+            )
     meta_data['SUN_POSX'] = HeaderEntry(sun_position[0], 'Sun position vector X [km]')
     meta_data['SUN_POSY'] = HeaderEntry(sun_position[1], 'Sun position vector Y [km]')
     meta_data['SUN_POSZ'] = HeaderEntry(sun_position[2], 'Sun position vector Z [km]')
@@ -205,7 +222,7 @@ def collect_config_metadata(telemetry_path: Path, data: DataConfig, orig_file: s
     
     return (AcqMetadata(**meta_data), issues)
 
-def collect_instrument_metadata(telemetry_path: Path, channel: str, missphas: str) -> tuple[InstrumentMetadata, list[Issue]]: 
+def collect_instrument_metadata(telemetry_path: Path, channel: str) -> tuple[InstrumentMetadata, list[Issue]]: 
     # AcqMetadata(**meta_data)
 
     issues: list[Issue] = []
@@ -263,7 +280,7 @@ def collect_instrument_metadata(telemetry_path: Path, channel: str, missphas: st
             meta_data[f'{ch}_CCDTEMP'] = HeaderEntry('UNK', f'{ch} detector temperature [DN]')
         try:
             fpi_temp1 = channel_specific_telemetry['FPI_TEMP1']
-            meta_data[f'{ch}_FPI_TEMP1'] = HeaderEntry(str(fpi_temp1), 'NIR FPI 1 temperature [DN]')
+            meta_data[f'{ch}_FPI_TEMP1'] = HeaderEntry(str(fpi_temp1), f'{ch} FPI 1 temperature [DN]')
         except KeyError as e:
             issues.append(
                 Issue(
@@ -304,7 +321,6 @@ def collect_instrument_specific_metadata(config_path: Path, acq_path: Path, chan
     frame_numbers = extract_frames(list_of_frames)
     frame_number_string = ','.join(frame_numbers)
     meta_data[f'{channel}_FRAMES'] = HeaderEntry(frame_number_string, 'All frames')
-    meta_data[f'{channel}_TASK_NUMBER'] = HeaderEntry(frame_count, 'Number of frames')
 
     try: 
         config_data = json.loads(config_path.read_text(encoding='utf-8'))
@@ -342,9 +358,15 @@ def collect_instrument_specific_metadata(config_path: Path, acq_path: Path, chan
         return (InstrumentSpecificMetadata(fields=meta_data), issues)
     try:
         #Extract sp values from taskValues
+        if len(taskFile) % 8 != 0:
+            issues.append(Issue(
+                level="warning",
+                message=f"{channel} taskFile length ({len(taskFile)}) is not divisible by 8. Header data for task values might be corrupted."
+            ))
         taskValues = [taskFile[i:i + 8] for i in range(0, len(taskFile), 8)]
         sp_expos_values = [task[1:5] for task in taskValues]
         task_number = len(taskValues)
+        meta_data[f'{channel}_TASK_NUMBER'] = HeaderEntry(task_number, 'Number of tasks')
     except Exception as e:
         issues.append(
             Issue(
@@ -355,6 +377,7 @@ def collect_instrument_specific_metadata(config_path: Path, acq_path: Path, chan
                 source=__name__,
             )
         )
+        meta_data[f'{channel}_TASK_NUMBER'] = HeaderEntry(frame_count, 'Number of tasks')
         return (InstrumentSpecificMetadata(fields=meta_data), issues)
     if task_number != len(frame_numbers):
         issues.append(

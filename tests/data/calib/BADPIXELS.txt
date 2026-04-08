@@ -1,0 +1,5 @@
+Type	Col		Row		SizeX	SizeY
+P		100		100		1		1
+H		-		250		640		1
+V		20		-		1		512
+R		400		400		3		4

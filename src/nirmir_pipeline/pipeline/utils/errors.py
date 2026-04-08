@@ -47,4 +47,7 @@ class ConfigError(PipelineError):
     "Raised when the congif is missing or failed to load"
 
 class ValidationError(PipelineError):
-    "Raised when validation is failed"
+    "Raised when validation fails"
+
+class CalibrationError(PipelineError):
+    "Raised when calibration fails"

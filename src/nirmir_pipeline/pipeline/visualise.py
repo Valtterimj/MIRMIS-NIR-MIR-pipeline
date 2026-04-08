@@ -1,8 +1,11 @@
 
 from astropy.io import fits
 from pathlib import Path
+import matplotlib
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 def visualise_fits(file: str | Path, cmap: str ='gray') -> None:
 
@@ -17,9 +20,6 @@ def visualise_fits(file: str | Path, cmap: str ='gray') -> None:
     if data is None:
         raise ValueError(f"{file.name}: Primary HDU has no data")
     
-    print(data[0])
-    data = np.asarray(data)
-
     if data.ndim == 1:
         print('Data is a one dimentional array')
         
@@ -33,6 +33,10 @@ def visualise_fits(file: str | Path, cmap: str ='gray') -> None:
         return
     
     if data.ndim == 2:
+        print(f"Dtype       : {data.dtype}")
+        print(f"Min         : {np.nanmin(data):.4g}")
+        print(f"Mean        : {np.nanmean(data):.4g}")
+        print(f"Max         : {np.nanmax(data):.4g}")
         plt.figure()
         plt.imshow(data, cmap=cmap)
         plt.title(file.name)
@@ -42,6 +46,7 @@ def visualise_fits(file: str | Path, cmap: str ='gray') -> None:
     if data.ndim != 3: 
         raise ValueError(f"{file.name}: expected 1D, 2D, or 3D data, got shape={data.shape}")
     
+    print(f"Dtype       : {data.dtype}")
     n_frames = data.shape[0]
 
     fig, ax = plt.subplots()

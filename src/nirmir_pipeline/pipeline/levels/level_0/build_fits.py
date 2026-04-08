@@ -60,7 +60,7 @@ def build_fits(input: InputLayout, cfg: Config, channel: str) -> tuple[Path, lis
         meta_data, meta_issues = collect_metadata(input=input, spice=cfg.run.spice_dir, cfg=cfg.data, channel=channel)
         all_issues.extend(meta_issues)
     except PipelineError as e:
-        raise PipelineError("build_fits failed") from e
+        raise PipelineError("build_fits failed. Error while collecting metadata.") from e
     
     # Add to header
     acq_meta = meta_data.acq
@@ -75,6 +75,10 @@ def build_fits(input: InputLayout, cfg: Config, channel: str) -> tuple[Path, lis
     acq_dir = input.acquisition_dir
     frame_n, frame_list = list_channel_frames(acq_dir=acq_dir, channel=channel)
 
+    if frame_n == 0:
+        raise PipelineError(f'No matching acquisitions in {acq_dir}. \n'
+                            f"Files should follow the file naming convetion e.g 'dc_0_exp_000.bin' for NIR first exposure")
+    
     primary_header["ORIGFILE"] = frame_list[0]
     if channel == 'MIR':
         values = []
@@ -106,8 +110,7 @@ def build_fits(input: InputLayout, cfg: Config, channel: str) -> tuple[Path, lis
                     source=__name__,
                 )
             )
-        array = np.array(values, dtype=np.uint32)
-        primary_hdu.data = array
+        image = np.array(values, dtype=np.uint32)
     elif channel == 'NIR':
         height = 518
         width = 648
@@ -133,8 +136,12 @@ def build_fits(input: InputLayout, cfg: Config, channel: str) -> tuple[Path, lis
                     )
                 )
 
-        data_cube = np.array(image_data) # Stack the images into a cube
-        primary_hdu.data = data_cube
+    
+        image = np.array(image_data) # Stack the images into a cube
+
+    if len(image) == 0:
+        raise PipelineError(f"Error creating fits data unit. List of frames seems to be empty.")
+    primary_hdu.data = image
 
     # Add comments to help the readability
     primary_header.insert('PROCLEVL',('COMMENT', ' - - - - - - - - Instrument data - - - - - - - - '), after=True)
@@ -162,11 +169,5 @@ def build_fits(input: InputLayout, cfg: Config, channel: str) -> tuple[Path, lis
                 )
             )
     except Exception as e:
-            all_issues.append(
-                Issue(
-                    level="error",
-                    message=(f"Error writing a fits file: {e}"),
-                    source=__name__,
-                )
-            )
+            raise PipelineError(f'Error writing a fits file.') from e
     return fits_file, all_issues

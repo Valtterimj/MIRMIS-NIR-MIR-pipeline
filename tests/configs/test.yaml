@@ -30,6 +30,42 @@ run:
   # Overwrite existing outputs if they already exists
   overwrite: true
 
+# --------------------------------------------------------
+# Calibration settings
+#   all calibration related files should be inside calibration_dir.
+#   Define the relative paths to specific files inside the calibration dir.
+#   
+# --------------------------------------------------------
+calibration: 
+
+  # (Required for level 1) Path to directory containing calibration files. Relative to this config file or absolute.
+  calibration_dir: "../calibration"
+
+  # Dark background for NIR channel. relative inside calibration_dir. Used as calibrarion_dir / dark
+  # Dark should be fits file with the frame is in the PrimaryHDU
+  dark: "DARKS/NIR_DARK.fits"
+
+  # Flat field for NIR channel.
+  # Flat should be fits file with the frame is in the PrimaryHDU
+  flat: "FLATS/NIR_FLAT.fits"
+
+  # Bad pixel list as a txt file.
+  badpixels: "BADPIXELS/NIR_BADPIXELS.TXT"
+
+  # Radiance conversion data
+  # Radiance files should be txt files
+  nir_radiance: "RADIANCE/NIR_RADIANCE.txt"
+  mir_radiance: "RADIANCE/MIR_RADIANCE.txt"
+
+  # Solar spectral irradiance
+  # Should be csv file
+  solar_ssi: "SOLAR/ssi_yearly_avg_e2024_c20250221.csv"
+
+  # Solar distance
+  # Manually set the solar distance, used in reflectance calibration.
+  # Warning setting this value will override the solar distance from SPICE kernel
+  # usage: solar disrtance in AU E.G. "1" or "1.2" | "" or None if not used.
+  solar_distance: ""
 
 # --------------------------------------------------------
 # Metadata settings
@@ -66,7 +102,7 @@ data:
 pipeline:
 
   # List of pipeline levels to execute.
-  # Values: "0", "1", "2", "3"
+  # Values: "0", "1", "1A", "1A-extra", "1B", "1C"
   # E.g. ["0","1"]
   levels: ["0"]
 

@@ -1,14 +1,18 @@
 import re
 import subprocess
+import numbers
+import numpy as np
 
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Iterable, List
+from astropy.io.fits import Header, PrimaryHDU, ImageHDU, BinTableHDU, HDUList
 
 from nirmir_pipeline.pipeline.utils.classes import Issue, IssueLevel
 
 import logging
 logger = logging.getLogger(__name__)
+
+kelvin: float = 273.15
 
 channel_to_id = {
     "NIR" : 0,
@@ -19,6 +23,26 @@ id_to_channel = {
     0 : "NIR",
     1 : "MIR"
 }
+
+def parse_levels_to_run(levels: list[str]) -> list[str]:
+    levels_to_run: list[str] = []
+    seen: set[str] = set()
+
+    def add(level: str) -> None:
+        if level not in seen:
+            levels_to_run.append(level)
+            seen.add(level)
+    
+    if "1" in levels:
+        for level in ("1A", "1B", "1C"):
+            add(level)
+    for level in levels:
+        if level == "1":
+            continue
+        if level.startswith("1"):
+            add(level)
+    
+    return levels_to_run
 
 def get_current_utc_time_str():
     return datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S')
@@ -134,6 +158,20 @@ def form_fits_name(channel: str, image_number: str, utc_time: str, calib_lvl: st
     file_name = f'{channel}_{image_number}_{utc_format}_{calib_lvl}.fits'
     return file_name
 
+def form_fits_header_val(key: str, value: str, comment: str, hierarch: bool) -> tuple[str, str]:
+    try: 
+        key = str(key)
+        value = str(value)
+        comment = str(comment)
+        k = f"HIERARCH {key}" if hierarch else key
+        card_length = len(k) + len(value) + len(comment) + 7
+        if card_length <= 80:
+            return (value, comment)
+        else: 
+            return (value, "")
+    except Exception as e:
+        raise ValueError(f"Fits header value and comment should be stings. (key: {type(key)}, value: {type(value)}, comment: {type(comment)})") from e
+
 def log_issue(issue: Issue) -> None:
     issue_logger = logging.getLogger(issue.source)
     if issue.level == "info":
@@ -148,3 +186,51 @@ def fits_in_dir(folder: Path) -> list[Path]:
     for pat in ("*.fits", "*.fit", "*fts"):
         files.extend(folder.glob(pat))
     return sorted(set(files))
+
+def convert_to_float64(hdul: HDUList, index: int = 0) -> tuple[HDUList, Issue]:
+    # Replace the .data with a float64
+    hdu = hdul[index]
+    if hdu.data is not None and np.issubdtype(hdu.data.dtype, np.number):
+        hdu.data = hdu.data.astype(np.float64)
+        if 'BITPIX' in hdu.header:
+            hdu.header['BITPIX'] = -64
+        issue = Issue(
+            level='info',
+            message='HDU data converted to float64',
+            source=__name__,
+        )
+    else:
+        issue = Issue(
+            level='warning',
+            message='HDU data is None or not convertable to float64',
+            source=__name__,
+        )
+    return hdul, issue
+
+def convert_to_float32(hdul: HDUList, index: int = 0) -> tuple[HDUList, Issue]:
+    # Replace the data with a float32 
+    hdu = hdul[index]
+    if hdu.data is not None and np.issubdtype(hdu.data.dtype, np.number):
+        hdu.data = hdu.data.astype(np.float32)
+        if 'BITPIX' in hdu.header:
+            hdu.header['BITPIX'] = -32
+        issue = Issue(
+            level='info',
+            message='HDU data converted to float32',
+            source=__name__,
+        )
+    else:
+        issue = Issue(
+            level='warning',
+            message='HDU data is None or not convertable to float32',
+            source=__name__,
+        )
+    return hdul, issue
+
+
+
+
+
+
+
+
