@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 
 from nirmir_pipeline.pipeline.config import load_config
+from nirmir_pipeline.pipeline.utils.classes import Issue
 from nirmir_pipeline.pipeline.utils.errors import PipelineError, ValidationError, ConfigError, format_exeption_chain
 
 from nirmir_pipeline.pipeline.levels.level_0.run import run_level_0
@@ -12,7 +13,14 @@ from nirmir_pipeline.pipeline.utils.utilities import fits_in_dir, log_issue
 from nirmir_pipeline.pipeline.levels.level_1.run import run_level_1
 logger = logging.getLogger(__name__)
 
-def run_pipeline(config_path: Path) -> None:
+def run_pipeline(config_path: Path) -> tuple[Path, list[Issue], list[Issue]]:
+    """
+    Main funciton to run data calibration and processing pipeline for MIRMIS instrument's NIR and MIR channels. 
+    Returns the output directory containing the processed FITS files and lists of potential warning / error messages.
+    """
+    warnings: list[Issue] = []
+    errors: list[Issue] = []
+
     logger.info("Staring pipeline function: run_pipeline")
 
     try:
@@ -38,33 +46,49 @@ def run_pipeline(config_path: Path) -> None:
     
     logger.info(f"Running pipeline levels: {levels} for channels: {channels}")
 
-    for channel in cfg.pipeline.channels:
-        logger.info(f"Channel: {channel}")
-        try:
-            if "0" in levels:
+    if "0" in levels:
+        for channel in cfg.pipeline.channels:
+            try:
                 logger.info(f"Running level 0 for channel {channel}.")
                 fits_file, all_issues = run_level_0(cfg=cfg, channel=channel)
                 for issue in all_issues:
                     log_issue(issue)
+                    if issue.level == 'warning':
+                        warnings.append(issue)
+                    if issue.level == 'error':
+                        errors.append(issue)
                 logger.info(f"Level 0 run finished for channel {channel}.")
-                cfg.run.input_dir = cfg.run.output_dir
+            except PipelineError as e:
+                logger.error(
+                    f"Error running pipeline for channel %s. Continuing. %s",
+                    channel, 
+                    format_exeption_chain(e)
+                    )
+                continue
+        cfg.run.input_dir = cfg.run.output_dir
 
-            if any(x in levels for x in ["1", "1A", "1A-extra", "1B", "1C"]):
+
+    if any(x in levels for x in ["1", "1A", "1A-extra", "1B", "1C"]):
+        for channel in cfg.pipeline.channels:
+            try:
                 logger.info(f"Running level 1 for channel {channel}.")
                 fits_file, all_issues = run_level_1(cfg=cfg, channel=channel)
                 for issue in all_issues:
                     log_issue(issue)
-                logger.info(f"Level 1 finished for channel {channel}.")
-
-            
-        except PipelineError as e:
-            logger.error(
-                f"Error running pipeline for channel %s. Continuing. %s",
-                channel, 
-                format_exeption_chain(e)
-                )
-            continue
-
+                    if issue.level == 'warning':
+                        warnings.append(issue)
+                    if issue.level == 'error':
+                        errors.append(issue)
+                logger.info(f"Level 1 finished for channel {channel}.")  
+            except PipelineError as e:
+                logger.error(
+                    f"Error running pipeline for channel %s. Continuing. %s",
+                    channel, 
+                    format_exeption_chain(e)
+                    )
+                continue
+    
+    return cfg.run.output_dir, warnings, errors
 
 
 def view_fits(path: Path, level: str | None = None) -> None:

@@ -60,8 +60,17 @@ def reflectance_calibration(
             frames = primary_header.get(f'{channel}_FRAMES').split(',')
             wavelengths = []
             for i, frame in enumerate(frames):
-                wavelengths.append(float(primary_header.get(f'{channel}_WL_{frame}')))
-    
+                wl = primary_header.get(f'{channel}_WL_{frame}')
+                if wl == None:
+                    all_issues.append(
+                        Issue(
+                            level='warning',
+                            message=f"No wavelength data found for {channel} frame {frame}. Skipping the frame",
+                            source=__name__
+                        )
+                    )
+                wavelengths.append(wl)
+
     except Exception as e:
         all_issues.append(
                 Issue(
@@ -94,7 +103,11 @@ def reflectance_calibration(
         ssi_gaussian = gaussian_convolution(ssi_vals, wl_nm, fwhm_nm)   
 
         for i, frame in enumerate(data):
-            wl = float(wavelengths[i])
+            wl = wavelengths[i]
+            if wl == None:
+                continue
+            else:
+                wl = float(wl)
             ssi_index = int(np.searchsorted(wl_nm, wl))
             f_au = ssi_gaussian[ssi_index]
             IF_frame = np.pi * frame * (sun_dist**2) / f_au
@@ -105,7 +118,7 @@ def reflectance_calibration(
         all_issues.append(
                 Issue(
                     level='error',
-                    message=f'Reflectance conversion failed.',
+                    message=f'Reflectance conversion failed: {e}',
                     source=__name__,
                 )
             )

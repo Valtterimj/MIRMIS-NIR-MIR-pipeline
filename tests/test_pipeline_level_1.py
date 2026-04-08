@@ -578,6 +578,69 @@ def test_radiance_calibration_mir(tmp_path: Path, repo_root: Path) -> None:
         assert np.all(data[1] == 1000)
         assert np.all(data[2] == 250)
 
+def test_radiance_mismatch_frames_wl_exp_nir(tmp_path: Path, repo_root: Path) -> None:
+
+    level_1A_fits = repo_root / 'tests' / 'data' / 'fits' / 'lvl_1A' / 'NIR_000000_1111111111111_1A.fits'
+    radiance_file = repo_root / 'tests' / 'data' / 'calib' / 'RADIANCE.txt'
+    modified_file = make_modified_fits_hdr(
+        source_path=level_1A_fits,
+        tmp_path=tmp_path,
+        output_name='NIR_000000_1111111111111_1A.fits',
+        updates={
+            "NIR_FRAMES" : ("000,002,003", "NIR frames"),
+            "NIR_EXP_001": ("0.001", "NIR TASK 000 exposure [s] "),
+            "NIR_EXP_002": ("0.001", "NIR TASK 001 exposure [s] "),
+            "NIR_EXP_003": ("0.001", "NIR TASK 002 exposure [s] "),
+            "NIR_WL_001" : ("900", "NIR TASK 000 wavelength [nm]"),
+            "NIR_WL_002" : ("950", "NIR TASK 001 wavelength [nm]"),
+            "NIR_WL_003" : ("1025", "NIR TASK 002 wavelength [nm]"),
+        },
+        deletes=['NIR_EXP_000', 'NIR_WL_000']
+    )
+    with fits.open(modified_file) as hdul:
+        hdul, issues = convert_to_float64(hdul)
+        hdul, issues = radiometric_calibration(hdul, radiance_file)
+        data = hdul[0].data
+
+        warnings = [i for i in issues if i.level == 'warning']
+
+        assert len(warnings) == 1
+        assert 'No wavelength data found for NIR frame 000' in warnings[0].message
+        assert np.all(data[0] == 1)
+        assert np.all(data[1] == 1000)
+
+
+def test_radiance_mismatch_frames_wl_exp_mir(tmp_path: Path, repo_root: Path) -> None:
+
+    level_1A_fits = repo_root / 'tests' / 'data' / 'fits' / 'lvl_1A' / 'MIR_000000_1111111111111_1A.fits'
+    radiance_file = repo_root / 'tests' / 'data' / 'calib' / 'RADIANCE.txt'
+    modified_file = make_modified_fits_hdr(
+        source_path=level_1A_fits,
+        tmp_path=tmp_path,
+        output_name='MIR_000000_1111111111111_1A.fits',
+        updates={
+            "MIR_FRAMES" : ("000,002,003", "MIR frames"),
+            "MIR_EXP_001": ("0.001", "MIR TASK 000 exposure [s] "),
+            "MIR_EXP_002": ("0.001", "MIR TASK 001 exposure [s] "),
+            "MIR_EXP_003": ("0.001", "MIR TASK 002 exposure [s] "),
+            "MIR_WL_001" : ("2000", "MIR TASK 000 wavelength [nm]"),
+            "MIR_WL_002" : ("2020", "MIR TASK 001 wavelength [nm]"),
+            "MIR_WL_003" : ("2050", "MIR TASK 002 wavelength [nm]"),
+        },
+        deletes=['MIR_EXP_000', 'MIR_WL_000']
+    )
+    with fits.open(modified_file) as hdul:
+        hdul, issues = convert_to_float64(hdul)
+        hdul, issues = radiometric_calibration(hdul, radiance_file)
+        data = hdul[0].data
+
+        warnings = [i for i in issues if i.level == 'warning']
+
+        assert len(warnings) == 1
+        assert 'No wavelength data found for MIR frame 000' in warnings[0].message
+        assert np.all(data[0] == 1)
+        assert np.all(data[1] == 1000)
+
 def test_convert_dtypes(tmp_path: Path, repo_root: Path) -> None:
 
     level_1A_fits = repo_root / 'tests' / 'data' / 'fits' / 'lvl_1A' / 'MIR_000000_1111111111111_1A.fits'
@@ -734,6 +797,7 @@ def test_reflectance_missing_frames(tmp_path: Path, repo_root: Path) -> None:
         tmp_path=tmp_path,
         output_name='NIR_000000_1111111111111_1B.fits',
         updates={
+            "SOLAR_D"    : ("1", "Solar distance [AU]"),
             "NIR_TASK_NUMBER" : ("3", "Number of tasks"),
             "NIR_FRAMES" : ("000,002,003", ""),
             "NIR_EXP_000": ("0.001", "NIR TASK 000 exposure [s] "),
@@ -749,9 +813,9 @@ def test_reflectance_missing_frames(tmp_path: Path, repo_root: Path) -> None:
 
     result, issues = reflectance_calibration(modified_file, output_dir, solar_ssi)
 
-    error = [i for i in issues if i.level=='error']
+    warning = [i for i in issues if i.level=='warning']
 
-    assert len(error) == 1
+    assert len(warning) == 1
 
 def test_reflectance_missing_wl(tmp_path: Path, repo_root: Path) -> None:
     level_1B_fits = repo_root / 'tests' / 'data' / 'fits' / 'lvl_1B' / 'NIR_000000_1111111111111_1B.fits'
@@ -761,6 +825,7 @@ def test_reflectance_missing_wl(tmp_path: Path, repo_root: Path) -> None:
         tmp_path=tmp_path,
         output_name='NIR_000000_1111111111111_1B.fits',
         updates={
+            "SOLAR_D"    : ("1", "Solar distance [AU]"),
             "NIR_TASK_NUMBER" : ("3", "Number of tasks"),
             "NIR_FRAMES" : ("000,001,002", ""),
             "NIR_EXP_000": ("0.001", "NIR TASK 000 exposure [s] "),
@@ -775,9 +840,41 @@ def test_reflectance_missing_wl(tmp_path: Path, repo_root: Path) -> None:
 
     result, issues = reflectance_calibration(modified_file, output_dir, solar_ssi)
 
-    error = [i for i in issues if i.level=='error']
+    warning = [i for i in issues if i.level=='warning']
 
-    assert len(error) == 1
+    assert len(warning) == 1
+
+def test_reflectance_mismatch_frames_wl_exp(tmp_path: Path, repo_root: Path) -> None:
+
+    level_1B_fits = repo_root / 'tests' / 'data' / 'fits' / 'lvl_1B' / 'NIR_000000_1111111111111_1B.fits'
+    radiance_file = repo_root / 'tests' / 'data' / 'calib' / 'RADIANCE.txt'
+    modified_file = make_modified_fits_hdr(
+        source_path=level_1B_fits,
+        tmp_path=tmp_path,
+        output_name='NIR_000000_1111111111111_1B.fits',
+        updates={
+            "SOLAR_D"    : ("1", "Solar distance [AU]"),
+            "NIR_FRAMES" : ("000,002,003", "NIR frames"),
+            "NIR_EXP_001": ("0.001", "NIR TASK 000 exposure [s] "),
+            "NIR_EXP_002": ("0.001", "NIR TASK 001 exposure [s] "),
+            "NIR_EXP_003": ("0.001", "NIR TASK 002 exposure [s] "),
+            "NIR_WL_001" : ("900", "NIR TASK 000 wavelength [nm]"),
+            "NIR_WL_002" : ("950", "NIR TASK 001 wavelength [nm]"),
+            "NIR_WL_003" : ("1025", "NIR TASK 002 wavelength [nm]"),
+        },
+        deletes=['NIR_EXP_000', 'NIR_WL_000']
+    )
+    solar_ssi = repo_root / 'calibration' / 'SOLAR' / 'ssi_yearly_avg_e2024_c20250221.csv'
+    result, issues = reflectance_calibration(modified_file, tmp_path, solar_ssi)
+
+    warnings = [i for i in issues if i.level == 'warning']
+
+    assert len(warnings) == 1
+    assert 'No wavelength data found for NIR frame 000' in warnings[0].message
+    with fits.open(result) as hdul:
+        data = hdul[0].data
+        assert np.all(data[0] == 1)
+
 
 def pipeline_level_1_works(tmp_path: Path, repo_root: Path) -> None:
     level_0A_fits = repo_root / 'tests' / 'data' / 'fits' / 'lvl_0A' / 'NIR_000000_1111111111111_0A.fits'

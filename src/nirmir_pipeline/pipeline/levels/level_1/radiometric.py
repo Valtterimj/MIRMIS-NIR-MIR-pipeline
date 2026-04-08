@@ -93,6 +93,24 @@ def radiometric_calibration(hdul: HDUList, radiance_file: Path) -> HDUList:
             image = new_data_cube[i]
             wl = header.get(f'{channel}_WL_{frame}')
             exposure = header.get(f'{channel}_EXP_{frame}')
+            if wl == None:
+                all_issues.append(
+                    Issue(
+                        level='warning',
+                        message=f'No wavelength data found for {channel} frame {frame}. Skipping the frame.',
+                        source=__name__
+                    )
+                )
+                continue
+            if exposure == None:
+                all_issues.append(
+                    Issue(
+                        level='warning',
+                        message=f'No exposure data found for {channel} frame {frame}. Skipping the frame.',
+                        source=__name__
+                    )
+                )
+                continue
 
             interp_vals = interp_values(df, float(wl))
             response = float(interp_vals.get('response_dn_per_w'))
