@@ -14,8 +14,6 @@ def run_level_1(cfg: Config, channel: str) -> tuple[Path, list[Issue]]:
     levels = cfg.pipeline.levels
     levels_to_run = parse_levels_to_run(levels=levels)
 
-    print(f'levels to run: {levels_to_run}' )
-
     if '1A' in levels_to_run: 
         fits_path = _resolve_level_fits_path(input_dir=cfg.run.input_dir, channel=channel, lvl='0A')
         output_dir = cfg.run.output_dir
