@@ -168,6 +168,7 @@
             </pds:Local_Internal_Reference>
             <sp:spectrum_format>3D</sp:spectrum_format>
             <sp:spectral_bin_type>wavelength</sp:spectral_bin_type>
+            
             <sp:Observation_Parameters>
                <sp:number_of_exposures>13</sp:number_of_exposures>
                <sp:net_integration_time unit="s">UNKNOWN</sp:net_integration_time>
