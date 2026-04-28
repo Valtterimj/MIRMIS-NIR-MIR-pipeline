@@ -4,7 +4,7 @@ from pathlib import Path
 
 from nirmir_pipeline.utils.logging_config import setup_logging
 
-from nirmir_pipeline.pipeline.run import run_pipeline, view_fits
+from nirmir_pipeline.pipeline.run import run_pipeline, view_fits, run_generate_pds4
 from nirmir_pipeline.pipeline.utils.errors import PipelineError
 
 
@@ -31,6 +31,13 @@ def main() -> None:
         help="If --path is a directory, which level product to view (e.g. '0A', '1A', '1B') "
     )
 
+    pds4 = sub.add_parser("pds4", help="Generate PDS4 products")
+    pds4.add_argument(
+        "--config",
+        default=None,
+        help="Path to YAML config. If omitted, searches default options"
+    )
+
     args = parser.parse_args()
 
     setup_logging("INFO")
@@ -44,6 +51,9 @@ def main() -> None:
                 path=Path(args.path).expanduser(),
                 level=args.level,
             )
+        elif args.cdm == "pds4":
+            config_path = Path(args.config).expanduser() if args.config else None
+            run_generate_pds4(config_path=config_path)
     except PipelineError as e:
         raise SystemExit(str(e)) from e
 

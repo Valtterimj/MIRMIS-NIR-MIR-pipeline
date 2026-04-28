@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Sequence, Literal, Optional
 
-Level = Literal["0", "1", "1A", "1A-extra", "1B", "1C"]
+Level = Literal["0A", "1A", "1A-extra", "1B", "1C"]
 Channel = Literal["NIR", "MIR"]
 IssueLevel = Literal["info", "warning", "error"]
 
@@ -47,6 +47,14 @@ class Config:
     data: DataConfig
     pipeline: PipelineConfig
     config_path: Path
+
+@dataclass(frozen=True)
+# The main pds4 config class
+class pds4_config:
+    input: Path
+    output: Path
+    products: list[Level]
+    channels: list[Channel]
 
 @dataclass(frozen=True)
 class InputLayout:

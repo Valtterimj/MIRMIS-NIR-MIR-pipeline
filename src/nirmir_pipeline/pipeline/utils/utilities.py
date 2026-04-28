@@ -227,6 +227,30 @@ def convert_to_float32(hdul: HDUList, index: int = 0) -> tuple[HDUList, Issue]:
         )
     return hdul, issue
 
+def find_fits_files(directory: Path, levels: list[str], channel: list[str]) -> tuple[list[Path], list[str]]:
+    """
+    Search a directory for .fits files matching given level endings.
+    """
+
+    all_fits = [ f for f in directory.iterdir() if f.suffix.lower() == ".fits"]
+
+    if len(channel) == 1:
+        (channel,) = channel
+        all_fits = [f for f in all_fits if f.stem.startswith(channel)]
+
+    matched_files = []
+    missing_files = []
+
+    for level in levels:
+        matches = [f.name for f in all_fits if f.stem.endswith(level)]
+
+        if matches: 
+            matched_files.append(matches)
+        else:
+            missing_files.append(level)
+    
+    return matched_files, missing_files
+
 
 
 

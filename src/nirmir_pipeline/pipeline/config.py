@@ -5,10 +5,10 @@ from typing import Any, Sequence
 import yaml 
 
 from nirmir_pipeline.pipeline.utils.validate import (Level, Channel, _require_mapping, _require_bool, _require_list_of_str, _require_str, 
-                                                     _resolve_str, _resolve_path, _resolve_optional_path, _validate_path, _validate_levels, _validate_channels)
+                                                     _resolve_str, _resolve_path, _resolve_optional_path, _validate_path, _expand_levels, _validate_levels, _validate_channels)
 
 from nirmir_pipeline.pipeline.utils.errors import ConfigError
-from nirmir_pipeline.pipeline.utils.classes import Config, RunConfig, CalibConfig, DataConfig, PipelineConfig
+from nirmir_pipeline.pipeline.utils.classes import Config, RunConfig, CalibConfig, DataConfig, PipelineConfig, pds4_config
 
 
 DEFAULT_CANDIDATES = [
@@ -33,6 +33,19 @@ def load_config(config_path: str | Path | None) -> Config:
     raw = _read_yaml(path)
     config_object = _parse_config_dict(raw=raw, config_path=path)
     return config_object
+
+def load_pds4_config(config_path: str | Path | None) -> pds4_config:
+    """
+    Load, parse and valudate the pds4 configurations
+    called by pipeline/run.py
+    """
+
+    path = _resolve_config_path(config_path=config_path)
+    raw = _read_yaml(path)
+    pds4_config_object = _parse_pds4_config_dict(raw=raw, config_path=path)
+    return pds4_config_object
+
+
 
 # Internals
 def _resolve_config_path(config_path: str | Path | None) -> Path:
@@ -140,6 +153,7 @@ def _parse_config_dict(raw: dict[str, Any], *, config_path: Path) -> Config:
     levels = _require_list_of_str(pipeline_raw, "levels")
     channels = _require_list_of_str(pipeline_raw, "channels")
 
+    levels = _expand_levels(levels)
     _validate_levels(levels)
     _validate_channels(channels)
 
@@ -151,3 +165,23 @@ def _parse_config_dict(raw: dict[str, Any], *, config_path: Path) -> Config:
     return Config(run=run, calib=calibration, data=data, pipeline=pipeline, config_path=config_path)
 
 
+def _parse_pds4_config_dict(raw: dict[str, Any], *, config_path: Path) -> pds4_config:
+
+    base_dir = config_path.parent
+    pds4_raw = _require_mapping(raw, "pds4")
+
+    levels = _require_list_of_str(pds4_raw, "products")
+    levels = _expand_levels(levels)
+    _validate_levels(levels)
+
+    channels = _require_list_of_str(pds4_raw, "channels")
+    _validate_channels(channels)
+
+    pds4_cfg = pds4_config(
+        input =  _validate_path(_resolve_path(_require_str(pds4_raw, "input"), base_dir), kind=None),
+        output = _resolve_optional_path(pds4_raw.get("output", ""), base_dir),
+        products = levels,
+        channels = channels
+    )
+
+    return pds4_cfg

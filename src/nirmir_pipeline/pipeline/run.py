@@ -2,14 +2,14 @@
 import logging
 from pathlib import Path
 
-from nirmir_pipeline.pipeline.config import load_config
+from nirmir_pipeline.pipeline.config import load_config, load_pds4_config
 from nirmir_pipeline.pipeline.utils.classes import Issue
 from nirmir_pipeline.pipeline.utils.errors import PipelineError, ValidationError, ConfigError, format_exeption_chain
 
 from nirmir_pipeline.pipeline.levels.level_0.run import run_level_0
 from nirmir_pipeline.pipeline.utils.validate import _validate_output_dir
 from nirmir_pipeline.pipeline.visualise import visualise_fits
-from nirmir_pipeline.pipeline.utils.utilities import fits_in_dir, log_issue
+from nirmir_pipeline.pipeline.utils.utilities import fits_in_dir, log_issue, find_fits_files
 from nirmir_pipeline.pipeline.levels.level_1.run import run_level_1
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ def run_pipeline(config_path: Path) -> tuple[Path, list[Issue], list[Issue]]:
     
     logger.info(f"Running pipeline levels: {levels} for channels: {channels}")
 
-    if "0" in levels:
+    if "0A" in levels:
         for channel in cfg.pipeline.channels:
             try:
                 logger.info(f"Running level 0 for channel {channel}.")
@@ -68,7 +68,7 @@ def run_pipeline(config_path: Path) -> tuple[Path, list[Issue], list[Issue]]:
         cfg.run.input_dir = cfg.run.output_dir
 
 
-    if any(x in levels for x in ["1", "1A", "1A-extra", "1B", "1C"]):
+    if any(x in levels for x in ["1A", "1A-extra", "1B", "1C"]):
         for channel in cfg.pipeline.channels:
             try:
                 logger.info(f"Running level 1 for channel {channel}.")
@@ -123,3 +123,39 @@ def view_fits(path: Path, level: str | None = None) -> None:
     
     for f in selected:
         visualise_fits(file=f)
+
+def run_generate_pds4(config_path: Path) -> None:
+    """
+    Main function to generate pds4 labels
+    """
+
+    warnings: list[Issue] = []
+    errors: list[Issue] = []
+
+    logger.info("Staring pipeline function: run_generate_pds4")
+
+    try:
+        cfg = load_pds4_config(config_path=config_path)
+    except ConfigError as e: 
+        logger.error(f"[%s] Loading config failed.", type(e).__name__)
+        raise
+
+    input = cfg.input
+    output = cfg.output
+    products = cfg.products
+    channels = cfg.channels
+
+    if input.is_file():
+
+        logger.info(f"Generating PDS4 product for file: {input}")
+        # TODO: call the generate pds4 function
+    
+    else:
+        logger.info(f"Generating PDS4 products for levels: {products}")
+        matches, missing = find_fits_files(input, products, channels)
+        if len(missing) > 0:
+            logger.warning(f"Missing fits files for the processing levels: {missing}.")
+        
+        print(f'matches found: {matches}')
+
+    

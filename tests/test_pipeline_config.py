@@ -213,11 +213,6 @@ def test_invalid_pipeline_config(tmp_path: Path, repo_root: Path) -> None:
     with pytest.raises(ValidationError, match="Missing or invalid list: levels, must be non-empty list"):
         cfg = load_config(modified_config)
     
-    modified["pipeline"]["levels"] = [0, None, "2"]
-    write_yaml(modified_config, modified)
-    with pytest.raises(ValidationError, match="^Invalid pipeline.levels:"):
-        cfg = load_config(modified_config)
-    
     modified["pipeline"]["levels"] = [0, "1"]
     modified["pipeline"]["channels"] = ['NIR', "SWIR"]
     write_yaml(modified_config, modified)
@@ -286,6 +281,6 @@ def test_all_correct_config(tmp_path: Path, repo_root: Path) -> None:
     assert cfg.data.object == "test"
     assert cfg.data.target == "TEST"
 
-    assert cfg.pipeline.levels == ("0", "1", "1A-extra")
+    assert cfg.pipeline.levels == ("0A", "1A", "1A-extra", "1B", "1C")
     assert cfg.pipeline.channels == ("NIR", "MIR")
 

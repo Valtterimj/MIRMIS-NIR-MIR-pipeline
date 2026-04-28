@@ -7,7 +7,7 @@ from nirmir_pipeline.pipeline.utils.errors import ValidationError
 from nirmir_pipeline.pipeline.utils.classes import Level, Channel, InputLayout
 
 
-ALLOWED_LEVELS = set(get_args(Level))
+ALLOWED_LEVELS = list(get_args(Level))
 ALLOWED_CHANNELS = set(get_args(Channel))
 
 def _require_mapping(d: dict[str, Any], key: str) -> dict[str, Any]:
@@ -78,7 +78,20 @@ def _validate_path(path: Path, kind: Literal["file", "dir"] | None = None) -> Pa
 
     return path
 
-def _validate_levels(levels: Sequence[str]) -> None:
+def _expand_levels(levels: Sequence[str]) -> list[str]:
+    expanded_levels = set()
+
+    for level in levels:
+        if level in ALLOWED_LEVELS:
+            expanded_levels.add(level)
+        elif level == "0":
+            expanded_levels.add("0A")
+        elif  level == "1":
+            expanded_levels.update(["1A", "1B", "1C"])
+    
+    return [l for l in ALLOWED_LEVELS if l in expanded_levels]
+
+def _validate_levels(levels: list[str]) -> None:
     bad = [x for x in levels if x not in ALLOWED_LEVELS]
     if bad:
         raise ValidationError(

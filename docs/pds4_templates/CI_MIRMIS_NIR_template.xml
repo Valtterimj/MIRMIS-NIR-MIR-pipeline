@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml-model href="https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1P00.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1P00_1510.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1P00_19B0.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/img/v1/PDS4_IMG_1P00_1930.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<?xml-model href="https://pds.nasa.gov/pds4/sp/v1/PDS4_SP_1P00_1330.sch" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<!-- Initial data dictionaries: PDS Common, Display, Geometry, Imaging. More specific e.g., mission dictionary needed later.-->
+
+<!-- 
+This is the initial PDS4 label template for Comet Interceptor MIRMIS NIR channel.
+The template provides the necessary fields and schemas for the instrument but lacks any mission / instrument specific dictionries.
+Some values are unkown at the time of creating this templa (e.g., product bundle and collection hierarhcy).
+these fields are marked with TODO comments. 
+
+This template is created in spring 2026 using the latest release of dictionaries (1.25.0.0).
+If the dictionary versions are updated make sure the information version matches the release.
+
+
+-->
+
+<Product_Observational xmlns="http://pds.nasa.gov/pds4/pds/v1"
+    xmlns:disp="http://pds.nasa.gov/pds4/disp/v1"
+    xmlns:geom="http://pds.nasa.gov/pds4/geom/v1"
+    xmlns:img="http://pds.nasa.gov/pds4/img/v1"
+    xmlns:sp="http://pds.nasa.gov/pds4/sp/v1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:pds="http://pds.nasa.gov/pds4/pds/v1"
+    xsi:schemaLocation="
+        http://pds.nasa.gov/pds4/pds/v1 https://pds.nasa.gov/pds4/pds/v1/PDS4_PDS_1P00.xsd
+        http://pds.nasa.gov/pds4/disp/v1 https://pds.nasa.gov/pds4/disp/v1/PDS4_DISP_1P00_1510.xsd
+        http://pds.nasa.gov/pds4/geom/v1 https://pds.nasa.gov/pds4/geom/v1/PDS4_GEOM_1P00_19B0.xsd
+        http://pds.nasa.gov/pds4/img/v1 https://pds.nasa.gov/pds4/img/v1/PDS4_IMG_1P00_1930.xsd
+        http://pds.nasa.gov/pds4/sp/v1 https://pds.nasa.gov/pds4/sp/v1/PDS4_SP_1P00_1330.xsd
+    "
+>
+    <Identification_Area>
+        <!--TODO: Check correct Bundle and Collection -->
+        <logical_identifier>urn:nasa:pds:ci_mirmis:nirmir:image0001</logical_identifier>
+        <version_id>1.0</version_id>
+        <title>Comet Interceptor MIRMIS instrument _ channel level _ processed datacube:image0001</title>
+        <!--TODO: Update the information model version if necessary -->
+        <information_model_version>1.25.0.0</information_model_version>
+        <product_class>Product_Observational</product_class>
+        <Modification_History>
+            <Modification_Detail>
+                <modification_date>2026-04-23</modification_date>
+                <version_id>1.0</version_id>
+                <description>Initial template.</description>
+            </Modification_Detail>
+        </Modification_History>
+    </Identification_Area>
+
+    <Observation_Area>
+        <Time_Coordinates>
+            <!--TODO: acquisition stop time should be provided in telemetry or externally -->
+            <start_date_time>2026-04-23T10:29:12.650Z</start_date_time>
+            <stop_date_time>2026-04-23T10:30:35.467Z</stop_date_time>
+        </Time_Coordinates>
+
+        <!-- Primary Reesult Summary is optional (used in LTM)-->
+        <Primary_Result_Summary>
+            <purpose>Science</purpose>
+            <!-- Processing levels: Calibrated, Derived, Partially Processed, Raw, Telemetry-->
+            <processing_level>Calibrated</processing_level>
+            <Science_Facets>
+                <!-- Infrared for MIR-->
+                <wavelength_range>Near Infrared</wavelength_range>
+                <discipline_name>Imaging</discipline_name>
+            </Science_Facets>
+        </Primary_Result_Summary>
+
+        <Investigation_Area>
+            <name>Comet Interceptor</name>
+            <type>Mission</type>
+            <Internal_Reference>
+                <!--TODO: Check the correct lid reference-->
+                <lid_reference>urn:nasa:pds:context:investigation:mission.comet-interceptor</lid_reference>
+                <reference_type>data_to_investigation</reference_type>
+            </Internal_Reference>
+        </Investigation_Area>
+        <Observing_System>
+            <!--TODO: Check the correct names and system hierarchy -->
+            <name>MIRMIS NIR</name>
+            <Observing_System_Component>
+                <name>MIRMIS</name>
+                <type>Host</type>
+                <Internal_Reference>
+                    <!--TODO: check the correct lid reference -->
+                    <lid_reference>urn:nasa:pds:contect:instrument_host.spacecraft.mirmis</lid_reference>
+                    <reference_type>is_instrument_host</reference_type>
+                </Internal_Reference>
+            </Observing_System_Component>
+            <Observing_System_Component>
+                <name>NIR</name>
+                <type>Instrument</type>
+                <Internal_Reference>
+                    <!--TODO: check the correct lid reference -->
+                    <lid_reference>urn:nasa:pds:contect:instrument:.mirmis.nir</lid_reference>
+                    <reference_type>is_instrument</reference_type>
+                </Internal_Reference>
+            </Observing_System_Component>
+        </Observing_System>
+        <Target_Identification>
+            <name>Unkown</name>
+            <type>Comet</type>
+            <!--TODO: add lid reference-->
+        </Target_Identification>
+
+        <!--TODO: add Mission_Area-->
+
+        <Discipline_Area>
+            <!-- Image display guide-->
+            <disp:Display_Settings>
+                <pds:Local_Internal_Reference>
+                    <!-- Local identifier for the datacube defined in File_Area_observational-->
+                    <pds:local_identifier_reference>data_cube</pds:local_identifier_reference>
+                    <pds:local_reference_type>display_setting_to_array</pds:local_reference_type>
+                </pds:Local_Internal_Reference>
+                <disp:Display_Direction>
+                    <disp:horizontal_display_axis>Sample</disp:horizontal_display_axis>
+                    <disp:horizontal_display_direction>Left to Right</disp:horizontal_display_direction>
+                    <disp:vertical_display_axis>Line</disp:vertical_display_axis>
+                    <disp:vertical_display_direction>Top to Bottom</disp:vertical_display_direction>
+                </disp:Display_Direction>
+            </disp:Display_Settings>
+
+            <!-- Geometry dictionary-->
+            <!-- These values comes from SPICE kernel and are optional to include-->
+            <geom:Geometry>
+                <!--TODO: fill out the metakernel information once it has been established -->
+                <geom:SPICE_Kernel_Files>
+                    <geom:SPICE_Kernel_Identification>
+                        <geom:kernel_type>MK</geom:kernel_type>
+                        <geom:spice_kernel_file_name>TBD.tm</geom:spice_kernel_file_name>
+                    </geom:SPICE_Kernel_Identification>
+                </geom:SPICE_Kernel_Files>
+                <!--TODO: fill accurate orbiter geometry -->
+                <geom:Geometry_Orbiter>
+                    <geom:geometry_start_time_utc>2026-04-23T10:29:12.650Z</geom:geometry_start_time_utc>
+                    <geom:geometry_stop_time_utc>2026-04-23T10:30:35.467Z</geom:geometry_stop_time_utc>
+                    <geom:Distances>
+                        <geom:Distances_Specific>
+                            <geom:spacecraft_heliocentric_distance unit="AU">1.0</geom:spacecraft_heliocentric_distance>
+                            <geom:spacecraft_target_center_distance unit="AU">0.00001</geom:spacecraft_target_center_distance>
+                        </geom:Distances_Specific>
+                    </geom:Distances>
+                    <geom:Illumination_Geometry>
+                        <geom:Illumination_Specific>
+                            <geom:solar_elongation unit="deg">1</geom:solar_elongation>
+                        </geom:Illumination_Specific>
+                    </geom:Illumination_Geometry>
+                </geom:Geometry_Orbiter>
+            </geom:Geometry>
+            
+            <!-- Image dictionary-->
+            <img:Imaging>
+                <pds:Local_Internal_Reference>
+                    <pds:local_identifier_reference>data_cube</pds:local_identifier_reference>
+                    <pds:local_reference_type>imaging_parameters_to_image_object</pds:local_reference_type>
+                </pds:Local_Internal_Reference>
+
+                <!-- Calibration -->
+                <img:Calibration>
+                    <img:description>Calibration procedures in order: dark current, flat field, bad pixel (by averaging neighbours), Spectral Radiance, I/F relflectance.</img:description>
+                    <img:processing_venue>Ground</img:processing_venue>
+                </img:Calibration>
+                <img:Dark_Current_Correction>
+                    <img:processing_venue>Ground</img:processing_venue>
+                </img:Dark_Current_Correction>
+                <img:Flat_Field_Correction>
+                    <img:processing_venue>Ground</img:processing_venue>
+                </img:Flat_Field_Correction>
+                <img:Radiometric_Correction>
+                    <img:processing_venue>Ground</img:processing_venue>
+                    <!-- Radiance Factor for 1C calibrated, Spectral Radiance for 1B calibrated-->
+                    <img:radiometric_type>Radiance Factor</img:radiometric_type>
+                </img:Radiometric_Correction>
+
+                <!-- Instrument state -->
+                <img:Instrument_State>
+                    <img:Device_Temperatures>
+                        <img:Device_Temperature>
+                            <img:device_name>NIR CCDTEMP</img:device_name>
+                            <img:temperature_value unit="K">1.01</img:temperature_value>
+                        </img:Device_Temperature>
+                        <img:Device_Temperature>
+                            <img:device_name>MIR CCDTEMP</img:device_name>
+                            <img:temperature_value unit="K">1.01</img:temperature_value>
+                        </img:Device_Temperature>
+                        <img:Device_Temperature>
+                            <img:device_name>NIR FPI TEMP1</img:device_name>
+                            <img:temperature_value unit="K">1.01</img:temperature_value>
+                        </img:Device_Temperature>
+                        <img:Device_Temperature>
+                            <img:device_name>NIR FPI TEMP2</img:device_name>
+                            <img:temperature_value unit="K">1.01</img:temperature_value>
+                        </img:Device_Temperature>
+                        <img:Device_Temperature>
+                            <img:device_name>MIR FPI TEMP1</img:device_name>
+                            <img:temperature_value unit="K">1.01</img:temperature_value>
+                        </img:Device_Temperature>
+                        <img:Device_Temperature>
+                            <img:device_name>MIR FPI TEMP2</img:device_name>
+                            <img:temperature_value unit="K">1.01</img:temperature_value>
+                        </img:Device_Temperature>
+                    </img:Device_Temperatures>
+                </img:Instrument_State>
+            </img:Imaging>
+
+            <!-- Spectral dictionary-->
+            <sp:Spectral_Characteristics>
+                <pds:Local_Internal_Reference>
+                    <pds:local_identifier_reference>data_cube</pds:local_identifier_reference>
+                    <pds:local_reference_type>spectral_characteristics_to_array_object</pds:local_reference_type>
+                </pds:Local_Internal_Reference>
+
+                <sp:spectrum_format>3D</sp:spectrum_format>
+                <sp:spectral_bin_type>wavelength</sp:spectral_bin_type>
+                
+                <sp:Observation_Parameters>
+                    <sp:number_of_exposures>13</sp:number_of_exposures>
+                    <!--TODO: The net integration time for FPI is the observation interval-->
+                    <sp:net_integration_time unit="s">1</sp:net_integration_time>
+                </sp:Observation_Parameters>
+
+                <sp:Field_of_View>
+                    <sp:description>NIR has a rectangular FoV.</sp:description>
+                    <sp:Rectangular_FOV>
+                        <sp:width_angle unit="deg">6.7</sp:width_angle>
+                        <sp:length_angle unit="deg">5.4</sp:length_angle>
+                    </sp:Rectangular_FOV>
+                </sp:Field_of_View>
+                <sp:Bin_Description>
+                    <sp:bin_profile_description>The spectral bins follow a gaussian distribution. Width given as FWHM.</sp:bin_profile_description>
+                    <!--TODO: Should use Uniformly_Sampled_wavelength or Spectral_Lookup? -->
+                    <sp:Uniformly_Sampled_Wavelength>
+                        <!--TODO: Check Axis name -->
+                        <sp:axis_name>band</sp:axis_name>
+                        <!--TODO: Check sampling interval-->
+                        <sp:sampling_interval_wavelength unit="nm">30</sp:sampling_interval_wavelength>
+                        <sp:sampling_scale>Linear</sp:sampling_scale>
+                        <!--TODO: Check bin width-->
+                        <sp:bin_width_wavelength unit="nm">30</sp:bin_width_wavelength>
+                        <sp:first_center_wavelength unit="nm">900</sp:first_center_wavelength>
+                        <sp:last_center_wavelength unit="nm">1700</sp:last_center_wavelength>
+                    </sp:Uniformly_Sampled_Wavelength>
+                </sp:Bin_Description>
+
+            </sp:Spectral_Characteristics>
+        </Discipline_Area>
+    </Observation_Area>
+
+    <Reference_List>
+      <Source_Product_Internal>
+        <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image0001_1b::1.0</lidvid_reference>
+        <reference_type>data_to_calibrated_product</reference_type>
+      </Source_Product_Internal>
+      <Source_Product_Internal>
+        <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image000_1a::1.0</lidvid_reference>
+        <reference_type>data_to_partially_processed_source_product</reference_type>
+      </Source_Product_Internal>
+      <Source_Product_Internal>
+        <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image000_0a::1.0</lidvid_reference>
+        <reference_type>data_to_raw_product</reference_type>
+      </Source_Product_Internal>
+   </Reference_List>
+
+
+    <File_Area_Observational>
+        <File>
+            <file_name>NIR_000000_0000000000000_1C.fits</file_name>
+            <local_identifier>data_file</local_identifier>
+            <creation_date_time>2026-04-23T19:17:07</creation_date_time>
+        </File>
+        <Header>
+            <name>PrimaryHDU</name>
+            <offset unit="byte">0</offset>
+            <object_length unit="byte">8640</object_length>
+            <parsing_standard_id>FITS 3.0</parsing_standard_id>
+            <description>Fits header. Contains metadata about the datacube.</description>
+        </Header>
+        <Array_3D_Spectrum>
+            <name>Hyperspectral Image Cube</name>
+            <local_identifier>data_cube</local_identifier>
+            <offset unit="byte">8640</offset><!-- Always a multiple of 2880 -->
+            <axes>3</axes>
+            <axis_index_order>Last Index Fastest</axis_index_order>
+            <Element_Array>
+                <data_type>IEEE754MSBSingle</data_type>
+                <unit>nm</unit>
+            </Element_Array>
+            <Axis_Array>
+                <axis_name>Wavelength</axis_name>
+                <elements>13</elements>
+                <sequence_number>1</sequence_number>
+            </Axis_Array>
+            <Axis_Array>
+                <axis_name>Line</axis_name>
+                <elements>512</elements>
+                <sequence_number>2</sequence_number>
+            </Axis_Array>
+            <Axis_Array>
+                <axis_name>Sample</axis_name>
+                <elements>640</elements>
+                <sequence_number>3</sequence_number>
+            </Axis_Array>
+      </Array_3D_Spectrum>
+    </File_Area_Observational>
+
+</Product_Observational>

@@ -7,7 +7,7 @@
 <!-- Initial data dictionaries: PDS Common, Display, Geometry, Imaging. More specific e.g., mission dictionary needed later.-->
 
 <!-- 
-This is the initial PDS4 label template for Comet Interceptor MIRMIS NIR and MIR channels.
+This is the initial PDS4 label template for Comet Interceptor MIRMIS MIR channel.
 The template provides the necessary fields and schemas for the instrument but lacks any mission / instrument specific dictionries.
 Some values are unkown at the time of creating this templa (e.g., product bundle and collection hierarhcy).
 these fields are marked with TODO comments. 
@@ -37,7 +37,7 @@ If the dictionary versions are updated make sure the information version matches
         <!--TODO: Check correct Bundle and Collection -->
         <logical_identifier>urn:nasa:pds:ci_mirmis:nirmir:image0001</logical_identifier>
         <version_id>1.0</version_id>
-        <title>Comet Interceptor MIRMIS instrument _ channel level _ processed datacube:image0001</title>
+        <title>Comet Interceptor MIRMIS instrument MIR channel level _ processed datacube:image0001</title>
         <!--TODO: Update the information model version if necessary -->
         <information_model_version>1.25.0.0</information_model_version>
         <product_class>Product_Observational</product_class>
@@ -61,16 +61,16 @@ If the dictionary versions are updated make sure the information version matches
         <Primary_Result_Summary>
             <purpose>Science</purpose>
             <!-- Processing levels: Calibrated, Derived, Partially Processed, Raw, Telemetry-->
-            <processing_level>Raw</processing_level>
+            <processing_level>Calibrated</processing_level>
             <Science_Facets>
-                <!-- Infrared for MIR-->
-                <wavelength_range>Near Infrared</wavelength_range>
+                <!-- Infrared for MIR, Near INfrared for NIR-->
+                <wavelength_range>Infrared</wavelength_range>
                 <discipline_name>Imaging</discipline_name>
             </Science_Facets>
         </Primary_Result_Summary>
 
         <Investigation_Area>
-            <name>Hera</name>
+            <name>Comet Interceptor</name>
             <type>Mission</type>
             <Internal_Reference>
                 <!--TODO: Check the correct lid reference-->
@@ -80,7 +80,7 @@ If the dictionary versions are updated make sure the information version matches
         </Investigation_Area>
         <Observing_System>
             <!--TODO: Check the correct names and system hierarchy -->
-            <name>MIRMIS NIR</name>
+            <name>MIRMIS MIR</name>
             <Observing_System_Component>
                 <name>MIRMIS</name>
                 <type>Host</type>
@@ -91,7 +91,7 @@ If the dictionary versions are updated make sure the information version matches
                 </Internal_Reference>
             </Observing_System_Component>
             <Observing_System_Component>
-                <name>NIR</name>
+                <name>MIR</name>
                 <type>Instrument</type>
                 <Internal_Reference>
                     <!--TODO: check the correct lid reference -->
@@ -214,7 +214,7 @@ If the dictionary versions are updated make sure the information version matches
                     <pds:local_reference_type>spectral_characteristics_to_array_object</pds:local_reference_type>
                 </pds:Local_Internal_Reference>
 
-                <sp:spectrum_format>3D</sp:spectrum_format>
+                <sp:spectrum_format>1D</sp:spectrum_format>
                 <sp:spectral_bin_type>wavelength</sp:spectral_bin_type>
                 
                 <sp:Observation_Parameters>
@@ -224,11 +224,10 @@ If the dictionary versions are updated make sure the information version matches
                 </sp:Observation_Parameters>
 
                 <sp:Field_of_View>
-                    <sp:description>NIR has a rectangular FoV.</sp:description>
-                    <sp:Rectangular_FOV>
-                        <sp:width_angle unit="deg">5.4</sp:width_angle>
-                        <sp:length_angle unit="deg">6.7</sp:length_angle>
-                    </sp:Rectangular_FOV>
+                    <sp:description>MIR has a circular FoV.</sp:description>
+                    <sp:Circular_FOV>
+                        <sp:diameter_angle unit="deg">2.0</sp:diameter_angle>
+                    </sp:Circular_FOV>
                 </sp:Field_of_View>
                 <sp:Bin_Description>
                     <sp:bin_profile_description>The spectral bins follow a gaussian distribution. Width given as FWHM.</sp:bin_profile_description>
@@ -239,9 +238,10 @@ If the dictionary versions are updated make sure the information version matches
                         <!--TODO: Check sampling interval-->
                         <sp:sampling_interval_wavelength unit="nm">30</sp:sampling_interval_wavelength>
                         <sp:sampling_scale>Linear</sp:sampling_scale>
+                        <!--TODO: Check bin width-->
                         <sp:bin_width_wavelength unit="nm">30</sp:bin_width_wavelength>
-                        <sp:first_center_wavelength unit="nm">900</sp:first_center_wavelength>
-                        <sp:last_center_wavelength unit="nm">1600</sp:last_center_wavelength>
+                        <sp:first_center_wavelength unit="nm">2500</sp:first_center_wavelength>
+                        <sp:last_center_wavelength unit="nm">5000</sp:last_center_wavelength>
                     </sp:Uniformly_Sampled_Wavelength>
                 </sp:Bin_Description>
 
@@ -250,10 +250,6 @@ If the dictionary versions are updated make sure the information version matches
     </Observation_Area>
 
     <Reference_List>
-      <Source_Product_Internal>
-        <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image0001_1b::1.0</lidvid_reference>
-        <reference_type>data_to_calibrated_product</reference_type>
-      </Source_Product_Internal>
       <Source_Product_Internal>
         <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image000_1a::1.0</lidvid_reference>
         <reference_type>data_to_partially_processed_source_product</reference_type>
@@ -267,7 +263,7 @@ If the dictionary versions are updated make sure the information version matches
 
     <File_Area_Observational>
         <File>
-            <file_name>NIR_000000_0000000000000_1C.fits</file_name>
+            <file_name>MIR_000000_0000000000000_1B.fits</file_name>
             <local_identifier>data_file</local_identifier>
             <creation_date_time>2026-04-23T19:17:07</creation_date_time>
         </File>
@@ -278,11 +274,11 @@ If the dictionary versions are updated make sure the information version matches
             <parsing_standard_id>FITS 3.0</parsing_standard_id>
             <description>Fits header. Contains metadata about the datacube.</description>
         </Header>
-        <Array_3D_Spectrum>
-            <name>Hyperspectral Image Cube</name>
+        <Array_1D_Spectrum>
+            <name>MIR Spectrometer Image</name>
             <local_identifier>data_cube</local_identifier>
             <offset unit="byte">8640</offset><!-- Always a multiple of 2880 -->
-            <axes>3</axes>
+            <axes>1</axes>
             <axis_index_order>Last Index Fastest</axis_index_order>
             <Element_Array>
                 <data_type>IEEE754MSBSingle</data_type>
@@ -293,17 +289,7 @@ If the dictionary versions are updated make sure the information version matches
                 <elements>13</elements>
                 <sequence_number>1</sequence_number>
             </Axis_Array>
-            <Axis_Array>
-                <axis_name>Line</axis_name>
-                <elements>512</elements>
-                <sequence_number>2</sequence_number>
-            </Axis_Array>
-            <Axis_Array>
-                <axis_name>Sample</axis_name>
-                <elements>640</elements>
-                <sequence_number>3</sequence_number>
-            </Axis_Array>
-      </Array_3D_Spectrum>
+      </Array_1D_Spectrum>
     </File_Area_Observational>
 
 </Product_Observational>
