@@ -52,6 +52,7 @@ class Config:
 # The main pds4 config class
 class pds4_config:
     input: Path
+    templates_dir: Path
     output: Path
     products: list[Level]
     channels: list[Channel]

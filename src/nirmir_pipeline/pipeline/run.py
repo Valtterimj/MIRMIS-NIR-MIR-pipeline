@@ -11,6 +11,8 @@ from nirmir_pipeline.pipeline.utils.validate import _validate_output_dir
 from nirmir_pipeline.pipeline.visualise import visualise_fits
 from nirmir_pipeline.pipeline.utils.utilities import fits_in_dir, log_issue, find_fits_files
 from nirmir_pipeline.pipeline.levels.level_1.run import run_level_1
+from nirmir_pipeline.pipeline.pds4.generate_pds4_label import generate_label
+
 logger = logging.getLogger(__name__)
 
 def run_pipeline(config_path: Path) -> tuple[Path, list[Issue], list[Issue]]:
@@ -129,9 +131,6 @@ def run_generate_pds4(config_path: Path) -> None:
     Main function to generate pds4 labels
     """
 
-    warnings: list[Issue] = []
-    errors: list[Issue] = []
-
     logger.info("Staring pipeline function: run_generate_pds4")
 
     try:
@@ -144,18 +143,34 @@ def run_generate_pds4(config_path: Path) -> None:
     output = cfg.output
     products = cfg.products
     channels = cfg.channels
+    templates_dir = cfg.templates_dir
+    if not output or output.is_dir():
+            output = input / 'pds4'
 
     if input.is_file():
-
         logger.info(f"Generating PDS4 product for file: {input}")
-        # TODO: call the generate pds4 function
+        try: 
+            issues = generate_label(input, output)
+            if issues:
+                for issue in issues:
+                    log_issue(issue)
+        except Exception as e:
+            raise PipelineError(f'Generating PDS4 label failed for file: {file}, \nreason: {e}') 
     
     else:
         logger.info(f"Generating PDS4 products for levels: {products}")
         matches, missing = find_fits_files(input, products, channels)
         if len(missing) > 0:
             logger.warning(f"Missing fits files for the processing levels: {missing}.")
+        for file in matches:
+            path = input / file
+            try: 
+                issues = generate_label(path, templates_dir, output)
+                if issues:
+                    for issue in issues:
+                        log_issue(issue)
+            except Exception as e:
+                raise PipelineError(f'Generating PDS4 label failed for file: {file}, \nreason: {e}') 
         
-        print(f'matches found: {matches}')
 
     

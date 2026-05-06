@@ -3,7 +3,7 @@ import subprocess
 import numbers
 import numpy as np
 
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from astropy.io.fits import Header, PrimaryHDU, ImageHDU, BinTableHDU, HDUList
 
@@ -245,14 +245,64 @@ def find_fits_files(directory: Path, levels: list[str], channel: list[str]) -> t
         matches = [f.name for f in all_fits if f.stem.endswith(level)]
 
         if matches: 
-            matched_files.append(matches)
+            matched_files.extend(matches)
         else:
-            missing_files.append(level)
+            missing_files.extend(level)
     
     return matched_files, missing_files
 
+def convert_to_zulu_time(time: str, offset: str | None = None) -> str:
+    """
+    Converts a local time string to UTC Zulu time.
 
+    Parameters:
+        time (str): Time string, e.g. '2020-01-01T01:59:48.000' or '2020-01-01T01:59:48'
+        offset (str | None): UTC offset as '±HH:MM', or None if already UTC.
 
+    Returns:
+        str: UTC time string with 'Z' suffix, e.g. '2020-01-01T01:59:48.000Z'
+    """
+    has_ms = '.' in time
+    for fmt in ("%Y-%m-%dT%H:%M:%S.%f", "%Y-%m-%dT%H:%M:%S"):
+        try:
+            dt = datetime.strptime(time, fmt)
+            break
+        except ValueError:
+            continue
+    else:
+        raise ValueError(f"Cannot parse time string: {time!r}")
+
+    if offset is not None:
+        match = re.match(r'^([+-])(\d{2}):(\d{2})$', offset)
+        if not match:
+            raise ValueError(f"Invalid offset format: {offset!r}. Expected ±HH:MM")
+        sign, hours, minutes = match.groups()
+        delta = timedelta(hours=int(hours), minutes=int(minutes))
+        dt = dt - delta if sign == '+' else dt + delta
+
+    if has_ms:
+        precision = len(time.split('.')[1])
+        ms_str = f"{dt.microsecond // (10 ** (6 - precision)):0{precision}d}"
+        result = dt.strftime("%Y-%m-%dT%H:%M:%S") + '.' + ms_str
+    else:
+        result = dt.strftime("%Y-%m-%dT%H:%M:%S")
+
+    return result + 'Z'
+
+def convert_processing_levels(level: str) -> str:
+    """
+    Converts pipeline processing levels to PDS4 format
+    0A -> Raw
+    1A -> Partially Processed
+    1A-extra -> Partially Processed
+    1B -> Calibrated
+    1C -> Calibrated
+    """
+    match level:
+        case '0A' : return 'Raw'
+        case '1A' | '1A-extra': return 'Partially Processed'
+        case '1B' | '1C' : return 'Calibrated'
+        case _ : raise ValueError(f'Processing level should be in (0A, 1A, 1A-extra, 1B, 1C) got: {level}')
 
 
 

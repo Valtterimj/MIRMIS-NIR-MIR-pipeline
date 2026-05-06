@@ -54,6 +54,7 @@ def main() -> None:
         elif args.cdm == "pds4":
             config_path = Path(args.config).expanduser() if args.config else None
             run_generate_pds4(config_path=config_path)
+            
     except PipelineError as e:
         raise SystemExit(str(e)) from e
 

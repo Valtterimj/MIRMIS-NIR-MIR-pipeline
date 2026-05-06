@@ -119,9 +119,12 @@ pipeline:
 # --------------------------------------------------------
 pds4:
 
-  # (required) relative to this file or absolute
+  # (required fpr pds4) relative to this file or absolute
   # The directory or file that contains the file(s) that the label is generated for
   input: "../outputs/000_test"
+
+  # (Required for pds4) Path to directory containing the templates. Relative to this config file or absolute.
+  templates_dir: "../pds4_templates"
 
   # (optional) Root output directory for generated products. Absolute or empty. If left empty the files are saved to input/pds4/.
   output: ""
@@ -131,7 +134,7 @@ pds4:
   # Setting input to point to a directory and listing here the processing levels allows to generate multiple pds4 labels.
   # Values "0A", "1A", "1A-extra", "1B", "1C"
   # E.g. ["0A", "1B", "1C"]
-  products: ["0A", "1", "1A", "1B"]
+  products: ["0A"]
 
   # (optional) A list of channels that the products are generated for
   # Values "NIR", "MIR"

@@ -16,7 +16,7 @@ KEYWORDS = {
     "original_file"         : "ORIGFILE",
     "creation_date_time"    : "DATE",
     "processing_level"      : "PROCLEVL",
-    "start_time"            : "DATE_OBS",
+    "start_date_time"       : "DATE_OBS",
     "sc_clock"              : "SC_CLK",
     "target"                : "OBJECT",
     "mk_file_name"          : "SPICE_MK",
@@ -114,7 +114,5 @@ def read_fits_metadata(fits_path: Path) -> dict:
         **keywords,
         "extensions"        : extensions
     }
-
-    print(metadata)
 
     return metadata

@@ -179,6 +179,7 @@ def _parse_pds4_config_dict(raw: dict[str, Any], *, config_path: Path) -> pds4_c
 
     pds4_cfg = pds4_config(
         input =  _validate_path(_resolve_path(_require_str(pds4_raw, "input"), base_dir), kind=None),
+        templates_dir= _validate_path(_resolve_path(_require_str(pds4_raw, "templates_dir"), base_dir), kind='dir'),
         output = _resolve_optional_path(pds4_raw.get("output", ""), base_dir),
         products = levels,
         channels = channels
