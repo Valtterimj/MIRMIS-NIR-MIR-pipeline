@@ -150,12 +150,9 @@ def run_generate_pds4(config_path: Path) -> None:
     if input.is_file():
         logger.info(f"Generating PDS4 product for file: {input}")
         try: 
-            issues = generate_label(input, output)
-            if issues:
-                for issue in issues:
-                    log_issue(issue)
+            generate_label(input, output)
         except Exception as e:
-            raise PipelineError(f'Generating PDS4 label failed for file: {file}, \nreason: {e}') 
+            raise PipelineError(f'Generating PDS4 label failed for file: {file} \nreason: {e}') 
     
     else:
         logger.info(f"Generating PDS4 products for levels: {products}")
@@ -165,12 +162,9 @@ def run_generate_pds4(config_path: Path) -> None:
         for file in matches:
             path = input / file
             try: 
-                issues = generate_label(path, templates_dir, output)
-                if issues:
-                    for issue in issues:
-                        log_issue(issue)
+                generate_label(path, templates_dir, output)
             except Exception as e:
-                raise PipelineError(f'Generating PDS4 label failed for file: {file}, \nreason: {e}') 
+                raise PipelineError(f'Generating PDS4 label failed for file: {file} \nreason: {e}') 
         
 
     

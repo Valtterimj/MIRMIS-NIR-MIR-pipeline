@@ -19,7 +19,7 @@
 run:
 
   # (Required) Path to input data. Relative to this config file or absolute.
-  input_dir: "../data/ASPECT_data/NIR"
+  input_dir: "../data/ASPECT_data/MIR"
 
   # (Optional) Root output directory for generated products. Absolute or empty. If left empty the files are saved to outputs/<missphase>.
   output_dir: ""
@@ -93,7 +93,7 @@ data:
   # Manually set the solar distance, used in reflectance calibration.
   # Warning setting this value will override the solar distance from SPICE kernel
   # usage: solar disrtance in AU E.G. "1" or "1.2" | "" or None if not used.
-  solar_d: ""
+  solar_d: "1"
 
 
 # --------------------------------------------------------
@@ -105,12 +105,12 @@ pipeline:
   # List of pipeline levels to execute.
   # Values: "0", "1", "1A", "1A-extra", "1B", "1C"
   # E.g. ["0","1"]
-  levels: ["0", "1"]
+  levels: ["0", "1", "1A-extra"]
 
   # List of channels included in processin
   # Values: "NIR", "MIR"
   # E.g. ["NIR"]
-  channels: ["NIR"]
+  channels: ["MIR"]
 
 
 # --------------------------------------------------------
@@ -134,8 +134,8 @@ pds4:
   # Setting input to point to a directory and listing here the processing levels allows to generate multiple pds4 labels.
   # Values "0A", "1A", "1A-extra", "1B", "1C"
   # E.g. ["0A", "1B", "1C"]
-  products: ["0A"]
+  products: ["0", "1", "1A-extra"]
 
   # (optional) A list of channels that the products are generated for
   # Values "NIR", "MIR"
-  channels: ["NIR"]
+  channels: ["NIR", "MIR"]

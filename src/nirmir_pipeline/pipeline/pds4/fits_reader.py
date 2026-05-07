@@ -15,7 +15,7 @@ KEYWORDS = {
     "file_name"             : "FILENAME",
     "original_file"         : "ORIGFILE",
     "creation_date_time"    : "DATE",
-    "processing_level"      : "PROCLEVL",
+    "proclevl"              : "PROCLEVL",
     "start_date_time"       : "DATE_OBS",
     "sc_clock"              : "SC_CLK",
     "target"                : "OBJECT",

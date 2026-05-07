@@ -5,6 +5,7 @@ import numpy as np
 
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from astropy.io import fits
 from astropy.io.fits import Header, PrimaryHDU, ImageHDU, BinTableHDU, HDUList
 
 from nirmir_pipeline.pipeline.utils.classes import Issue, IssueLevel
@@ -304,7 +305,51 @@ def convert_processing_levels(level: str) -> str:
         case '1B' | '1C' : return 'Calibrated'
         case _ : raise ValueError(f'Processing level should be in (0A, 1A, 1A-extra, 1B, 1C) got: {level}')
 
+def get_wavelengths(fits_file: Path) -> list[str] | None:
+    """Get all the wavelenghts of an acquisition from the fits header"""
+    try:
+        with fits.open(fits_file) as hdul:
+            header = hdul[0].header
+            channel = header.get('CHANNELS')
+            task_number = header.get(f'{channel}_TASK_NUMBER')
+            if task_number == None:
+                raise ValueError('No task number found.')
+            number = int(task_number)
+            wavelengths = []
+            for i in range(number):
+                index = str(i).zfill(3)
+                wl = header.get(f'{channel}_WL_{index}', None)
+                if wl == None:
+                    continue
+                wavelengths.append(wl)
+            if len(wavelengths) == 0:
+                return None
+            return wavelengths
+    except Exception:
+        return None
 
+def get_exposures(fits_file: Path) -> list[str] | None:
+    """Get all the exposures of an acquisition from the fits header"""
+    try:
+        with fits.open(fits_file) as hdul:
+            header = hdul[0].header
+            channel = header.get('CHANNELS')
+            task_number = header.get(f'{channel}_TASK_NUMBER')
+            if task_number == None:
+                raise ValueError('No task number found.')
+            number = int(task_number)
+            exposures = []
+            for i in range(number):
+                index = str(i).zfill(3)
+                exp = header.get(f'{channel}_EXP_{index}', None)
+                if exp == None:
+                    continue
+                exposures.append(exp)
+            if len(exposures) == 0:
+                return None
+            return exposures
+    except Exception:
+        return None
 
 
 

@@ -37,7 +37,7 @@ If the dictionary versions are updated make sure the information version matches
         <!--TODO: Check correct Bundle and Collection -->
         <logical_identifier>urn:nasa:pds:ci_mirmis:nirmir:image0001</logical_identifier>
         <version_id>1.0</version_id>
-        <title>Comet Interceptor MIRMIS instrument _ channel level _ processed datacube:image0001</title>
+        <title>{{ title }}</title>
         <!--TODO: Update the information model version if necessary -->
         <information_model_version>1.25.0.0</information_model_version>
         <product_class>Product_Observational</product_class>
@@ -63,8 +63,8 @@ If the dictionary versions are updated make sure the information version matches
             <!-- Processing levels: Calibrated, Derived, Partially Processed, Raw, Telemetry-->
             <processing_level>{{ processing_level }}</processing_level>
             <Science_Facets>
-                <!-- Infrared for MIR-->
-                <wavelength_range>Near Infrared</wavelength_range>
+                <!-- Infrared for MIR, Near Infrared for NIR-->
+                <wavelength_range>{{ wl_range }}</wavelength_range>
                 <discipline_name>Imaging</discipline_name>
             </Science_Facets>
         </Primary_Result_Summary>
@@ -74,24 +74,25 @@ If the dictionary versions are updated make sure the information version matches
             <type>Mission</type>
             <Internal_Reference>
                 <!--TODO: Check the correct lid reference-->
-                <lid_reference>urn:nasa:pds:context:investigation:mission.comet-interceptor</lid_reference>
+                <lid_reference>{{mission_lid}}</lid_reference>
                 <reference_type>data_to_investigation</reference_type>
             </Internal_Reference>
         </Investigation_Area>
+
         <Observing_System>
             <!--TODO: Check the correct names and system hierarchy -->
-            <name>MIRMIS NIR</name>
+            <name>{{ os_name }}</name>
             <Observing_System_Component>
                 <name>MIRMIS</name>
                 <type>Host</type>
                 <Internal_Reference>
                     <!--TODO: check the correct lid reference -->
-                    <lid_reference>urn:nasa:pds:contect:instrument_host.spacecraft.mirmis</lid_reference>
+                    <lid_reference>{{ mirmis_lid }}</lid_reference>
                     <reference_type>is_instrument_host</reference_type>
                 </Internal_Reference>
             </Observing_System_Component>
             <Observing_System_Component>
-                <name>NIR</name>
+                <name>{{ channel }}</name>
                 <type>Instrument</type>
                 <Internal_Reference>
                     <!--TODO: check the correct lid reference -->
@@ -100,6 +101,7 @@ If the dictionary versions are updated make sure the information version matches
                 </Internal_Reference>
             </Observing_System_Component>
         </Observing_System>
+
         <Target_Identification>
             <name>{{ target }}</name>
             <type>Comet</type>
@@ -114,7 +116,7 @@ If the dictionary versions are updated make sure the information version matches
                 <pds:Local_Internal_Reference>
                     <!-- Local identifier for the datacube defined in File_Area_observational-->
                     <pds:local_identifier_reference>data_cube</pds:local_identifier_reference>
-                    <pds:local_reference_type>display_setting_to_array</pds:local_reference_type>
+                    <pds:local_reference_type>display_settings_to_array</pds:local_reference_type>
                 </pds:Local_Internal_Reference>
                 <disp:Display_Direction>
                     <disp:horizontal_display_axis>Sample</disp:horizontal_display_axis>
@@ -126,6 +128,7 @@ If the dictionary versions are updated make sure the information version matches
 
             <!-- Geometry dictionary-->
             <!-- These values comes from SPICE kernel and are optional to include-->
+            {% if mk_file_name not in ['UNK', 'N/A'] %}
             <geom:Geometry>
                 <!--TODO: fill out the metakernel information once it has been established -->
                 <geom:SPICE_Kernel_Files>
@@ -138,19 +141,28 @@ If the dictionary versions are updated make sure the information version matches
                 <geom:Geometry_Orbiter>
                     <geom:geometry_start_time_utc>{{ start_date_time }}</geom:geometry_start_time_utc>
                     <geom:geometry_stop_time_utc>2026-04-23T10:30:35.467Z</geom:geometry_stop_time_utc>
+                    {% if sc_distance not in ['UNK', 'N/A'] and target_distance not in ['UNK', 'N/A'] %}
                     <geom:Distances>
                         <geom:Distances_Specific>
+                            {% if sc_distance not in ['UNK', 'N/A'] %}
                             <geom:spacecraft_heliocentric_distance unit="AU">{{ sc_distance }}</geom:spacecraft_heliocentric_distance>
+                            {% endif %}
+                            {% if target_distance not in ['UNK', 'N/A'] %}
                             <geom:spacecraft_target_center_distance unit="AU">{{ target_distance }}</geom:spacecraft_target_center_distance>
+                            {% endif %}
                         </geom:Distances_Specific>
                     </geom:Distances>
+                    {% endif %}
+                    {% if solar_elongation not in ['UNK', 'N/A'] %}
                     <geom:Illumination_Geometry>
                         <geom:Illumination_Specific>
                             <geom:solar_elongation unit="deg">{{ solar_elongation }}</geom:solar_elongation>
                         </geom:Illumination_Specific>
                     </geom:Illumination_Geometry>
+                    {% endif %}
                 </geom:Geometry_Orbiter>
             </geom:Geometry>
+            {% endif %}
 
             <!-- Image dictionary-->
             <img:Imaging>
@@ -161,9 +173,10 @@ If the dictionary versions are updated make sure the information version matches
 
                 <!-- Calibration -->
                 <img:Calibration>
-                    <img:description>Calibration procedures in order: dark current, flat field, bad pixel (by averaging neighbours), Spectral Radiance, I/F relflectance.</img:description>
+                    <img:description>Calibration procedures applied vary by processing level. Procedures in order: dark current, flat field, bad pixel (by averaging neighbours), Spectral Radiance, I/F reflectance.</img:description>
                     <img:processing_venue>Ground</img:processing_venue>
                 </img:Calibration>
+                {% if proclevl in ['1A-extra', '1B', '1C'] %}
                 <img:Dark_Current_Correction>
                     <img:processing_venue>Ground</img:processing_venue>
                 </img:Dark_Current_Correction>
@@ -173,36 +186,49 @@ If the dictionary versions are updated make sure the information version matches
                 <img:Radiometric_Correction>
                     <img:processing_venue>Ground</img:processing_venue>
                     <!-- Radiance Factor for 1C calibrated, Spectral Radiance for 1B calibrated-->
-                    <img:radiometric_type>Radiance Factor</img:radiometric_type>
+                    <img:radiometric_type>{{ radiometric_type }}</img:radiometric_type>
                 </img:Radiometric_Correction>
+                {% endif %}
 
                 <!-- Instrument state -->
                 <img:Instrument_State>
                     <img:Device_Temperatures>
+                        {% if nir_ccdtemp not in ['UNK', 'N/A']%}
                         <img:Device_Temperature>
                             <img:device_name>NIR CCDTEMP</img:device_name>
                             <img:temperature_value unit="K">{{ nir_ccdtemp }}</img:temperature_value>
                         </img:Device_Temperature>
+                        {% endif %}
+                        {% if mir_ccdtemp not in ['UNK', 'N/A']%}
                         <img:Device_Temperature>
                             <img:device_name>MIR CCDTEMP</img:device_name>
                             <img:temperature_value unit="K">{{ mir_ccdtemp }}</img:temperature_value>
                         </img:Device_Temperature>
+                        {% endif %}
+                        {% if nir_fpi_temp1 not in ['UNK', 'N/A']%}
                         <img:Device_Temperature>
                             <img:device_name>NIR FPI TEMP1</img:device_name>
                             <img:temperature_value unit="K">{{ nir_fpi_temp1 }}</img:temperature_value>
                         </img:Device_Temperature>
+                        {% endif %}
+                        {% if nir_fpi_temp2 not in ['UNK', 'N/A'] %}
                         <img:Device_Temperature>
                             <img:device_name>NIR FPI TEMP2</img:device_name>
                             <img:temperature_value unit="K">{{ nir_fpi_temp2 }}</img:temperature_value>
                         </img:Device_Temperature>
+                        {% endif %}
+                        {% if mir_fpi_temp1 not in ['UNK', 'N/A'] %}
                         <img:Device_Temperature>
                             <img:device_name>MIR FPI TEMP1</img:device_name>
                             <img:temperature_value unit="K">{{ mir_fpi_temp1 }}</img:temperature_value>
                         </img:Device_Temperature>
+                        {% endif %}
+                        {% if mir_fpi_temp2 not in ['UNK', 'N/A'] %}
                         <img:Device_Temperature>
                             <img:device_name>MIR FPI TEMP2</img:device_name>
                             <img:temperature_value unit="K">{{ mir_fpi_temp2 }}</img:temperature_value>
                         </img:Device_Temperature>
+                        {% endif %}
                     </img:Device_Temperatures>
                 </img:Instrument_State>
             </img:Imaging>
@@ -220,29 +246,37 @@ If the dictionary versions are updated make sure the information version matches
                 <sp:Observation_Parameters>
                     <sp:number_of_exposures>{{ extensions[0].data_shape[0] }}</sp:number_of_exposures>
                     <!--TODO: The net integration time for FPI is the observation interval-->
-                    <sp:net_integration_time unit="s">1</sp:net_integration_time>
+                    <sp:net_integration_time unit="s">{{ net_integration_time }}</sp:net_integration_time>
                 </sp:Observation_Parameters>
 
                 <sp:Field_of_View>
+                    {% if channel == 'NIR' %}
                     <sp:description>NIR has a rectangular FoV.</sp:description>
                     <sp:Rectangular_FOV>
                         <sp:width_angle unit="deg">6.7</sp:width_angle>
                         <sp:length_angle unit="deg">5.4</sp:length_angle>
                     </sp:Rectangular_FOV>
+                    {% else %}
+                    <sp:description>MIR has a circular FoV.</sp:description>
+                    <sp:Circular_FOV>
+                        <sp:diameter_angle unit="deg">2</sp:diameter_angle>
+                    </sp:Circular_FOV>
+                    {% endif %}
                 </sp:Field_of_View>
+
                 <sp:Bin_Description>
                     <sp:bin_profile_description>The spectral bins follow a gaussian distribution. Width given as FWHM.</sp:bin_profile_description>
                     <!--TODO: Should use Uniformly_Sampled_wavelength or Spectral_Lookup? -->
                     <sp:Uniformly_Sampled_Wavelength>
                         <!--TODO: Check Axis name -->
-                        <sp:axis_name>band</sp:axis_name>
+                        <sp:axis_name>Wavelength</sp:axis_name>
                         <!--TODO: Check sampling interval-->
-                        <sp:sampling_interval_wavelength unit="nm">30</sp:sampling_interval_wavelength>
+                        <sp:sampling_interval_wavelength unit="nm">{{ sampling_interval }}</sp:sampling_interval_wavelength>
                         <sp:sampling_scale>Linear</sp:sampling_scale>
                         <!--TODO: Check bin width-->
-                        <sp:bin_width_wavelength unit="nm">30</sp:bin_width_wavelength>
-                        <sp:first_center_wavelength unit="nm">900</sp:first_center_wavelength>
-                        <sp:last_center_wavelength unit="nm">1700</sp:last_center_wavelength>
+                        <sp:bin_width_wavelength unit="nm">{{ bin_width }}</sp:bin_width_wavelength>
+                        <sp:first_center_wavelength unit="nm">{{ first_center }}</sp:first_center_wavelength>
+                        <sp:last_center_wavelength unit="nm">{{ last_center }}</sp:last_center_wavelength>
                     </sp:Uniformly_Sampled_Wavelength>
                 </sp:Bin_Description>
 
@@ -250,20 +284,26 @@ If the dictionary versions are updated make sure the information version matches
         </Discipline_Area>
     </Observation_Area>
 
+    {% if reference_list %}
     <Reference_List>
-      <Source_Product_Internal>
-        <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image0001_1b::1.0</lidvid_reference>
-        <reference_type>data_to_calibrated_product</reference_type>
-      </Source_Product_Internal>
-      <Source_Product_Internal>
-        <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image000_1a::1.0</lidvid_reference>
-        <reference_type>data_to_partially_processed_source_product</reference_type>
-      </Source_Product_Internal>
-      <Source_Product_Internal>
-        <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image000_0a::1.0</lidvid_reference>
-        <reference_type>data_to_raw_product</reference_type>
-      </Source_Product_Internal>
-   </Reference_List>
+        <Source_Product_Internal>
+            <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image000_0a::1.0</lidvid_reference>
+            <reference_type>data_to_raw_source_product</reference_type>
+        </Source_Product_Internal>
+        {% if proclevl in ['1A-extra', '1B', '1C'] %}
+        <Source_Product_Internal>
+            <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image000_1a::1.0</lidvid_reference>
+            <reference_type>data_to_partially_processed_source_product</reference_type>
+        </Source_Product_Internal>
+        {% endif %}
+        {% if proclevl == '1C' %}
+        <Source_Product_Internal>
+            <lidvid_reference>urn:nasa:pds:ci_mirmis:nirmir:image0001_1b::1.0</lidvid_reference>
+            <reference_type>data_to_calibrated_source_product</reference_type>
+        </Source_Product_Internal>
+        {% endif %}
+    </Reference_List>
+    {% endif %}
 
 
     <File_Area_Observational>
