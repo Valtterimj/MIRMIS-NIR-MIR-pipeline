@@ -26,5 +26,12 @@
   "pipeline": {
     "levels": ["0"],
     "channels": ["NIR", "MIR"]
+  },
+  "pds4": {
+    "input" : "../outputs/000_test",
+    "templates_dir" : "../pds4_templates",
+    "output" : "",
+    "products" : ["0", "1", "1A-extra"],
+    "channels" : ["NIR", "MIR"]
   }
 }

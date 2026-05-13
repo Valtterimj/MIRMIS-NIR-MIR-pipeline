@@ -24,8 +24,9 @@ The pipeline is operated from the command line via the `mirmis` CLI.
 8. [Processing Levels](#processing-levels)
 9. [Outputs](#outputs)
 10. [PDS4 Label Generation](#pds4-label-generation)
-11. [Additional Resources](#additional-resources)
-12. [Contact](#contact)
+11. [Testing](#testing)
+12. [Additional Resources](#additional-resources)
+13. [Contact](#contact)
 
 ---
 
@@ -514,6 +515,32 @@ validate --target path/to/CI_MIRMIS_<STEM>.xml
 The tool checks schema conformance, schematron rules, and verifies that the array dimensions and data types declared in the label match the actual bytes in the referenced FITS file.
 
 > **Note:** The three `error.label.context_ref_not_found` errors for the Comet Interceptor investigation, instrument host, and instrument LIDs are expected at this stage — the corresponding PDS4 context products have not yet been registered in the PDS registry.
+
+---
+
+## Testing
+
+The test suite lives in [`tests/`](tests/) and is run with [pytest](https://docs.pytest.org). Test data (small binary frames, calibration files, and pre-built FITS fixtures) is included under `tests/data/`.
+
+| Test file | Covers |
+|---|---|
+| `test_pipeline_level_0.py` | Level 0: raw binary → FITS |
+| `test_pipeline_level_1.py` | Level 1 calibration steps |
+| `test_pipeline_complete.py` | Full end-to-end pipeline run |
+| `test_pipeline_config.py` | Configuration loading and validation |
+| `test_pipeline_pds4.py` | PDS4 label generation |
+
+Run the full suite from the project root:
+
+```bash
+pytest
+```
+
+Run a specific file:
+
+```bash
+pytest tests/test_pipeline_pds4.py -v
+```
 
 ---
 
