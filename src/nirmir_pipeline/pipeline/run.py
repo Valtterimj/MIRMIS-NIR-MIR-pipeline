@@ -163,6 +163,7 @@ def run_generate_pds4(config_path: Path) -> None:
             path = input / file
             try: 
                 generate_label(path, templates_dir, output)
+                logger.info(f"PDS4 product created for {file}. Saved to: {output}")
             except Exception as e:
                 raise PipelineError(f'Generating PDS4 label failed for file: {file} \nreason: {e}') 
         

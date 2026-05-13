@@ -96,7 +96,7 @@ If the dictionary versions are updated make sure the information version matches
                 <type>Instrument</type>
                 <Internal_Reference>
                     <!--TODO: check the correct lid reference -->
-                    <lid_reference>urn:nasa:pds:contect:instrument:.mirmis.nir</lid_reference>
+                    <lid_reference>{{ instrument_lid }}</lid_reference>
                     <reference_type>is_instrument</reference_type>
                 </Internal_Reference>
             </Observing_System_Component>
@@ -111,11 +111,12 @@ If the dictionary versions are updated make sure the information version matches
         <!--TODO: add Mission_Area-->
 
         <Discipline_Area>
-            <!-- Image display guide-->
+            <!-- Image display guide (NIR only: MIR has 1D spectrum, no spatial axes) -->
+            {% if channel == 'NIR' %}
             <disp:Display_Settings>
                 <pds:Local_Internal_Reference>
                     <!-- Local identifier for the datacube defined in File_Area_observational-->
-                    <pds:local_identifier_reference>data_cube</pds:local_identifier_reference>
+                    <pds:local_identifier_reference>{{ data_local_id }}</pds:local_identifier_reference>
                     <pds:local_reference_type>display_settings_to_array</pds:local_reference_type>
                 </pds:Local_Internal_Reference>
                 <disp:Display_Direction>
@@ -125,6 +126,7 @@ If the dictionary versions are updated make sure the information version matches
                     <disp:vertical_display_direction>Top to Bottom</disp:vertical_display_direction>
                 </disp:Display_Direction>
             </disp:Display_Settings>
+            {% endif %}
 
             <!-- Geometry dictionary-->
             <!-- These values comes from SPICE kernel and are optional to include-->
@@ -167,7 +169,7 @@ If the dictionary versions are updated make sure the information version matches
             <!-- Image dictionary-->
             <img:Imaging>
                 <pds:Local_Internal_Reference>
-                    <pds:local_identifier_reference>data_cube</pds:local_identifier_reference>
+                    <pds:local_identifier_reference>{{ data_local_id }}</pds:local_identifier_reference>
                     <pds:local_reference_type>imaging_parameters_to_image_object</pds:local_reference_type>
                 </pds:Local_Internal_Reference>
 
@@ -236,11 +238,11 @@ If the dictionary versions are updated make sure the information version matches
             <!-- Spectral dictionary-->
             <sp:Spectral_Characteristics>
                 <pds:Local_Internal_Reference>
-                    <pds:local_identifier_reference>data_cube</pds:local_identifier_reference>
+                    <pds:local_identifier_reference>{{ data_local_id }}</pds:local_identifier_reference>
                     <pds:local_reference_type>spectral_characteristics_to_array_object</pds:local_reference_type>
                 </pds:Local_Internal_Reference>
 
-                <sp:spectrum_format>3D</sp:spectrum_format>
+                <sp:spectrum_format>{{ spectrum_format }}</sp:spectrum_format>
                 <sp:spectral_bin_type>wavelength</sp:spectral_bin_type>
 
                 <sp:Observation_Parameters>
@@ -313,12 +315,14 @@ If the dictionary versions are updated make sure the information version matches
             <creation_date_time>{{ creation_date_time }}</creation_date_time>
         </File>
         <Header>
-            <name>PrimaryHDU</name>
+            <name>Primary Header</name>
             <offset unit="byte">{{ extensions[0].header_offset }}</offset>
             <object_length unit="byte">{{ extensions[0].header_length }}</object_length>
             <parsing_standard_id>FITS 3.0</parsing_standard_id>
-            <description>Fits header. Contains metadata about the datacube.</description>
+            <description>Primary FITS header containing observation metadata.</description>
         </Header>
+        {% if channel == 'NIR' %}
+        {# NIR: 3-D hyperspectral cube [Wavelength × Line × Sample] #}
         <Array_3D_Spectrum>
             <name>Hyperspectral Image Cube</name>
             <local_identifier>data_cube</local_identifier>
@@ -326,8 +330,8 @@ If the dictionary versions are updated make sure the information version matches
             <axes>3</axes>
             <axis_index_order>Last Index Fastest</axis_index_order>
             <Element_Array>
-                <data_type>IEEE754MSBSingle</data_type>
-                <unit>nm</unit>
+                <data_type>{{ pds4_data_type }}</data_type>
+                <unit>{{ data_unit }}</unit>
             </Element_Array>
             <Axis_Array>
                 <axis_name>Wavelength</axis_name>
@@ -344,7 +348,37 @@ If the dictionary versions are updated make sure the information version matches
                 <elements>{{ extensions[0].data_shape[2] }}</elements>
                 <sequence_number>3</sequence_number>
             </Axis_Array>
-      </Array_3D_Spectrum>
+        </Array_3D_Spectrum>
+        {% if extensions | length > 1 %}
+        {# NIR 1A-extra/1B/1C: BinTable extension containing raw frame data #}
+        <Header>
+            <name>BinTable Header</name>
+            <offset unit="byte">{{ extensions[1].header_offset }}</offset>
+            <object_length unit="byte">{{ extensions[1].header_length }}</object_length>
+            <parsing_standard_id>FITS 3.0</parsing_standard_id>
+            <description>FITS binary table extension header for raw per-frame pixel data.</description>
+        </Header>
+        <!--TODO: Add Table_Binary description for the BinTable raw frame data -->
+        {% endif %}
+        {% else %}
+        {# MIR: 1-D spectrum, one value per wavelength #}
+        <Array_1D_Spectrum>
+            <name>Spectral Data</name>
+            <local_identifier>data_spectrum</local_identifier>
+            <offset unit="byte">{{ extensions[0].data_offset }}</offset><!-- Always a multiple of 2880 -->
+            <axes>1</axes>
+            <axis_index_order>Last Index Fastest</axis_index_order>
+            <Element_Array>
+                <data_type>{{ pds4_data_type }}</data_type>
+                <unit>{{ data_unit }}</unit>
+            </Element_Array>
+            <Axis_Array>
+                <axis_name>Wavelength</axis_name>
+                <elements>{{ extensions[0].data_shape[0] }}</elements>
+                <sequence_number>1</sequence_number>
+            </Axis_Array>
+        </Array_1D_Spectrum>
+        {% endif %}
     </File_Area_Observational>
 
 </Product_Observational>

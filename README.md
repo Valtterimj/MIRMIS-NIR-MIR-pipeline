@@ -23,8 +23,9 @@ The pipeline is operated from the command line via the `mirmis` CLI.
 7. [Running the Pipeline](#running-the-pipeline)
 8. [Processing Levels](#processing-levels)
 9. [Outputs](#outputs)
-10. [Additional Resources](#additional-resources)
-11. [Contact](#contact)
+10. [PDS4 Label Generation](#pds4-label-generation)
+11. [Additional Resources](#additional-resources)
+12. [Contact](#contact)
 
 ---
 
@@ -123,6 +124,9 @@ MIRMIS-NIR-MIR-pipeline/
 │   ├── pipeline.yaml           # Default config (searched first at runtime)
 │   └── pipeline.example.yaml  # Annotated example — copy and edit this
 │
+├── pds4_templates/
+│   └── CI_MIRMIS_NIRMIR_template.xml.j2   # Jinja2 PDS4 label template (NIR and MIR)
+│
 ├── calibration/                # Calibration reference files
 │   ├── DARKS/                  # Dark background frames (.fits)
 │   ├── FLATS/                  # Flat field frames (.fits)
@@ -158,6 +162,8 @@ MIRMIS-NIR-MIR-pipeline/
 │           │       ├── reflectance.py
 │           │       └── level_1b.py
 │           ├── pds4/           # PDS4 label generation
+│           │   ├── generate_pds4_label.py      # Label generation orchestrator
+│           │   └── fits_reader.py              # FITS metadata extractor for templates
 │           └── utils/          # Shared classes, error types, utilities
 │
 ├── tests/                      # pytest test suite
@@ -296,6 +302,29 @@ pipeline:
   # Instrument channels to process.
   # Allowed values: "NIR", "MIR"
   channels: ["NIR"]
+
+# ── PDS4 label generation ─────────────────────────────────────────────────────
+pds4:
+  # (Required) Directory or single FITS file to generate labels for.
+  # Relative to this config file, or absolute.
+  input: "../outputs/000_test"
+
+  # (Required) Directory containing the Jinja2 label templates.
+  # Relative to this config file, or absolute.
+  templates_dir: "../pds4_templates"
+
+  # (Optional) Root output directory for generated PDS4 products.
+  # If empty, products are written to <input>/pds4/.
+  output: ""
+
+  # (Optional) Processing levels to generate labels for.
+  # Only used when input points to a directory.
+  # Allowed values: "0A", "1A", "1A-extra", "1B", "1C"
+  products: ["0A", "1A", "1A-extra", "1B", "1C"]
+
+  # (Optional) Channels to generate labels for.
+  # Allowed values: "NIR", "MIR"
+  channels: ["NIR", "MIR"]
 ```
 
 ### Notes on paths
@@ -445,6 +474,49 @@ Each output file contains a single `PrimaryHDU` with the image data array (frame
 
 ---
 
+## PDS4 Label Generation
+
+The pipeline can generate [PDS4](https://pds.nasa.gov/datastandards/pds4/)-compliant XML product labels for any FITS file produced by the processing pipeline. Each label is generated from a shared Jinja2 template ([`pds4_templates/CI_MIRMIS_NIRMIR_template.xml.j2`](pds4_templates/CI_MIRMIS_NIRMIR_template.xml.j2)) that is filled in with metadata read directly from the FITS headers and file structure. The correct array type (`Array_3D_Spectrum` for NIR, `Array_1D_Spectrum` for MIR), element data type, and axis dimensions are determined automatically from the FITS file content.
+
+### Running PDS4 generation
+
+Configure the `pds4:` section in your config file (see [Configuration](#configuration)), then run:
+
+```bash
+mirmis pds4 --config path/to/pipeline.yaml
+```
+
+The path may be absolute or relative to the current working directory. If `--config` is omitted the pipeline looks for `configs/pipeline.yaml` in the project root.
+
+To generate labels for a single FITS file, set `pds4.input` to the file path directly and omit `pds4.products`. To process a whole output directory, set `pds4.input` to the directory and list the desired levels in `pds4.products`.
+
+### Output layout
+
+For each processed FITS file a subdirectory is created containing the XML label and a copy of the FITS file:
+
+```text
+<output>/pds4/
+└── <STEM>/
+    ├── CI_MIRMIS_<STEM>.xml    # PDS4 label
+    └── <STEM>.fits             # Copy of the FITS data product
+```
+
+Where `<STEM>` is the filename stem of the source FITS file (e.g. `NIR_000000_200101T015948_1A`). If `pds4.output` is empty the `pds4/` directory is created inside the directory given by `pds4.input`.
+
+### Validating PDS4 labels
+
+Generated labels can be validated with the [NASA PDS Validate Tool](https://nasa-pds.github.io/validate/). Installation instructions and full documentation are available at that link. Once the tool is installed, validate a single label with:
+
+```bash
+validate --target path/to/CI_MIRMIS_<STEM>.xml
+```
+
+The tool checks schema conformance, schematron rules, and verifies that the array dimensions and data types declared in the label match the actual bytes in the referenced FITS file.
+
+> **Note:** The three `error.label.context_ref_not_found` errors for the Comet Interceptor investigation, instrument host, and instrument LIDs are expected at this stage — the corresponding PDS4 context products have not yet been registered in the PDS registry.
+
+---
+
 ## Additional Resources
 
 | Resource | Location |
@@ -456,6 +528,8 @@ Each output file contains a single `PrimaryHDU` with the image data array (frame
 | Jasper library (JP2 decompression) | https://jasper-software.github.io/jasper-manual/latest/html/index.html |
 | SpiceyPy documentation | https://spiceypy.readthedocs.io |
 | Comet Interceptor mission | https://www.cosmos.esa.int/web/comet-interceptor |
+| NASA PDS Validate Tool | https://nasa-pds.github.io/validate/ |
+| PDS4 Data Standards | https://pds.nasa.gov/datastandards/pds4/ |
 
 ---
 
