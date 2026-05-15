@@ -8,7 +8,9 @@ from nirmir_pipeline.pipeline.levels.level_1.level_1b import run_level_1b
 from nirmir_pipeline.pipeline.levels.level_1.reflectance import reflectance_calibration
 
 def run_level_1(cfg: Config, channel: str) -> tuple[Path, list[Issue]]:
-
+    """
+    main fucntion to run the level 1.
+    """
     all_issues: list[Issue] = []
 
     levels = cfg.pipeline.levels

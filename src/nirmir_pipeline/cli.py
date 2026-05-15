@@ -9,6 +9,13 @@ from nirmir_pipeline.pipeline.utils.errors import PipelineError
 
 
 def main() -> None:
+    """
+    Commandline interface for MIRMIS pipeline. 
+    Commands:
+    - run: runs the pipeline according to the configurations defined
+    - view: visualises a FITS file
+    - pds4: generates a PDS4 product according to the configurations defined
+    """
     parser = argparse.ArgumentParser(prog="mirmis")
     sub = parser.add_subparsers(dest="cdm", required=True)
 

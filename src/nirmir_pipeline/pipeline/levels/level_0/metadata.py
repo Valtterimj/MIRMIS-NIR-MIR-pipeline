@@ -223,7 +223,6 @@ def collect_config_metadata(telemetry_path: Path, data: DataConfig, orig_file: s
     return (AcqMetadata(**meta_data), issues)
 
 def collect_instrument_metadata(telemetry_path: Path, channel: str) -> tuple[InstrumentMetadata, list[Issue]]: 
-    # AcqMetadata(**meta_data)
 
     issues: list[Issue] = []
     meta_data = {}

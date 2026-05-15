@@ -11,6 +11,9 @@ from nirmir_pipeline.pipeline.utils.utilities import log_issue
 
 
 def run_level_0(cfg: Config, channel: str) -> tuple[Path, list[Issue]]:
+    """
+    Main function to run the level 0. Combines the acqusition binary files and metadata into a single FITS file.
+    """
 
     all_issues: list[Issue] = []
 

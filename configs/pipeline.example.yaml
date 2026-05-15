@@ -78,16 +78,16 @@ data:
   swcreate: "NIRMIRCAL"
 
   # Mission phase ID
-  missphas: "000_test"
+  missphas: "000_test2"
 
   # Mission observation ID
   observ: "pipeline-testing"
 
   # Observed target
-  object: "test"
+  object: "dark"
 
   # Observed target (SPICE)
-  target: "TEST"
+  target: "DARK"
 
   # Solar distance
   # Manually set the solar distance, used in reflectance calibration.
@@ -121,7 +121,7 @@ pds4:
 
   # (required fpr pds4) relative to this file or absolute
   # The directory or file that contains the file(s) that the label is generated for
-  input: "../outputs/000_test"
+  input: "../outputs/000_test2"
 
   # (Required for pds4) Path to directory containing the templates. Relative to this config file or absolute.
   templates_dir: "../pds4_templates"

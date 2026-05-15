@@ -6,12 +6,13 @@ from pathlib import Path
 from scipy.spatial.transform import Rotation as R
 
 """
-THIS IS A COPY OF SPICE DATA FUNCTIONS FOR HERA
+THIS IS A COPY OF SPICE DATA FUNCTIONS FOR HERA. 
+AT THE TIME OF CREATING THIS PIPELINE THERE IS NO EXISTING SPICE KERNEL FOR COMET INTERCEPTOR.
 
 TODO: ADJUST THE FUNCTIONS FOR COMET INTERCEPTOR
 
-This is a Python file for using HERA SPICE kernels.
-To use this file, you need to have HERA SPICE kernel dataset installed.
+This is a Python file for using SPICE kernels.
+To use this file, you need to have the SPICE kernel dataset installed.
 You may need to write the correct path to the kernel folder specified in metakernel.
 The SPICE dataset has too large file sizes to be uploaded into github.
 Refer to the readme files in SPICE dataset for more information about SPICE kernels.
@@ -21,12 +22,6 @@ Refer to the readme files in SPICE dataset for more information about SPICE kern
 HERA SPICE kernel dataset: https://s2e2.cosmos.esa.int/bitbucket/projects/SPICE_KERNELS/repos/hera/browse
 SpiceyPy docs: https://spiceypy.readthedocs.io/en/stable/documentation.html#
 WebGeocalc: http://spice.esac.esa.int/webgeocalc/#NewCalculation
-"""
-
-"""
-Memo:
-- hera_plan.tm metakernel provides Milani long term predicted trajectory
-- hera_ops.tm is later updated with asteroid phase cubesat trajectories
 """
 
 test_et = None

@@ -94,6 +94,7 @@ def run_pipeline(config_path: Path) -> tuple[Path, list[Issue], list[Issue]]:
 
 
 def view_fits(path: Path, level: str | None = None) -> None:
+    """Main function to visualise FITS files."""
 
     if path.is_file():
         visualise_fits(path)
@@ -102,7 +103,7 @@ def view_fits(path: Path, level: str | None = None) -> None:
     if not path.is_dir():
         raise PipelineError(f"Path does not exist: {path}")
 
-    allowed_levels = {"0A", "1A", "1B", "1C", "2A", "2B"}
+    allowed_levels = {"0A", "1A", "1A-extra", "1B", "1C"}
 
     if level is None:
         raise PipelineError(f"when --path is a directory, you must provide --level "
